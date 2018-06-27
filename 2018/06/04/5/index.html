@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="文件I/O深入　　所有的系统调用都是以原子操作进行的，内核保证了某系统调用中所有步骤会作为独立操作一次执行，期间不会被其他进程或线程所中断。　　原子操作规避了竞争冒险 保证进程是打开文件的创建者　　保证对文件是否存在的检查和创建文件属于同一个原子操作。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件I&#x2F;O深入">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/04/5/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="文件I/O深入　　所有的系统调用都是以原子操作进行的，内核保证了某系统调用中所有步骤会作为独立操作一次执行，期间不会被其他进程或线程所中断。　　原子操作规避了竞争冒险 保证进程是打开文件的创建者　　保证对文件是否存在的检查和创建文件属于同一个原子操作。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-12T10:49:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件I&#x2F;O深入">
+<meta name="twitter:description" content="文件I/O深入　　所有的系统调用都是以原子操作进行的，内核保证了某系统调用中所有步骤会作为独立操作一次执行，期间不会被其他进程或线程所中断。　　原子操作规避了竞争冒险 保证进程是打开文件的创建者　　保证对文件是否存在的检查和创建文件属于同一个原子操作。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/04/5/"/>
+
+
+
+
+
+  <title>文件I/O深入 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/04/5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件I/O深入</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-04T18:23:19+08:00">
+                2018-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="文件I-O深入"><a href="#文件I-O深入" class="headerlink" title="文件I/O深入"></a>文件I/O深入</h1><p>　　所有的系统调用都是以原子操作进行的，内核保证了某系统调用中所有步骤会作为独立操作一次执行，期间不会被其他进程或线程所中断。<br>　　<strong>原子操作规避了竞争冒险</strong></p>
+<h5 id="保证进程是打开文件的创建者"><a href="#保证进程是打开文件的创建者" class="headerlink" title="保证进程是打开文件的创建者"></a>保证进程是打开文件的创建者</h5><p>　　保证对文件是否存在的检查和创建文件属于同一个原子操作。<br><a id="more"></a></p>
+<h5 id="向文件尾部追加数据"><a href="#向文件尾部追加数据" class="headerlink" title="向文件尾部追加数据"></a>向文件尾部追加数据</h5><p>　　将文件偏移量的移动和数据写操作纳入同一个原子操作，在打开文件时加入O_APPEND标志就可以保证。  </p>
+<h3 id="文件控制操作：fcntl"><a href="#文件控制操作：fcntl" class="headerlink" title="文件控制操作：fcntl()"></a>文件控制操作：fcntl()</h3><p>　　fcntl()系统调用对一个打开的文件描述符执行一系列的系统控制操作。</p>
+<pre><code>#include &lt;fcntl.h&gt;
+int fcntl(int fd,int cmd,...);/* return on success depends on cmd,or -1 on error*/
+</code></pre><p> 　　cmd参数支持的操作范围很广，fcntl()的第三个参数以省略号表示，这意味着可以设置为不同的类型，或者加以省略，内核会根据cmd参数的值来确定该参数的数据类型。  </p>
+<h4 id="打开文件的状态标志"><a href="#打开文件的状态标志" class="headerlink" title="打开文件的状态标志"></a>打开文件的状态标志</h4><p>　　fcntl()的用途之一就是对打开的文件获取或修改其访问模式和状态标志（这些值都是通过open()系统调用的flag参数来设置的)。要获取这些设置，应将fcntl()的mcd参数设置为F_GETFL。<br>　　判断访问模式采用以下代码：</p>
+<pre><code>accessMode = flasg &amp; O_ACCMODE;
+if(accessMode == O_WRONLY || accessMode == O_RDWR)
+  printf(&quot;file is writable \n&quot;);
+</code></pre><p>  　　使用fcntl()修改文件的状态标志适用于以下情景：<br>  　　1.文件不是由调用程序打开的，所有程序无法使用open()控制其文件的状态标志。<br>  　　2.文件描述符的获取是通过open()之外的系统调用，如pipe()调用，该调用创建一个管道，并返回两个文件描述符分别对应管道的两端，再比如socket()调用，该调用创建一个套接字并返回指向该套接字的文件描述符。<br>  　　通过fcnt()的F_GETFL命令获取当前标志的副本，然后修改需要变更的比特位，最后再次调用fcntl()函数的F_SETFL命令来更新这个状态标志。可以实现以下代码。  </p>
+<pre><code>int flags;  
+flags = fcntl(fd,F_GETFL):
+if(flags == -1)
+  errExit(&quot;fcntl&quot;);
+flags |= O_APPEND;
+if(fcntl(fd,F_SETFL,flags) == -1)
+  errExit(&quot;fcntl&quot;);   
+</code></pre><h3 id="文件描述符与打开文件的关系"><a href="#文件描述符与打开文件的关系" class="headerlink" title="文件描述符与打开文件的关系"></a>文件描述符与打开文件的关系</h3><p>　　多个文件描述符可以指向同一个打开文件，如一个文件在不同的进程中打开时。</p>
+<h4 id="进程的文件描述符表"><a href="#进程的文件描述符表" class="headerlink" title="进程的文件描述符表"></a>进程的文件描述符表</h4><p>　　1.控制文件描述符操作的一组标志。（目前只定义了一个close-on-exec标志）<br>　　2.对打开文件的句柄的引用。</p>
+<h4 id="系统级的打开文件表"><a href="#系统级的打开文件表" class="headerlink" title="系统级的打开文件表"></a>系统级的打开文件表</h4><p>　　内核会为所有打开的文件维护一个文件打开表，包括以下内容：<br>　　1.当前文件偏移量（调用read()和write()时更新，或者直接用lseek()修改）<br>　　2.打开文件时所使用的状态标志（open()的flags参数）<br>　　3.文件访问模式<br>　　4.与信号驱动I/O相关的设置<br>　　5.对文件i-node对象的引用  </p>
+<h4 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h4><p>　　每个文件系统都会为驻留其上的所有文件建立一个i-node表，i-node节点的信息如下：<br>　　1.文件类型（如常规文件，套接字，FIFO)和访问权限<br>　　2.一个指针，指向该文件所持有的锁的列表<br>　　3.文件的各种属性，包括文件大小以及不同类型操作相关的时间戳。<br>　　<strong>两个不同的文件描述符，若指向同一文件打开句柄，将共享同一文件偏移量，一次，如果通过其中一个文件描述符来修改文件偏移量，从另一个文件描述符中也可以观察到这个变化，无论两个文件描述符是否属于同一个进程。</strong><br>　　<strong>要获取或者修改打开的文件标志（如O_APPEND,O_NOBLOCK和O_ASYNC)，可以执行fcntl()的F_GETFL和F_SETFL操作，无论是否属于同一个文件进程</strong><br>　　<strong>文件描述符标志即close-on-exec标志为进程和文件描述符所私有，对其更改不会影响到不同或同一进程中的其他文件描述符。</strong>   </p>
+<h4 id="复制文件描述符"><a href="#复制文件描述符" class="headerlink" title="复制文件描述符"></a>复制文件描述符</h4><p>　　dup()调用复制一个打开的文件描述符oldfd,并返回一个新描述符，两者都指向同一个打开的文件句柄，系统会保证新描述符一定是编号最低的未用文件描述符。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int dup(int oldfd);/*returns new file descriptor on success,or -1 on error*/
+</code></pre><p>　　dup2()系统调用会为oldfd参数所指定的文件描述符创建副本，其编号由newfd参数指定，如果由newfd指定的文件描述符之前已经打开，dup2()会先将其关闭。（dup2()调用会默然忽略newfd关闭期间出现的任何错误，安全的做法是，在调用dup2()之前，如果newfd已经打开，应显式调用close()将其关闭。<br>　　fcntl()的F_DUPFD操作是复制文件描述符的另一个接口：</p>
+<pre><code>newfd = fcntl(oldfd,F_DUPFD,startfd);
+</code></pre><p>　　该调用为oldfd创建一个副本，且将大于等于startfd的最小未用值作为描述符编号。<br>　　文件描述符的正副本之间共享同一打开文件句柄所含的文件偏移量和状态标志，然而，新文件描述符有其自己的一套文件描述标志，且其close-on-exec标志总是处于关闭状态<br>　　dup3()系统调用完成的工作与dup2()相同，只是新增了一个附加参数flag，这是一个可以修改系统调用行为的位掩码。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int dup3(int oldfd,int newfd,int flags);/*return new file descriptor on success,or -1 on error*/
+
+dup3()只支持一个标志O_CLOEXEC,这将促使内核为新文件描述符设置close-on-exec标志。  
+</code></pre><h4 id="在文件特定偏移量处的I-O：pread-和pwrite"><a href="#在文件特定偏移量处的I-O：pread-和pwrite" class="headerlink" title="在文件特定偏移量处的I/O：pread()和pwrite()"></a>在文件特定偏移量处的I/O：pread()和pwrite()</h4><pre><code>#include  &lt;unistd.h&gt;
+ssize_t pread(int fd,void *buf,size_t count,off_t offset);//return number of bytes read,0 on EOF,or -1 on error
+ssize_t pwrite(int fd,const void *buf,size_t count,off_t offset);//
+return numbers of bytes written,or -1 on error
+</code></pre><p> 　　在多线程应用中，进程下下辖的所有线程将共享同一个文件描述符表，即文件的偏移量为所有线程所共享，通过pread()和pwrite()可以有效的避免进程间出现竞争状态。<br> 　　如果需要反复执行lseek()，并伴之以文件I/O，则pread()和pwrite()是具有性能优势的。  </p>
+<h4 id="分散输入和集中输入"><a href="#分散输入和集中输入" class="headerlink" title="分散输入和集中输入"></a>分散输入和集中输入</h4><pre><code>#include &lt;sys/uio.h&gt;
+sszie_t  readv(int fd,const struct iovec *iov,int iovcnt);//return number of bytes read, 0 on EOF,or -1 on error
+ssize_t writev(int fd,cosnt struct iovec *iov,int iovcnt);// return number of bytes written,or -1 on error  
+</code></pre><p> 　　这些系统调用都是对多个缓冲区进行读写操作，iov定义了一组用来传输数据的缓冲区，iovcnt则指定了iov的成员个数。  </p>
+<pre><code>struct iovec{
+    void * iov_base;//缓冲区的开始地址
+    size_t iov_len;//缓冲区的字节数
+    }
+</code></pre><h5 id="分散输入"><a href="#分散输入" class="headerlink" title="分散输入"></a>分散输入</h5><p>　　readv()系统调用实现了分散输入的功能：从文件描述符fd所指代的文件中读取一片连续的字节，然后将其分散放置在iov制定的缓冲区中，这个动作从iov[0]开始，依次填满每个缓冲区。<br>　　<strong>原子性是readv()的重要特征。</strong> 从进程角度看，内核在fd指代的文件和用户内存之间一次性的完成了数据转移。<br>　　readv()成功将返回读取的字节数，若文件结束将返回0.</p>
+<h5 id="集中输出"><a href="#集中输出" class="headerlink" title="集中输出"></a>集中输出</h5><p>　　writev()系统调用实现集中输出：将iov所指定的所有缓冲区的数据拼接起来，然后以连续字节序列写入文件描述符fd所指代的文件中，对缓冲区数据的拼接集中于iov[0]所制定的缓冲区，并按数组顺序展开。<br>　　writev()也是原子操作。即所有数据一次性的从用户内存写入fd所指代的文件中。<br>　　同readv()，writev()也存在部分写的问题，因此，必须检查writev()返回值以确定写入的字节是否与要求相符。<br>　　<em>在指定的文件偏移量出执行分散输入/集中输出，可采用preadv()和pwritev(),除可制定offset外其他与readv()和writev()相同</em>  </p>
+<h4 id="dev-fd-目录"><a href="#dev-fd-目录" class="headerlink" title="/dev/fd 目录"></a>/dev/fd 目录</h4><p>　　对每个进程内核提供一个特殊的虚拟目录/dev/fd，该目录中包含”/dev/fd/n”形式的文件名，n是与进程中的打开文件描述符相对应的编号，如/dev/fd/0对应于进程的标准输入。<br>　　打开/dev/fd目录中的一个文件等同于复制相应的文件描述符，所以下列两行代码是等价的：</p>
+<pre><code>fd = open(&quot;/dev/fd/1&quot;,O_WRONLY);
+fd = dup(1);  
+</code></pre><p> 　　/dev/fd是一个符号链接，连接到linux所专有的/proc/self/fd目录，主要用于shell中，许多用户级命令将文件名作为参数。  </p>
+<h4 id="创建临时文件"><a href="#创建临时文件" class="headerlink" title="创建临时文件"></a>创建临时文件</h4><pre><code>#include &lt;stdlib.h&gt;
+int mkstemp(char * template);//return file descriptor on success,or -1 on error
+</code></pre><p>　　模板参数采用路径名形式，其中最后6个字符必须为XXXXXX,这6个字符将被替换，以保证文件名的唯一性，且修改后的字符串将通过template参数传回。<br>　　文件拥有者对mkstem()函数建立的文件拥有读写权限，其他用户则没有任何操作权限，且打开文件时使用了O_EXCL标志，以保证调用者以独占方式打开文件。<br>　　通常，打开文件不久，程序就会通过unlink()系统调用将其删除。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+FILE *temfile(void);//return file pointer on success,or NULL on error
+</code></pre><p>　　tmpfile()函数执行成功，将返回一个文件流供stdio函数库使用，文件流关闭后将自动删除临时文件。  </p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>　　原子操作，指定O_EXCL标志调用open()，确保了调用者就是文件创建者，指定O_APPEND标志调用open()，确保了多个进程在对同一个文件追加数据时不会覆盖彼此的输出。</p>
+<p>　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/03/4/" rel="next" title="文件I/O">
+                <i class="fa fa-chevron-left"></i> 文件I/O
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/05/6/" rel="prev" title="进程深入">
+                进程深入 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件I-O深入"><span class="nav-number">1.</span> <span class="nav-text">文件I/O深入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#保证进程是打开文件的创建者"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">保证进程是打开文件的创建者</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#向文件尾部追加数据"><span class="nav-number">1.0.0.0.2.</span> <span class="nav-text">向文件尾部追加数据</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件控制操作：fcntl"><span class="nav-number">1.0.1.</span> <span class="nav-text">文件控制操作：fcntl()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#打开文件的状态标志"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">打开文件的状态标志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件描述符与打开文件的关系"><span class="nav-number">1.0.2.</span> <span class="nav-text">文件描述符与打开文件的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程的文件描述符表"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">进程的文件描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统级的打开文件表"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">系统级的打开文件表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件系统"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复制文件描述符"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">复制文件描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在文件特定偏移量处的I-O：pread-和pwrite"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">在文件特定偏移量处的I/O：pread()和pwrite()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分散输入和集中输入"><span class="nav-number">1.0.2.6.</span> <span class="nav-text">分散输入和集中输入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#分散输入"><span class="nav-number">1.0.2.6.1.</span> <span class="nav-text">分散输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#集中输出"><span class="nav-number">1.0.2.6.2.</span> <span class="nav-text">集中输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dev-fd-目录"><span class="nav-number">1.0.2.7.</span> <span class="nav-text">/dev/fd 目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建临时文件"><span class="nav-number">1.0.2.8.</span> <span class="nav-text">创建临时文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.0.2.9.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

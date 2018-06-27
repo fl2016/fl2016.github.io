@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程凭证">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/08/9/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-12T10:48:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程凭证">
+<meta name="twitter:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/08/9/"/>
+
+
+
+
+
+  <title>进程凭证 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/08/9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">进程凭证</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-08T18:23:34+08:00">
+                2018-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程凭证"><a href="#进程凭证" class="headerlink" title="进程凭证"></a>进程凭证</h1><h4 id="有效用户ID和有效组ID及其设置"><a href="#有效用户ID和有效组ID及其设置" class="headerlink" title="有效用户ID和有效组ID及其设置"></a>有效用户ID和有效组ID及其设置</h4><p>　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。<br>　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权限位。<br><a id="more"></a><br>　　运行set-user-ID和set-group-ID位，可以修改进程的有效用户ID和组ID，能够是进程获得对文件的执行权限。如果可执行文件的属主是root，还可以使得进程获得超级用户权限。<br>　　set-user-ID-root来表示root用户所拥有的set-user-ID程序，set-user-ID仅为进程提供其属主的权限。  </p>
+<h4 id="保存set-user-ID和保存set-group-ID"><a href="#保存set-user-ID和保存set-group-ID" class="headerlink" title="保存set-user-ID和保存set-group-ID"></a>保存set-user-ID和保存set-group-ID</h4><p>　　1.如果可执行文件的set-user-ID（set-group-ID)开启，则进程的有效用户（组）ID设置为可执行文件的属主，如未设置，进程的有效ID保持不变。<br>　　2.保存set-user-ID和保存set-group-ID的值由对应的有效ID复制而来，无论set-user-ID（set-group-ID)是否设置，这一复制都将进行。<br>　　由很多系统调用允许将set-user-ID程序的有效ID在实际用户ID和保存set-user-ID之间切换。  </p>
+<h4 id="获取及修改进程凭证"><a href="#获取及修改进程凭证" class="headerlink" title="获取及修改进程凭证"></a>获取及修改进程凭证</h4><p>　　getuid()/getgid()分别返回进程的实际用户ID和组ID<br>　　geteuid()/getegid()分别返回进程的有效ID和有效组ID<br>　　1.当非特权进程调用setuid()，仅能修改进程的有效用户ID,且仅能将有效用户ID设置为相应的实际ID或保存set-user-ID。<br>　　2.当特权进程以一个非0参数调用setuid()，其实际用户ID,有效用户ID，和保存set-user-ID均被置位为uid参数制定的值。这一操作是单向的，一旦进行，不可再将进程的有效ID重置为0。如果不希望这样，使用seteuid()更为可取。  </p>
+<h4 id="修改实际ID和有效ID"><a href="#修改实际ID和有效ID" class="headerlink" title="修改实际ID和有效ID"></a>修改实际ID和有效ID</h4><p>　　<strong>setreuid()系统调用</strong>允许调用进程独立修改其实际和有效用户ID，setregid()对实际和有效组实现类似功能。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int setreuid(uid_t ruid,uid_t  euid);
+int setregid(gid_t rgid,gid_t egid);//成功返回0，失败返回-1  
+</code></pre><p>　　这两个系统调用的第一个参数都是实际ID，第二个参数都是有效ID，只修改一个ID，可以另一个参数设为-1。<br>　　1.非特权进程只能将实际用户ID设置为当前实际用户ID值（即保持不变）或有效用户ID值，且只能将有效用户ID设置为当前实际用户ID,有效用户ID，或保存set-user-ID。<br>　　2.特权级进程能够将其实际用户ID和有效用户ID设置为任意值。<br>　　3.不管进程是否拥有特权，以下条件满足之一就能将保存set-user-ID设成新的有效用户ID<br>　　 　　a.   ruid不是-1<br>　　 　　b.对有效用户ID所设置的值不同于系统调用之前的实际用户ID。<br>　　 　　<br>　　如果进程使用setreuid()仅将有效用户ID修改为实际用户的当前值，那么保存set-user-ID的值将保存不变，并且后续可调用setreuid()(或seteuid())将有效用户ID恢复为保存set-user-ID值。   </p>
+<h4 id="获取实际，有效，保存设置ID"><a href="#获取实际，有效，保存设置ID" class="headerlink" title="获取实际，有效，保存设置ID"></a>获取实际，有效，保存设置ID</h4><p>　　setreuid()系统调用允许调用进程独立修改其三个用户ID值，每个用户ID的新值由系统调用的三个参数给定。  </p>
+<pre><code>int setresuid(uid_t ruid,uid_t euid,uid_t suid);
+int setresgid(gid_t rgid,gid_t egid,gid_t sgid);//成功返回0，失败返回-1  
+</code></pre><p>　　1.非特权进程能够将实际用户ID,有效用户ID和保存set-user-ID中的任一ID设置为实际用户ID,有效用户ID或保存set-user-ID之中的任一当前值。<br>　　2.特权进程能够将三个ID进行任意设置。<br>　　3.不管系统调用是否对其他用户ID做了改动，总是将文件系统用户ID设置为与有效ID相同。<br>　　setresuid()和setresgid()具有 0/1效应，即对ID的修改要么全成功，要么全失败。  </p>
+<h4 id="获取和修改文件系统ID以及辅助组ID"><a href="#获取和修改文件系统ID以及辅助组ID" class="headerlink" title="获取和修改文件系统ID以及辅助组ID"></a>获取和修改文件系统ID以及辅助组ID</h4><pre><code>#include &lt;sys/fsuid.h&gt;
+int setfsuid(uid fsuid);
+int setfsgid(gid_t fsgid);//总是返回先前文件系统用户ID  
+</code></pre><p>　　1，非特权进程能够将文件系统用户ID设置为实际用户ID，有效用户ID,文件系统ID或保存set-user-ID值。<br>　　2，特权级进程能够将文件系统用户ID设置为任意值。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int getgroups(int gidsetsize,gid_t grouplist[]);//成功则返回组ID,失败返回-1
+</code></pre><p>　　getgroups()返回调用进程的辅助组ID，调度程序为grouplist数组分配空间，并在gidsetsize指定其长度，如果调用成功，则返回置于grouplist中的组ID数量。<br>　　如果进程组的数量超过gidsetsize，则返回错误。  </p>
+<pre><code>int setgroups(size_t gidsetsize,const gid_t *grouplist);
+int initgroups(const char *user,git_t group);//用于设置和初始化进程的辅助组ID。  
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/07/8/" rel="next" title="用户和组">
+                <i class="fa fa-chevron-left"></i> 用户和组
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/09/10/" rel="prev" title="时间">
+                时间 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程凭证"><span class="nav-number">1.</span> <span class="nav-text">进程凭证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#有效用户ID和有效组ID及其设置"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">有效用户ID和有效组ID及其设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#保存set-user-ID和保存set-group-ID"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">保存set-user-ID和保存set-group-ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取及修改进程凭证"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">获取及修改进程凭证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改实际ID和有效ID"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">修改实际ID和有效ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取实际，有效，保存设置ID"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">获取实际，有效，保存设置ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取和修改文件系统ID以及辅助组ID"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">获取和修改文件系统ID以及辅助组ID</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

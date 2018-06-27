@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="/proc文件系统　　/proc文件并未存储于磁盘上，而是由内核在进程访问此类信息动态创建而成，是一个虚拟文件系统，包含了各种用于展示内核信息的文件，并允许通过常规文件I/O系统来方便的调取，有时还可以修改这些信息。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#x2F;proc文件系统">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/11/12/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="/proc文件系统　　/proc文件并未存储于磁盘上，而是由内核在进程访问此类信息动态创建而成，是一个虚拟文件系统，包含了各种用于展示内核信息的文件，并允许通过常规文件I/O系统来方便的调取，有时还可以修改这些信息。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-11T10:38:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&#x2F;proc文件系统">
+<meta name="twitter:description" content="/proc文件系统　　/proc文件并未存储于磁盘上，而是由内核在进程访问此类信息动态创建而成，是一个虚拟文件系统，包含了各种用于展示内核信息的文件，并允许通过常规文件I/O系统来方便的调取，有时还可以修改这些信息。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/11/12/"/>
+
+
+
+
+
+  <title>/proc文件系统 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/11/12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">/proc文件系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-11T18:23:44+08:00">
+                2018-06-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="proc文件系统"><a href="#proc文件系统" class="headerlink" title="/proc文件系统"></a>/proc文件系统</h3><p>　　/proc文件并未存储于磁盘上，而是由内核在进程访问此类信息动态创建而成，是一个虚拟文件系统，包含了各种用于展示内核信息的文件，并允许通过常规文件I/O系统来方便的调取，有时还可以修改这些信息。<br><a id="more"></a> </p>
+<h4 id="获取与进程相关的信息-proc-PID"><a href="#获取与进程相关的信息-proc-PID" class="headerlink" title="获取与进程相关的信息 : /proc/PID"></a>获取与进程相关的信息 : /proc/PID</h4><p>　　/proc/1下是进程init的信息，通过该文件目录总可以获取init进程的信息，且该进程的PID总是1 。<br>　　每个进程文件下都有一个status的文件，提供了有关该进程的一切消息。  </p>
+<h4 id="proc-PID-fd-目录"><a href="#proc-PID-fd-目录" class="headerlink" title="/proc/PID/fd 目录"></a>/proc/PID/fd 目录</h4><p>　　这个目录为进程中每个打开的文件描述符都包含了一个符号链接，每个符号链接的名称都与描述符的数值相匹配。  </p>
+<h4 id="proc-PID-task-目录"><a href="#proc-PID-task-目录" class="headerlink" title="/proc/PID/task 目录"></a>/proc/PID/task 目录</h4><p>　　针对进程中的每个线程，内核提供了/proc/PID/task/TID命名的子目录，其中TID是该线程的线程ID。<br>　　每个/proc/PID/task/TID子目录中都有一套类似/proc/PID目录内容的文件和目录，因为线程共享了多个属性，所以文件中的许多信息对进程中的各个线程而言都是相同的。  </p>
+<h4 id="proc目录下的系统信息"><a href="#proc目录下的系统信息" class="headerlink" title="/proc目录下的系统信息"></a>/proc目录下的系统信息</h4><p>　　/proc目录下的各种文件和子目录提供了对系统级信息的访问，下面是有关/proc子目录的描述：<br>　　/proc 各种系统信息<br>　　/proc/net 有关网络和套接字的信息<br>　　/proc/sys/fs 文件系统相关设置<br>　　/proc/sys/kernel 各种常规内核设置<br>　　/proc/sys/net 网络和套接字设置<br>　　/proc/sys/vm 内存管理设置   </p>
+<h4 id="访问-proc文件"><a href="#访问-proc文件" class="headerlink" title="访问/proc文件"></a>访问/proc文件</h4><p>　　1.通过shell脚本访问/proc目录下的文件（如python或perl之类的脚本语言，很容易解析/proc目录下含有多个值的文件。<br>　　2.通过常规I/O系统调用访问/proc目录下文件，但存在一些限制：<br>　　　a./proc目录下的一些文件是只读的 ，即这些文件仅用于显示内核消息，无法进行修改，如/proc/PID下的大多数文件就是这样。<br>　　　b./proc目录下的一些文件仅能由文件拥有者（或特权级进程）读取。/proc/PID目录下的所有文件都属于相应进程的用户，即使对文件的属主，其中的部分文件页仅仅授予了读权限。<br>　　　c.除了/proc/PID子目录下的文件，/proc目录下的其他文件大多属于root用户，并且也仅有root用户可以修改那些修改过的文件。  </p>
+<h4 id="系统标识-：-uname"><a href="#系统标识-：-uname" class="headerlink" title="系统标识 ： uname()"></a>系统标识 ： uname()</h4><p>　　uname()系统调用用于返回了一系列关于主机系统的标识信息，存储于utsbuf所指向的结构中。   </p>
+<pre><code>#include &lt;sys/utsname.h&gt;
+int uname(struct utname *utsbuf);  
+</code></pre><p>　　utsbuf参数是一个指向uname结构的指针，uname()定义如下：</p>
+<pre><code>struct utsname {
+    char sysname [_UTSNAME_LENGTH];//implementation name
+    char nodename[_UTSNAME_LENGTH];// node name on network
+    char release[_UTSNAME_LENGTH];// implementation release level
+    char version[_UTSNAME_LENGTH];// hardware on which system is running 
+    char machine[_UTSNAME_LENGTH];// 硬件信息
+    #ifdef _GNU_SOURCE
+      char domainname[_UTSNAME_LENGTH];//NIS主机域名
+    #endif
+    };
+utsname结构中的sysname,release,version和machine字段由内核自动设置，nodename字段的返回值由sethostname()系统调用设置，通常该值类似于系统DNS域名中的前缀主机名。  
+domainname字段的返回值由setdomainname（)系统调用设置，该值是主机的网路服务信息域名。  
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/10/11/" rel="next" title="系统限制">
+                <i class="fa fa-chevron-left"></i> 系统限制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/12/13/" rel="prev" title="文件I/O的缓冲">
+                文件I/O的缓冲 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#proc文件系统"><span class="nav-number">1.</span> <span class="nav-text">/proc文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取与进程相关的信息-proc-PID"><span class="nav-number">1.1.</span> <span class="nav-text">获取与进程相关的信息 : /proc/PID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc-PID-fd-目录"><span class="nav-number">1.2.</span> <span class="nav-text">/proc/PID/fd 目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc-PID-task-目录"><span class="nav-number">1.3.</span> <span class="nav-text">/proc/PID/task 目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#proc目录下的系统信息"><span class="nav-number">1.4.</span> <span class="nav-text">/proc目录下的系统信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#访问-proc文件"><span class="nav-number">1.5.</span> <span class="nav-text">访问/proc文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统标识-：-uname"><span class="nav-number">1.6.</span> <span class="nav-text">系统标识 ： uname()</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

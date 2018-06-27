@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目录和链接目录和硬链接　　在文件系统中，目录的存储方式类似与普通文件，目录和普通文件的区别有2。　　　　1.在其i-node条目中，会将目录标记为一种不同的文件类型。　　　　2.目录是将特殊组织形成的文件，本质上是一个表格，包括文件名和i-node编号。　　　　在大多数的原生的Linux文件系统上，文件名可以长达255个字符。　　　　进程虽然可以通过read()打开一个目录，但是进程不能使用rea">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A new cpp learner">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/24/18/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="目录和链接目录和硬链接　　在文件系统中，目录的存储方式类似与普通文件，目录和普通文件的区别有2。　　　　1.在其i-node条目中，会将目录标记为一种不同的文件类型。　　　　2.目录是将特殊组织形成的文件，本质上是一个表格，包括文件名和i-node编号。　　　　在大多数的原生的Linux文件系统上，文件名可以长达255个字符。　　　　进程虽然可以通过read()打开一个目录，但是进程不能使用rea">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-22T09:39:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A new cpp learner">
+<meta name="twitter:description" content="目录和链接目录和硬链接　　在文件系统中，目录的存储方式类似与普通文件，目录和普通文件的区别有2。　　　　1.在其i-node条目中，会将目录标记为一种不同的文件类型。　　　　2.目录是将特殊组织形成的文件，本质上是一个表格，包括文件名和i-node编号。　　　　在大多数的原生的Linux文件系统上，文件名可以长达255个字符。　　　　进程虽然可以通过read()打开一个目录，但是进程不能使用rea">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/24/18/"/>
+
+
+
+
+
+  <title> | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/24/18/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-24T16:05:48+08:00">
+                2018-06-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录和链接"><a href="#目录和链接" class="headerlink" title="目录和链接"></a>目录和链接</h1><h4 id="目录和硬链接"><a href="#目录和硬链接" class="headerlink" title="目录和硬链接"></a>目录和硬链接</h4><p>　　在文件系统中，目录的存储方式类似与普通文件，目录和普通文件的区别有2。<br>　　　　1.在其i-node条目中，会将目录标记为一种不同的文件类型。<br>　　　　2.目录是将特殊组织形成的文件，本质上是一个表格，包括文件名和i-node编号。<br>　　　　在大多数的原生的Linux文件系统上，文件名可以长达255个字符。<br>　　　　进程虽然可以通过read()打开一个目录，但是进程不能使用read()读目录中内容，同样进程不能通过write()函数来改变一个目录的内容。仅能借助于open()，link(),mkdir()，symlin(),unlink()和rmdir()之类的系统调用。<br>　　　　i-node节点的编号开始于1,如果i-node字段值为0，则表示该节点尚未使用，i-node 1 用来记录文件系统中的坏块。文件系统的根目录总是存储在i-node 2中。<br>　　　　每个硬链接均指向i-node节点，所有原生的UNIX文件系统均支持硬链接，仅当指向i-node的链接计数为0时，将释放该i-node节点和数据块。<br>　　　　<strong>硬链接的限制：</strong><br>　　　　　　1.i-node节点编号在一个文件系统中唯一标识一个i-node节点，因此所有硬链接必须与其指代的文件驻留在一个文件系统中。<br>　　　　　　2.不能为目录创建硬链接，避免出现使程序陷入混乱的链接环路 。  </p>
+<h4 id="符号软链接"><a href="#符号软链接" class="headerlink" title="符号软链接"></a>符号软链接</h4><p>　　符号链接也称为软链接，属于特殊的文件类型，其数据是指另一文件的名称。<br>　　符号链接的内容可以是绝对路径，也可以是相对路径。解释相对路径是以符号链接本身的位置为参考点。<br>　　符号连接的地位不如硬链接，文件的链接计数中并未将符号链接计算在内，移除符号链接的文件名内容时，符号链接将继续存在，但是无法解引用操作，也将此链接成为悬空链接。<br>　　因为符号链接指代一个文件名，而非i-node编号，可以符号链接来链接不同文件系统中的文件，也可以为目录创建符号链接，诸如find和tar 之类的工具有能力识别软链接和符号链接之间的差异，在默认情况下不会对符号链接进行解引用，避免因使用符号链接而陷入环路。<br>　　<strong>系统调用对符号链接的处理：对路径中的目录部分的符号链接总是进行解引用处理，对路径中的文件部分，则取决于路径名所传入的系统调用</strong>  </p>
+<h4 id="创建和移除硬链接：link-和unlink"><a href="#创建和移除硬链接：link-和unlink" class="headerlink" title="创建和移除硬链接：link()和unlink()"></a>创建和移除硬链接：link()和unlink()</h4><pre><code>#include &lt;unistd.h&gt;
+int link(const char *oldpath,const char *newpath);//成功返回0，失败返回-1  
+</code></pre><p>　　若oldpath提供了一个已存在文件的路径名，则系统调用link()将以newpath参数指定的路径名创建一个新链接，若newpath指定的路径名已经存在，则产生一个错误。<br>　　<strong>link()系统调用不会对oldpath进行解引用，如果oldpath属于符号链接，则会将newpath创建指向相同符号链接文件的全新硬链接。鉴于系统之间的差异，应避免将oldpath参数指定为符号链接，以保证程序的可移植性。</strong>  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int unlink(const char *pathname);//成功返回0，失败返回-1  
+</code></pre><p>　　unlink()系统调用将移除一个链接（删除一个文件名），如果该链接是指向文件的最后一个链接，还将移除文件本身。若pathname中指定的链接不存在，则unlink()调用失败，并将errno设置为ENOENT。<br>　　unlink()不能移除一个目录，要用rmdir()或者remove()。<br>　　unlink()系统调用不会对符号链接进行解引用操作，若pathname为符号链接，则移除链接本身，而非链接指向的名称。  </p>
+<h4 id="仅当关闭所有的文件描述符时，方可删除一个已打开的文件"><a href="#仅当关闭所有的文件描述符时，方可删除一个已打开的文件" class="headerlink" title="仅当关闭所有的文件描述符时，方可删除一个已打开的文件"></a>仅当关闭所有的文件描述符时，方可删除一个已打开的文件</h4><p>　　内核除了为每个i-node节点维护链接计数之外，还对文件的打开文件描述计数。当移除指向文件的最后一个链接时，如果仍有进程持有指代该文件的打开文件描述符，那么系统在关闭所有此类描述符之前，实际上将不会删除该文件。  </p>
+<h4 id="更改文件名-rename"><a href="#更改文件名-rename" class="headerlink" title="更改文件名:rename()"></a>更改文件名:rename()</h4><p>　　借助于raname()系统调用可以重命名文件，也可以将文件移动到同一个文件系统的另一个目录。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+int rename(const char*oldpath,const char *newpath);//成功返回0，失败返回-1  
+</code></pre><p>　　调用会将现有的一个路径名oldpath重命名为newpath参数指定的路径名。<br>　　rename()调用仅操作目录条目，不移动文件数据，改名既不影响指向该文件的其他硬链接，也不影响持有该文件打开描述符的任何进程。<br>　　1.若newpath已经存在，则将其覆盖。<br>　　2.若newpath与oldpath指向同一文件，则不发生变化（调用成功）</p>
+<h4 id="使用符号链接-：symlink-和readlink"><a href="#使用符号链接-：symlink-和readlink" class="headerlink" title="使用符号链接 ：symlink()和readlink()"></a>使用符号链接 ：symlink()和readlink()</h4><p>　　symlink()系统调用会针对由filepath所指定的路径名创建一个新的符号链接-linkpath，想要移除符号链接，需使用unlink调用。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int symlink(const char *filepath,const char *linkpath);
+</code></pre><p>　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/22/17/" rel="next" title="访问控制列表">
+                <i class="fa fa-chevron-left"></i> 访问控制列表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/26/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录和链接"><span class="nav-number">1.</span> <span class="nav-text">目录和链接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#目录和硬链接"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">目录和硬链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#符号软链接"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">符号软链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建和移除硬链接：link-和unlink"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">创建和移除硬链接：link()和unlink()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#仅当关闭所有的文件描述符时，方可删除一个已打开的文件"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">仅当关闭所有的文件描述符时，方可删除一个已打开的文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更改文件名-rename"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">更改文件名:rename()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用符号链接-：symlink-和readlink"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">使用符号链接 ：symlink()和readlink()</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

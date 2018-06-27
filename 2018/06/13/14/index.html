@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="设备专用文件　　在内核中，每种设备类型都有与之相对应的设备驱动程序，用来处理设备的所有I/O请求，设备处理程序属于内核代码单元，可执行一系列操作，通常与相应硬件的输入/输出动作相对应。设备驱动程序提供的API是固定的，隐藏了每个设备在操作之间的差异，满足了I/O操作通用性。　　某些设备是真实存在的，比如，鼠标，键盘和磁带设备。有一些设备是虚拟的，并不存在相应的硬件。但内核会提供一种内核抽象，使其与">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件系统">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/13/14/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="设备专用文件　　在内核中，每种设备类型都有与之相对应的设备驱动程序，用来处理设备的所有I/O请求，设备处理程序属于内核代码单元，可执行一系列操作，通常与相应硬件的输入/输出动作相对应。设备驱动程序提供的API是固定的，隐藏了每个设备在操作之间的差异，满足了I/O操作通用性。　　某些设备是真实存在的，比如，鼠标，键盘和磁带设备。有一些设备是虚拟的，并不存在相应的硬件。但内核会提供一种内核抽象，使其与">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-13T12:38:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件系统">
+<meta name="twitter:description" content="设备专用文件　　在内核中，每种设备类型都有与之相对应的设备驱动程序，用来处理设备的所有I/O请求，设备处理程序属于内核代码单元，可执行一系列操作，通常与相应硬件的输入/输出动作相对应。设备驱动程序提供的API是固定的，隐藏了每个设备在操作之间的差异，满足了I/O操作通用性。　　某些设备是真实存在的，比如，鼠标，键盘和磁带设备。有一些设备是虚拟的，并不存在相应的硬件。但内核会提供一种内核抽象，使其与">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/13/14/"/>
+
+
+
+
+
+  <title>文件系统 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/13/14/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-13T20:37:07+08:00">
+                2018-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="设备专用文件"><a href="#设备专用文件" class="headerlink" title="设备专用文件"></a>设备专用文件</h4><p>　　在内核中，每种设备类型都有与之相对应的设备驱动程序，用来处理设备的所有I/O请求，设备处理程序属于内核代码单元，可执行一系列操作，通常与相应硬件的输入/输出动作相对应。设备驱动程序提供的API是固定的，隐藏了每个设备在操作之间的差异，满足了I/O操作通用性。<br>　　某些设备是真实存在的，比如，鼠标，键盘和磁带设备。有一些设备是虚拟的，并不存在相应的硬件。但内核会提供一种内核抽象，使其与API与真实的设备一般无异。<br><a id="more"></a><br>　　设备可分为两种类型：<br>　　　　字符型设备基于每个字符来处理数据，终端和键盘都是字符型设备。<br>　　　　块设备则每次处理一块数据，块的大小取决于设备类型，通常是512字节的倍数，磁带和磁盘设备都属于块设备。<br>　　　　设备文件通常位于/dev目录下，超级用户和特权级程序可以使用mknod命令创建设备文件。  </p>
+<h4 id="设备ID"><a href="#设备ID" class="headerlink" title="设备ID"></a>设备ID</h4><p> 　　每个设备文件都有主和辅ＩＤ各一，主标识设备等级，内核会使用主ＩＤ查找与该设备对应的设备驱动程序，辅ＩＤ号能够在一般等级中唯一标识特定设备。设备文件的ｉ节点记录了设备文件的主，辅ＩＤ。　　</p>
+<h4 id="磁盘和分区"><a href="#磁盘和分区" class="headerlink" title="磁盘和分区"></a>磁盘和分区</h4><p>　　可将每块磁盘设备划分为一个或者多个不重叠的分区，内核则将每个分区视为/dev下的单独设备，磁盘分区可以容纳任何信息，但通产只会包含下列之一：<br>　　1.文件系统：用来放常规文件<br>　　2.数据区域：可作为裸设备对其进行访问<br>　　3.交换区域：供内核的管理之用</p>
+<h4 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h4><p>　　创建文件系统的命令是mkfs:linux的强项之一就是支持种类繁多的文件系统：<br>　　1.传统的ex2文件系统<br>　　2.各种原生的UNIX文件系统如minix<br>　　3.微软，苹果，CD-ROM文件系统<br>　　4.一系列的NFS系统和日志文件系统，包括ex3，ex4等。<br>　　从linux的专有文件/proc/filesystems中可以查看当前为内核所知的文件系统类型。  </p>
+<h5 id="文件系统-1"><a href="#文件系统-1" class="headerlink" title="文件系统"></a>文件系统</h5><p>　　文件系统中用来分配空间的基本单位就是逻辑块，即文件系统咋磁盘设备上若干连续的物理块，在ex2文件系统上，逻辑块的大小是1024,2048或4096字节。<br>　　文件系统通常由以下组成：<br>　　　　1.引导块：总是作为文件系统的首块，只包含用来引导操作系统的信息，操作系统虽然只需要一个引导块，但大多数文件系统都设有引导块，其中绝大多数未使用。<br>　　　　2.超级块：紧随引导块之后的一个独立块，包含与文件系统有关的参数信息，包括：<br>　　　　　a.i节点表的容量<br>　　　　　b.文件系统中逻辑块的大小<br>　　　　　c.以逻辑块计，文件系统的大小<br>　　　　3.i节点表：文件系统中的每个文件或目录在i节点表中都对应这唯一一条记录，记录了文件的各种信息。<br>　　　　4.数据块：文件系统的大部分空间都用于存放数据，构成驻留在文件系统上的文件和目录。  </p>
+<h4 id="i节点"><a href="#i节点" class="headerlink" title="i节点"></a>i节点</h4><p>　　文件系统中的每个文件在i节点表中都包含一个i节点，即索引节点，i节点采用节点号标识，采用是i节点表中的顺序位置。<br>　　i节点维护以下信息：<br>　　　1.文件类型：如常规文件，目录，符号链接，以及字符设备等。<br>　　　2.文件属主：也称用户ID或UID。<br>　　　3.文件属组：也称组ID。<br>　　　4.三个访问权限：用户，组，其他<br>　　　5.三个时间戳：最后访问时间(ls -lu)，最后修改时间(ls -l)，文件状态的最后改变时间是（ls -lc），同unix实现一样，大多数linux文件系统不会记录文件的创建时间。<br>　　　6.指向文件的硬链接的数量。<br>　　　7.文件的大小，字节单位<br>　　　8.实际分配给文件的块数量，512字节块为单位，考虑到文件中包含空洞的情形，分配给文件的块数可能会低于根据文件正常大小计算出的块数。<br>　　　9.指向文件数据块的指针。  </p>
+<h5 id="ext2的i节点和数据块指针"><a href="#ext2的i节点和数据块指针" class="headerlink" title="ext2的i节点和数据块指针"></a>ext2的i节点和数据块指针</h5><p>　　ext2文件系统存储文件时，数据块不一定连续，甚至不一定按顺序存放，（降低空闲磁盘空间的碎片化程度）为了定位文件数据块，内核在i节点内维护一组指针。<br>　　ext2文件系统中每个i节点包含15个指针，其中的前12个指针（0-11）指向文件前12个数据块在文件系统中的位置，接下来是一个指向指针块的指针，提供了文件的第13个以及后续数据块的位置，指针块中指针的数量取决于文件系统中块的大小，每个指针占4字节，因此指针的数量可能在256（块容量1024字节）-1024（块容量4096字节）之间，第14个指针是一个双重间接指针，是一个指向指针块，这个块中的指针进而指向指针块，这个块中的指针最终才指向文件的数据块，用于存储巨型文件，类似的，i节点的最后一个指针属于三重间接指针。  </p>
+<h4 id="虚拟文件系统（VFS"><a href="#虚拟文件系统（VFS" class="headerlink" title="虚拟文件系统（VFS)"></a>虚拟文件系统（VFS)</h4><p>　　VFS位于应用程序和各种文件系统之间，提供一种抽象层的通用接口，每个文件系统都会提供VFS接口的实现，程序只需理解VFS接口，无需过问具体文件系统的实现细节。  </p>
+<h4 id="日志文件系统"><a href="#日志文件系统" class="headerlink" title="日志文件系统"></a>日志文件系统</h4><p>　　 采用日志文件系统，则无需在系统崩溃后对文件进行漫长的一致性检查，在实际更新数据之前，日志文件系统会将这些更新操作记录于专用的磁盘日志文件中，对元数据更新的记录是按照其相关性进行分组（以事务的方式记录）进行的，在事务处理过程中，一旦系统崩溃，系统重启便可利用日志重做任何不完整的更新，同时为文件系统恢复一致性状态。<br>　　 日志文件系统不好的一点是增加了文件的更新时间。   </p>
+<h4 id="单根目录层级和挂载点"><a href="#单根目录层级和挂载点" class="headerlink" title="单根目录层级和挂载点"></a>单根目录层级和挂载点</h4><p>　　linux上的所有文件系统中的文件都是位于单根目录树下，即“/“,其他文件系统都是挂载在根目录下，超级用户可以用以下命令挂载文件系统：</p>
+<pre><code>$mount device directory
+</code></pre><p>　　使用unmount命令卸载文件系统，然后在另一个挂载点再次挂载文件系统，从而改变文件系统的挂载点。  </p>
+<h4 id="文件系统的挂载与卸载"><a href="#文件系统的挂载与卸载" class="headerlink" title="文件系统的挂载与卸载"></a>文件系统的挂载与卸载</h4><p>　　1.mount()系统调用将由source指定设备所包含的文件系统，挂载到由target制定的目录下。  </p>
+<pre><code>#include &lt;sys/mount.h&gt;
+int mount(const char *source,const char *target,const char *fstype,unsigned long mountflags,const void *data);//成功返回0，失败返回-1  
+</code></pre><p>　　fstype是一字符串，用来标识设备所含文件类型。<br>　　mountflags为一位掩码，通过对下面所示的0个或多个标志进行OR操作得出，如MS_BIND（建立绑定挂载），MS_DIRSYNC同步更新路径等。<br>　　mount()最后一个参数data是一个指向信息缓冲区的指针，对大多数文件系统而言，该参数是一字符串，包含了以逗号分割的选项设置。  </p>
+<h4 id="卸载文件系统：umount-和unmount2"><a href="#卸载文件系统：umount-和unmount2" class="headerlink" title="卸载文件系统：umount()和unmount2()"></a>卸载文件系统：umount()和unmount2()</h4><p>　　umount()系统调用用于卸载已挂载的文件系统。</p>
+<pre><code>#include &lt;sys/mount.h&gt;
+int umount(const char *target);//成功则返回０，失败返回－１
+</code></pre><p> 　　target指卸载文件系统的挂载点。  </p>
+<h4 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h4><p>　　包括在多个挂载点挂载文件系统，多次挂载在同一挂载点，基于每次挂载的挂载标志，绑定挂载，递归绑定挂载，</p>
+<h4 id="虚拟文件系统tmpfs"><a href="#虚拟文件系统tmpfs" class="headerlink" title="虚拟文件系统tmpfs"></a>虚拟文件系统tmpfs</h4><p>　　对应用程序来说，此类文件系统和任何其他文件系统没有区别，但由于不涉及磁盘访问，虚拟文件系统的文件操作速度极快。<br>　　在linux上，最复杂的文件系统非tmpfs系统莫属，其虚拟内存系统不但使用RAM,在RAM耗尽的情况下，还会使用交换空间。<br>　　默认情况下，允许将tmpfs文件系统的大小提高至RAM容量的一半，但在创建文件系统或者之后重新挂载时，可使用mount的size = nbytes来为该文件系统的大小设置不同的上限值，tmpfs文件系统会根据当前所持有的文件来消耗内存和交换空间。<br>　　一旦卸载tmpfs文件系统，或者遭遇文件系统崩溃，那么该文件系统的所有数据都将丢失，tmpfs正是得名以此。  
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　　
+　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/12/13/" rel="next" title="文件I/O的缓冲">
+                <i class="fa fa-chevron-left"></i> 文件I/O的缓冲
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/19/15/" rel="prev" title="文件属性">
+                文件属性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#设备专用文件"><span class="nav-number">1.</span> <span class="nav-text">设备专用文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备ID"><span class="nav-number">2.</span> <span class="nav-text">设备ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#磁盘和分区"><span class="nav-number">3.</span> <span class="nav-text">磁盘和分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件系统"><span class="nav-number">4.</span> <span class="nav-text">文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#文件系统-1"><span class="nav-number">4.1.</span> <span class="nav-text">文件系统</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#i节点"><span class="nav-number">5.</span> <span class="nav-text">i节点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ext2的i节点和数据块指针"><span class="nav-number">5.1.</span> <span class="nav-text">ext2的i节点和数据块指针</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟文件系统（VFS"><span class="nav-number">6.</span> <span class="nav-text">虚拟文件系统（VFS)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日志文件系统"><span class="nav-number">7.</span> <span class="nav-text">日志文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#单根目录层级和挂载点"><span class="nav-number">8.</span> <span class="nav-text">单根目录层级和挂载点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件系统的挂载与卸载"><span class="nav-number">9.</span> <span class="nav-text">文件系统的挂载与卸载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卸载文件系统：umount-和unmount2"><span class="nav-number">10.</span> <span class="nav-text">卸载文件系统：umount()和unmount2()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高级特性"><span class="nav-number">11.</span> <span class="nav-text">高级特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟文件系统tmpfs"><span class="nav-number">12.</span> <span class="nav-text">虚拟文件系统tmpfs</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

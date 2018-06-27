@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="文件属性获取文件信息：stat()　　利用系统调用stat()，lstat()以及fstat()可获取与文件有关的信息。其中大部分提取子文件的i节点。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件属性">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/19/15/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="文件属性获取文件信息：stat()　　利用系统调用stat()，lstat()以及fstat()可获取与文件有关的信息。其中大部分提取子文件的i节点。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-19T03:56:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件属性">
+<meta name="twitter:description" content="文件属性获取文件信息：stat()　　利用系统调用stat()，lstat()以及fstat()可获取与文件有关的信息。其中大部分提取子文件的i节点。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/19/15/"/>
+
+
+
+
+
+  <title>文件属性 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/19/15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件属性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-19T20:37:07+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h1><h4 id="获取文件信息：stat"><a href="#获取文件信息：stat" class="headerlink" title="获取文件信息：stat()"></a>获取文件信息：stat()</h4><p>　　利用系统调用stat()，lstat()以及fstat()可获取与文件有关的信息。其中大部分提取子文件的i节点。<br><a id="more"></a></p>
+<pre><code>#include &lt;sys/stat.h&gt;
+int stat(const char * pathname,struct stat *statbuf);
+int lstat (const char *pathname,struct stat *statbuf);
+int fstat(int fd,struct stat *statbuf);  
+</code></pre><p>　　上述所有的系统调用都会在缓冲区返回一个由statbuf指向的stat结构：</p>
+<pre><code>struct stat{
+    dev_t st_dev;//b标识文件所驻留的设备
+    ino_t st_ino;//i节点号，结合st_dev可以标识文件系统中的某个文件
+    mode_t st_mode;//file type and permissions,含有位掩码，起到标识文件类型和指定文件权限的作用
+    nlink_t st_nlink;///指向文件的硬链接数
+    uid_t st_uid;
+    gid_t st_gid;
+    dev_t st_rdev;//如果是针对设备的i节点，该字段包含设备的主，辅ID
+    off_t st_size;// 总文件大小
+    blksize_t st_blksize;//optimal block size for I/O
+    blkcnt_t st_blocks;//分配的块数量
+    time_t st_atime;//文件最后访问时间
+    time_t st_mtime;//文件最后更改时间
+    time_t st_ctime;//最后状态改变时间
+    }；
+</code></pre><p>　　st_size对于常规文件，标识文件的字节数，对于符号链接，标识链接所指路径名的长度，对于共享内存对象，标识对象的大小。<br>　　st_blocks字段标识分配给文件的总块数，块大小为512字节。该字段记录了实际分配给文件的磁盘块数量，如果文件含有空洞，该值将小于相应的st_size值。  </p>
+<h5 id="文件时间戳"><a href="#文件时间戳" class="headerlink" title="文件时间戳"></a>文件时间戳</h5><p>　　utimme()和utimes()用于修改存储于文件i节点的访问和修改时间戳<br>　　utimesat()系统调用和futimens()系统调用可以用与改变文件的访问和修改时间戳。<br>　　具体内容请见系统编程手册的p237-p240</p>
+<h4 id="文件属主"><a href="#文件属主" class="headerlink" title="文件属主"></a>文件属主</h4><h5 id="新建文件的属主"><a href="#新建文件的属主" class="headerlink" title="新建文件的属主"></a>新建文件的属主</h5><p>　　新建文件的用户ID取自进程的有效ID，组ID取自进程的有效组ID；<br>　　装配ext2文件系统是，mount 要么带有-o grpid选项或者-o nogrpid选项，默认是 - o nogrpid选项，如果制定了-o grpid选项，则新建文件的组ID总是继承自其父目录的组ID，如果制定-o nogrpid，默认情况下新建文件的组ID则取自进程的组有效ID。如果已将目录的set-group-ID置位(chmod g+s)，则组ID从父目录进程。  </p>
+<h4 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h4><h5 id="普通文件的权限"><a href="#普通文件的权限" class="headerlink" title="普通文件的权限"></a>普通文件的权限</h5><p>　　stat结构中st_mode 字段的低12位定义了文件权限，其中前三位为专用位，分别是set-user-ID位，set-group-ID位，sticky位，其余9位构成了定义权限的掩码，分别授予访问文件的各类用户。文件掩码分为三类：<br>　　Owner:授予文件属主<br>　　Group:授予文件组成员的权限<br>　　Other:授予其他用户的权限<br>　　<br>　　Read:阅读文件内容。<br>　　Write:可更改文件内容<br>　　Execute:可以执行文件，要执行脚本文件，需同时具备读的权限和写的权限。  </p>
+<p>　　头文件&lt;sys/stat.h&gt;定义了可与stat结构中st_mode相与（&amp;）的常量，用于检查特定权限的位置与否。  </p>
+<h4 id="目录权限"><a href="#目录权限" class="headerlink" title="目录权限"></a>目录权限</h4><p>　　目录和文件拥有相同的权限方案，只是对三种权限的含义另有所指。<br>　　1.读权限：可以列出目录之下的内容之下的内容。<br>　　2.写权限：可在目录内创建和删除文件，删除文件无需对文件有任何权限。<br>　　3.可执行权限：可访问目录中文件，因此，有时也将对目录的执行权限称为search权限。<br>　　访问文件时，需要对路径名中的所有所列目录具有执行权限。<br>　　拥有对目录的读权限，用户只是能查看目录中的文件列表，如果想要查看文件的目录内容或是这些文件的i节点信息，还需有对目录的执行权限。<br>　　反之，如果对目录有可执行权限，而无读权限，只要知道目录内的文件名称，仍可以对其进行访问，但是不能列出目录下的内容，在控制对公共目录内容进行访问时，这是一种常见技术，简单而实用。  </p>
+<h4 id="权限检查算法"><a href="#权限检查算法" class="headerlink" title="权限检查算法"></a>权限检查算法</h4><p>　　只要在访问文件或目录的系统调用中指定了路径名称，内核就会检查相应文件的权限，如果赋予系统调用的路径名还包含目录前缀时，内核还会检查前缀的每个目录的执行权限，内核会使用进程的有效ID，有效组ID，以及辅助组ID,来执行权限检查。<br>　　<strong>一旦调用open()打开了文件，针对返回描述符的后续系统调用，比如read()，write(),fstat(),fcntl(),mmap(),将不再进行任何权限检查。</strong><br>　　检查文件权限时，内核遵循的原则如下，<br>　　　1.对特权级进程，授予其所有访问权限。<br>　　　2.对进程的有效用户ID与文件的用户ID相同，内核会根据文件的属主权限，授予进程相应的访问权限。<br>　　　3.如果进程的有效组ID或者任一附属组ID与文件的组ID相匹配，内核会根据文件的属组权限，授予进程对文件相应访问权限。<br>　　　4.如果以上三点都不满足，内核会根据文件的other权限，授予进程相应权限。<br>　　　<strong>只有以上检查都未能获得所需要的权限时，才去检查进程是否属于特权级进程，省去了对ASU记账标志的设置。</strong>  </p>
+<h4 id="检查对文件的访问权限"><a href="#检查对文件的访问权限" class="headerlink" title="检查对文件的访问权限"></a>检查对文件的访问权限</h4><p>　　系统调用access()就是根据进程的真实用户ID和组ID以及附属组ID，检查pathname()参数所指定的文件权限。  </p>
+<pre><code>#include &lt;unistd.h&gt;
+int access(const char * pathname,int mode)//如果所有权限都有，则返回0，否则返回-1.  
+</code></pre><p>　　如果pathname为符号链接，access()将其解引用。<br>　　参数mode是由表中的常量相或而成的位掩码，F_OK有这个文件吗 R_OK对这个文件具有读权限吗 W_OK对这个文件具有写权限吗 X_OK对这个问阿金具有执行权限吗<br>　　由于对某一个文件的调用access()与对同一个文件的后续操作存在时间差，因此执行后续操作时，也无法保证对文件的后续操作时由access()所返回的信息依然正确。<br>　　文件粘滞位，采用chmod +t file或chmod系统调用来设文件的粘滞位，如果设置了文件的sticky粘滞位，则ls -l时会在权限字段看到T，如果是小写的则对其他用户执行权限位，sticky权限起到限制删除位的作用，为设置该位，则表明仅当非特权进程具有对目录的写权限，且为文件或目录的属主时，才能对目录下的文件进行删除(unlink(),rmdir(),rename()操作）,可以借此机制来创建为多个用户共享一个目录，各个用户可在其下创建或删除属于自己的文件，但是不能删除隶属于其他用户的文件。<br>　　对于新建文件或目录，内核会使用open()或creat()中的mode参数制定的权限，对于新建目录，则会根据mkdir()的mode参数设置权限，文件模式创建掩码会对这些设置进行修改，umask会一种进程属性，当进程创建文件或目录时，该属性用于指明该屏蔽那些位。<br>　　进程的umask通常继承自其父shell，用户可以使用shell内置命令umask来修改进程的umask,从而控制在shell下运行程序的umask。<br>　　大多数shell的初始化文件都会将umask默认置为八进制位022（—-w–w-)，其含义为对于同组或者其他用户，应总是屏蔽写权限。<br>　　系统调用umask()将进程的umask改变为mask参数指定的值。  </p>
+<pre><code>#include &lt;sys/stat.h&gt;
+mode_t umask(mode_t mask);// always successfully returns the previous process umask  
+</code></pre><h4 id="更改文件权限"><a href="#更改文件权限" class="headerlink" title="更改文件权限"></a>更改文件权限</h4><p>　　可利用系统调用chmod()和fchmod()去修改文件权限。  </p>
+<pre><code>#include &lt;sys/stat.h&gt;
+int chmod(const char*pathname,mode_t mode);
+# define _XOPEN_SOURCE 500 
+#include &lt;sys/stat.h&gt;
+int fchmod(int fd,mode_t mode);//成功返回0，失败返回-1  
+</code></pre><h4 id="i节点标志"><a href="#i节点标志" class="headerlink" title="i节点标志"></a>i节点标志</h4><p>　　某些linux文件系统允许为文件和目录设置各种各样的i-node flags ，ext2是首个支持i节点标志的Linux文件系统，程序中ioctl()可以获取并修改i节点标志。
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　
+　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/13/14/" rel="next" title="文件系统">
+                <i class="fa fa-chevron-left"></i> 文件系统
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/22/17/" rel="prev" title="访问控制列表">
+                访问控制列表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件属性"><span class="nav-number">1.</span> <span class="nav-text">文件属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取文件信息：stat"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">获取文件信息：stat()</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#文件时间戳"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">文件时间戳</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件属主"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">文件属主</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#新建文件的属主"><span class="nav-number">1.0.0.2.1.</span> <span class="nav-text">新建文件的属主</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件权限"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">文件权限</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#普通文件的权限"><span class="nav-number">1.0.0.3.1.</span> <span class="nav-text">普通文件的权限</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目录权限"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">目录权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#权限检查算法"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">权限检查算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#检查对文件的访问权限"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">检查对文件的访问权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更改文件权限"><span class="nav-number">1.0.0.7.</span> <span class="nav-text">更改文件权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#i节点标志"><span class="nav-number">1.0.0.8.</span> <span class="nav-text">i节点标志</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

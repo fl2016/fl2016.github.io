@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="主要包括两种，系统调用I/O缓冲和标准C语言函数的磁盘缓冲。   文件I/O的内核缓冲　　read() ,write()系统调用在操作磁盘文件时不会直接发起磁盘访问，而是仅仅在用户空间缓冲去和内核缓冲区高速缓存之间复制数据，　　write(fd,”abc”,3);">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件I&#x2F;O的缓冲">
+<meta property="og:url" content="https://www.yixuan.tech/2018/06/12/13/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="主要包括两种，系统调用I/O缓冲和标准C语言函数的磁盘缓冲。   文件I/O的内核缓冲　　read() ,write()系统调用在操作磁盘文件时不会直接发起磁盘访问，而是仅仅在用户空间缓冲去和内核缓冲区高速缓存之间复制数据，　　write(fd,”abc”,3);">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-12T09:20:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件I&#x2F;O的缓冲">
+<meta name="twitter:description" content="主要包括两种，系统调用I/O缓冲和标准C语言函数的磁盘缓冲。   文件I/O的内核缓冲　　read() ,write()系统调用在操作磁盘文件时不会直接发起磁盘访问，而是仅仅在用户空间缓冲去和内核缓冲区高速缓存之间复制数据，　　write(fd,”abc”,3);">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/06/12/13/"/>
+
+
+
+
+
+  <title>文件I/O的缓冲 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/12/13/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件I/O的缓冲</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-12T16:29:56+08:00">
+                2018-06-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>主要包括两种，系统调用I/O缓冲和标准C语言函数的磁盘缓冲。  </p>
+<h4 id="文件I-O的内核缓冲"><a href="#文件I-O的内核缓冲" class="headerlink" title="文件I/O的内核缓冲"></a>文件I/O的内核缓冲</h4><p>　　read() ,write()系统调用在操作磁盘文件时不会直接发起磁盘访问，而是仅仅在用户空间缓冲去和内核缓冲区高速缓存之间复制数据，<br>　　write(fd,”abc”,3);<br><a id="more"></a><br>　　write()随即返回，后续某个时刻，内核会将缓冲区的数据写入磁盘，可以说，系统调用和磁盘操作并不同步。<br>　　read()操作也与write()相似，都需要进行文件缓冲。以提高文件的I/O速度。<br>　　linux内核对缓冲区的缓冲的大小没有固定的上限，内核会分配尽可能多的缓冲区高速缓存页，受限于两个因素：<br>　　　　1，可用物理内存总量<br>　　　　2，处于其他目的对内存的需求（如将正在运行的文本和数据页保存在物理内存中），如果内存不足，内核会将一些修改过的缓冲区高速缓存页内容刷新到磁盘，并释放缓存给系统重新使用。  </p>
+<h4 id="缓冲区大小对I-O系统调用的影响"><a href="#缓冲区大小对I-O系统调用的影响" class="headerlink" title="缓冲区大小对I/O系统调用的影响"></a>缓冲区大小对I/O系统调用的影响</h4><p>　　BUF_SIZE指定了每次调用read()和write()操作的传输的字节数，如果执行大量的数据传输，通过采用大块空间缓冲数据，和执行更少的系统调用，可以极大的提高I/O性能。  </p>
+<h4 id="stdio库的缓冲"><a href="#stdio库的缓冲" class="headerlink" title="stdio库的缓冲"></a>stdio库的缓冲</h4><p>　　当操作磁盘文件时，<strong>缓冲大块数据可以减少系统调用</strong>，C语言函数库的I/O函数（fprintf(),fscanf(),fgets(),fputs(),fputc(),fgetc()),stdio库可以是编程者免于自行处理对数据的缓冲。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+int setvbuf(FILE *stream,char *buf,int mode,size_t size);//成功则返回0，错误则返回非0  
+</code></pre><p>　　参数stream标识将要修改那个文件流的缓冲，打开流后，必须在调用任何其他stdio函数之前先调用setvbuf()，setvbuf()调用影响后续在制定流上进行的所有stdio操作。<br>　　buf和size则针对stream要使用的缓冲区<br>　　　１，如果参数buf不为NULL,那么其指向size大小的内存块以作为stream的缓冲区，stdio将要使用buf指向的缓冲区，应在堆中动态或静态的为缓冲区分配一块空间。（使用malloc()或类似函数）,而不是分配在栈上的函数本地变量，否则，函数返回时将销毁其栈帧。<br>　　　2，若buf为NULL,那么stdio库会为stream自动分配一个缓冲区（除非选择非缓冲的I/O）<br>　　　　a._IONBF 不对I/O进行缓冲，每个stdio库函数可以立即调用write()和read()，并且忽略buf和size参数，可以分别指定两个参数为NULL和0，stderr为这一类型，从而保证错误能够立即输出。<br>　　　　b._IOLBF采用行缓冲，制定终端设备的流默认属于这一类型，对于输出流，在输出一个换行符前缓冲数据(除非缓冲区已经填满)，对于输入流，每次读取一行数据。<br>　　　　c.、_IOFBF 采用全缓冲I/O，单次读写数据的大小和缓冲区相同，指代磁盘的流默认此模式。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+void setbuf(FILE *stream ,char *buf);  
+</code></pre><p>　　setbuf()函数建立在setvbuf()之上，setbuf(fd,buf)除了不返回函数结果外，就相当于setvbuf(fp,buf，(buf!=NULL)?_IOFBF:_IONBF,BUFSIZ);<br>　　setbuffer()函数类似于setbuff()函数，但允许调用者制定buf缓冲区的大小。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+void setbuffer(FILE *stream,char *buf,size_t size);  
+</code></pre><p> 　　对setbuffer(fp,buf,size)的调用相当于如下调用：<br> 　　setvbuf(fp,buf,(buf != NULL)?_IOFBF:_IONBF ,size);  </p>
+<h4 id="刷新stdio缓冲区"><a href="#刷新stdio缓冲区" class="headerlink" title="刷新stdio缓冲区"></a>刷新stdio缓冲区</h4><p>　　无论当前采用何种缓冲区模式，在任何时候，都可以使用fflush()库函数强制将stdio输出流中的数据(即通过write())刷新到内核缓冲区中，此函数会刷新制定stream的输出缓冲区。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+int fflush(FILE *stream);  
+</code></pre><p> 　　如果参数stream为NULL，则fflush()将刷新所有的stdio缓冲区。<br> 　　也能将fflush()函数应用到输入流，这将丢弃已经缓冲的输入数据，当程序下一次尝试从流中读取数据时，将重新装满缓冲区。<br> 　　当关闭流时，将自动刷新其stdio缓冲区。  </p>
+<h5 id="控制文件I-O的内核缓冲"><a href="#控制文件I-O的内核缓冲" class="headerlink" title="控制文件I/O的内核缓冲"></a>控制文件I/O的内核缓冲</h5><p>　　 两种不同的I/O完整性，即同步I/O数据完整性和同步I/O文件完整性。两者之间的区别在于用于描述文件的元数据(关于数据的数据)，也就是内核针对文件而存储的数据。  </p>
+<h4 id="用于控制文件I-O内核缓冲的系统调用"><a href="#用于控制文件I-O内核缓冲的系统调用" class="headerlink" title="用于控制文件I/O内核缓冲的系统调用"></a>用于控制文件I/O内核缓冲的系统调用</h4><p>　　fsync()系统调用将是缓冲数据与打开文件描述符fd相关的所有元数据都刷新到磁盘上。调用fsync()会强制将文件处于synchronized I/O file completion 状态。 </p>
+<pre><code>#include &lt;unistd.h&gt;
+int fsync(int fd);//成功则返回0，失败返回-1
+int fdatasync(int fd);
+</code></pre><p>　　仅在对磁盘设备（至少是高速缓存）的传递完成后，fsync()调用才返回。<br>　　fdatasync()系统调用的运作类似于fsync()，只是强制使文件处于synchronized() I/O data integrity completion 状态。<br>　　fdatasync()可能会减少对磁盘调用的次数，由fsync()调用请求的两次变为一次，例如，修改了文件数据，而文件大小不变，调用fdatasync()只强制进行数据更新。<br>　　sync()系统调用会使包含更新文件信息的所有所有内核缓冲区（即数据块，指针元数据等）都刷新到磁盘上。   </p>
+<pre><code>#include &lt;unistd.h&gt;
+void sync(void);  
+</code></pre><h5 id="使所有写入同步O-SYNC"><a href="#使所有写入同步O-SYNC" class="headerlink" title="使所有写入同步O_SYNC"></a>使所有写入同步O_SYNC</h5><p>　　调用open()函数如指定O_SYNC标志，则会使后续输入同步：  </p>
+<pre><code>fd = open(pathname,O_WRONLY | O_SYNC);
+</code></pre><p>　　调用open()后，每个write()调用会自动将文件和元数据刷新到磁盘上，即（按照synchronzied I/O file Integrity completion要求执行写操作)。  </p>
+<h5 id="O-SYNC对性能的影响"><a href="#O-SYNC对性能的影响" class="headerlink" title="O_SYNC对性能的影响"></a>O_SYNC对性能的影响</h5><p>　　采用O_SYNC标志，（或者频繁调用fsync()，fdatasync()或sync()对性能影响极大，总之，如果需要强制刷新内核缓冲区，在设计程序时就应考虑是否可以使用大尺寸的write()缓冲区。  </p>
+<h5 id="O-DSYNC和O-RSYNC标志"><a href="#O-DSYNC和O-RSYNC标志" class="headerlink" title="O_DSYNC和O_RSYNC标志"></a>O_DSYNC和O_RSYNC标志</h5><p>　　O_RSYNC标志是与O_SYNC标志或O_DSYNC标志结合在一起使用的，将这些标志对写的作用结合到读操作中，如果在打开文件时同时制定O_RSYNC和O_DSYNC标志，即以为着会按照synchronized I/O data integrity completion 来完成所有的后续读操作。 （即在执行读操作之前，像执行O_DSYNC标志一样完成所有待处理的写操作）。如果同时在打开文件时指定O_RSYNC和O_SYNC标志，则意味着会遵照synchronized I/O file integrity completion 的要求来完成后续读操作。（即，执行读操作之前，像执行O_SYNC标志一样完成所有待处理的写操作。）。  </p>
+<h4 id="I-O缓冲小结"><a href="#I-O缓冲小结" class="headerlink" title="I/O缓冲小结"></a>I/O缓冲小结</h4><p>　　首先是stdio库将用户数据传递到stdio缓冲区，该缓冲区位于用户内存区，当缓冲区填满时，stdio库调用write()系统调用，将数据传递到内核的高速缓冲区(位于内核态内存区)，最终内核发起磁盘操作，将数据写到磁盘。  </p>
+<h4 id="绕过内核缓冲区高速缓存：直接I-O"><a href="#绕过内核缓冲区高速缓存：直接I-O" class="headerlink" title="绕过内核缓冲区高速缓存：直接I/O"></a>绕过内核缓冲区高速缓存：直接I/O</h4><p>　　linux允许应用程序在执行磁盘I/O时绕过缓冲区高速缓存，从用户空间直接将数据传递到文件或磁盘设备，有时也称此为直接I/O或者裸I/O。<br>　　直接I/O只适用于有特定I/O需求的应用，例如数据库系统，其高速缓存和I/O优化机制自成一体，无需内核消耗CPU时间和内存去完成相同的任务。<br>　　可针对一个单独文件或块设备（磁盘）执行直接I/O，需要在调用open()函数打开文件时或设备时指定O_DIRECT标志。<br><strong>直接I/O的对齐限制</strong>：<br>　　1.用于传递数据的缓冲区，其内存边界必须对齐为块大小的整数倍。<br>　　2.数据传输的开始点，亦即文件和磁盘的偏移量，必须是块大小的整数倍。<br>　　3.待传递数据的长度必须是磁盘大小的整数倍。<br>　　不遵守以上任一限制将导致EINVAL错误，在上述列表中，块大小是指设备的物理块大小。（通常是512字节）  </p>
+<h4 id="混合使用库函数和系统调用进行文件I-O"><a href="#混合使用库函数和系统调用进行文件I-O" class="headerlink" title="混合使用库函数和系统调用进行文件I/O"></a>混合使用库函数和系统调用进行文件I/O</h4><p> 　　 在同一个文件上执行I/O操作时，可以将C语言标准库函数和系统调用混合使用，fileno()和fdopen()函数有助于完成这一工作。  </p>
+<pre><code>#include &lt;stdio.h&gt;
+int fileno(FILE *stream);
+FILE *fdopen(int fd,const char *mode);  
+</code></pre><p>　　给定一个文件流，fileno()函数将返回相应的文件描述符，（即stdio库已经在该流上打开的文件描述符），随即可以在诸如read()，wrtie(),dup(),fcntl()之类的系统调用中正常使用该文件描述符。<br>　　fdopen()函数与fileno()函数的功能相反，给定一个文件描述符，该函数将创建一个使用该描述符进行文件I/O的相应流，mode :r为读，w为写，a为追加。<br>　　<strong>创建套接字和系统调用总是返回文件描述符，为了在这些文件类型上使用stdio函数，必须使用fdopen()函数来创建相应的文件流。</strong><br>　　<strong>I/O调用会直接将数据传递到内核缓冲区高速缓存，stdio库函数会等到用户空间的流缓冲区填满，在调用write()将其传递到内核缓冲区高速缓存</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/11/12/" rel="next" title="/proc文件系统">
+                <i class="fa fa-chevron-left"></i> /proc文件系统
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/13/14/" rel="prev" title="文件系统">
+                文件系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件I-O的内核缓冲"><span class="nav-number">1.</span> <span class="nav-text">文件I/O的内核缓冲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓冲区大小对I-O系统调用的影响"><span class="nav-number">2.</span> <span class="nav-text">缓冲区大小对I/O系统调用的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stdio库的缓冲"><span class="nav-number">3.</span> <span class="nav-text">stdio库的缓冲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#刷新stdio缓冲区"><span class="nav-number">4.</span> <span class="nav-text">刷新stdio缓冲区</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#控制文件I-O的内核缓冲"><span class="nav-number">4.1.</span> <span class="nav-text">控制文件I/O的内核缓冲</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用于控制文件I-O内核缓冲的系统调用"><span class="nav-number">5.</span> <span class="nav-text">用于控制文件I/O内核缓冲的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使所有写入同步O-SYNC"><span class="nav-number">5.1.</span> <span class="nav-text">使所有写入同步O_SYNC</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#O-SYNC对性能的影响"><span class="nav-number">5.2.</span> <span class="nav-text">O_SYNC对性能的影响</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#O-DSYNC和O-RSYNC标志"><span class="nav-number">5.3.</span> <span class="nav-text">O_DSYNC和O_RSYNC标志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O缓冲小结"><span class="nav-number">6.</span> <span class="nav-text">I/O缓冲小结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绕过内核缓冲区高速缓存：直接I-O"><span class="nav-number">7.</span> <span class="nav-text">绕过内核缓冲区高速缓存：直接I/O</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#混合使用库函数和系统调用进行文件I-O"><span class="nav-number">8.</span> <span class="nav-text">混合使用库函数和系统调用进行文件I/O</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
