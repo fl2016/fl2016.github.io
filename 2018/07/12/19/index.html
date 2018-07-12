@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="信号是事件发生时对进程的通知机制，有时也称之为软件终端。　　信号分为2大类，第一组用于进程向内核通知事件，构成所谓传统或者标准信号，linux中标准信号的编号范围为1-31。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信号">
+<meta property="og:url" content="https://www.yixuan.tech/2018/07/12/19/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="信号是事件发生时对进程的通知机制，有时也称之为软件终端。　　信号分为2大类，第一组用于进程向内核通知事件，构成所谓传统或者标准信号，linux中标准信号的编号范围为1-31。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-12T06:17:10.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="信号">
+<meta name="twitter:description" content="信号是事件发生时对进程的通知机制，有时也称之为软件终端。　　信号分为2大类，第一组用于进程向内核通知事件，构成所谓传统或者标准信号，linux中标准信号的编号范围为1-31。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/07/12/19/"/>
+
+
+
+
+
+  <title>信号 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/07/12/19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">信号</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-12T14:14:54+08:00">
+                2018-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　信号是事件发生时对进程的通知机制，有时也称之为软件终端。<br>　　信号分为2大类，第一组用于进程向内核通知事件，构成所谓传统或者标准信号，linux中标准信号的编号范围为1-31。　　<br><a id="more"></a><br>　　第二组称之为实时信号。　　<br>　　信号因某些事件产生，信号喊声后，会于稍后被传递给某一个进程，而进程也会采取某些措施来响应信号，在产生和到达期间，信号处于等待（pending）状态。<br>　　一旦内核接下来要调度该进程的运行，等待信号会马上送达，或者如果进程正在运行，则会立即传递信号，有时候需要将确保一段代码不会位传递来的信号终端，可将信号添加到进程的掩码之中，目前会阻塞该组信号的到达。如果所产生的信号属于阻塞之列，那么信号将保持等待状态，直至稍后对其接触阻塞，即从信号掩码中移除，进程可使用各种系统调用对其信号掩码添加和移除信号。<br>　　信号到达之后，进程视具体信号执行如下默认动作之一。<br>　　　　1.忽略信号：就是说内核将信号丢弃，信号对进程没有产生任何影响。<br>　　　　2.终止进程：有时进程是异常终止。<br>　　　　3.停止进程：暂停进程的运行。<br>　　　　4.与之前暂停后再度恢复进程的运行。<br>　　除了根据特定信号采取默认行为之外，程序也能改变信号到达时的响应行为，也将称之对信号的处置设置。程序将对信号的处置设置为以下之一：<br>　　　　1.采取默认行为，这适用于撤销之前对信号处置的修改，恢复默认处置的场景。<br>　　　　2.忽略信号。这适用于默认行为为终止进程的信号。<br>　　　　3.执行信号处理器程序。  </p>
+<h4 id="信号默认类型和默认行为"><a href="#信号默认类型和默认行为" class="headerlink" title="信号默认类型和默认行为"></a>信号默认类型和默认行为</h4><p>　　SIGABRT 当进程调用abort()函数时，系统向进程发送该信号，默认情况下，该信号会终止进程，并产生核心转储文件。<br>　　SIGLRM 经调用alarm()或setitimer()而设置的实时定时器一旦到期，内核将会产生该信号，实时定时器是根据挂钟事件进行计时的。  </p>
+<h4 id="改变信号量：signal"><a href="#改变信号量：signal" class="headerlink" title="改变信号量：signal()"></a>改变信号量：signal()</h4><p>　　UNIX系统提供了两种方法改变信号处置：signal()和sigaction()。本节描述的是signal()系统调用，是设置信号处置的原始API。所提供的接口比sigaction()简单。但是sigaction()具有signal()所不具备的功能。  </p>
+<pre><code>#include &lt;signal.h&gt;
+void (*signal(int sig,void(*handler)（int))(int);
+</code></pre><p>　　signal 函数第一个参数sig,标识希望修改处置的信号编号，第二个参数handler,则标识信号到达时所调用的函数的地址。<br>　　信号处理器函数一般具有以下形式：</p>
+<pre><code>void handle(int sig)
+{
+    /*code for the handler*/
+}
+</code></pre><p>　　signal()的返回值是对之前的信号处置，像handler参数一样，是一枚指针，指向一个整形参数且无返回值的函数。</p>
+<h4 id="发送信号kill"><a href="#发送信号kill" class="headerlink" title="发送信号kill()"></a>发送信号kill()</h4><p>　　与shell的kill命令类似，一个进程能够使用kill系统调用向另一个进程发送信号。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int kill(pid_t pid,int sig); // return 0 on success,or -1 on error。  
+</code></pre><p>　　pid参数标识一个或者多个目标进程，而sig则指定了要发送的信号。  </p>
+<ul>
+<li>如果pid大于0，那么会发送信号给由pid指定的进程。</li>
+<li>如果pid等于0，那么会发送信号给与调用进程同组的每个进程，包括调用进程本身。  </li>
+<li>如果pid小于-1，那么信号的发送范围是：向进程组内的所有组id等于该pid绝对值的所有下属进程发送信号，</li>
+<li><p>如果pid等于-1，调用进程有权讲信号发送到每个目标进程，除去init(进程id是1)和调用进程本身，该信号发送方式也称之为广播信号。  </p>
+<h4 id="检查进程的存在"><a href="#检查进程的存在" class="headerlink" title="检查进程的存在"></a>检查进程的存在</h4><p>　　将kill()的系统调用的sig参数指定为0，则无信号发送，如果信号发送失败且errno为ESRCH,则表明目标进程不存在，如果调用失败，且errno为EPERM则表示进程存在。<br>　　检查进程是否正在运行：<br>　　　1.wait()系统调用。<br>　　　2.信号量和排他文件锁。<br>　　　3.诸如管道和FIFO之类的IPC通道。可对监控目标进程进行设置，令其在自身生命周期内持有对通道进行写操作的打开文件描述符。同时，令监控进程持有对通道进行读操作的打开文件描述符，且当通道写入端关闭时，即可获知监控目标进程已经终止。<br>　　　4./proc/PID接口</p>
+<h4 id="发送信号的其他方式：raise-和killpg"><a href="#发送信号的其他方式：raise-和killpg" class="headerlink" title="发送信号的其他方式：raise()和killpg()"></a>发送信号的其他方式：raise()和killpg()</h4><p>　　有时候进程需要向自身发送信号，raise()函数就执行了这一任务。  </p>
+<p> #include &lt;signal.h&gt;<br> int raise(int sig);// return 0 on success  </p>
+</li>
+</ul>
+<p>　　在单线程程序中，调用raise()相当于kill()的如下调用，kill(getpid(),sig);<br>　　支持线程的系统会将rasie(sig)实现为：pthread_kill(pthread_self(),sig)</p>
+<h4 id="显示信号描述"><a href="#显示信号描述" class="headerlink" title="显示信号描述"></a>显示信号描述</h4><p>　　每个信号都有一串预支相关的可打印说明，这些smia描述位于数组sys_siglist中。  </p>
+<pre><code>#include &lt;signal.h&gt;
+extern const char *const sys_siglist[];
+#include &lt;string.h&gt;
+char strsignal(int sig);
+</code></pre><p>　　strsigna()函数对sig参数进行边界检查，返回一枚指针，指向针对该信号的可打印描述字符串，或是当信号编号无效时指向错误字符串。（strsignal()函数会在sig无效时返回空值。）<br>　　除去边界检查之外，strsignal()函数较之于直接引用sys_siglist数组的另一优势是对本地设置敏感，所以显示信号描述时会使用本地语言。<br>　　psignal()函数所示为msg参数所指定的字符串，后面有一个冒号，随后是对应于sig的信号描述，和strsignal()一样，psignal()函数也对本地设置敏感。  </p>
+<pre><code>#include &lt;signal.h&gt;
+void psignal(int sig,const char *sig);
+</code></pre><h4 id="信号集"><a href="#信号集" class="headerlink" title="信号集"></a>信号集</h4><p>　　许多信号相关的系统调用都需要能表示一组不同的信号。sigaction()和sigprocmask()允许程序指定一组将由进程阻塞的信号，sigpending()则返回一组目前正在等待送达给一进程的信号。<br>　　多个信号可使用一个称之为信号集的数据结构来表示，其系统数据类型为sigset_t。<br>　　segemptyset()函数初始化一个未包含任何成员的信号集，sigfillset()函数则初始化一个信号集，使其包含所有信号。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigemptyset(sigset_t *set);
+int sigfillset(sigset_t *set);
+</code></pre><p>　　必须使用sigemptyset()或者sigfillset()来初始化信号集。<br>　　信号集初始化之后，使用以下两个函数来向集合中添加或者删除信号。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigaddset(sigset_t *set,int sig);
+int sigdelset(sigset_t *set,int sig);
+</code></pre><p>　　setismember()函数用来测试sig是否是信号集set的成员。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigismember(const sigset_t *set,int sig);
+</code></pre><h4 id="信号掩码"><a href="#信号掩码" class="headerlink" title="信号掩码"></a>信号掩码</h4><p>　　内核会为每个进程维护一个信号掩码，即一组信号，并将阻塞对该进程的传递（信号掩码实际属于线程属性，在多线程进程中，每个线程都可使用pthread_sigmask()函数来独立检查和修改其信号掩码。）<br>　　向信号掩码中添加一个信号的几种方式：</p>
+<ul>
+<li>调用信号处理器程序时，将引发调用的信号自动添加到信号掩码中。  </li>
+<li>使用sigaction()函数建立信号处理器程序时，可以指定一组额外信号，当调用该信号处理器程序时会将其阻塞。  </li>
+<li><p>使用sigprocmask()系统调用，随时可以显式向信号掩码中添加或移除信号。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigprocmask(int how,const sigset_t *set,sigset_t *oldset);
+</code></pre></li>
+</ul>
+<p>　　使用sigprocmask()函数既可以修改进程的信号掩码，又可获取现有掩码。</p>
+<h4 id="处于等待状态的信号"><a href="#处于等待状态的信号" class="headerlink" title="处于等待状态的信号"></a>处于等待状态的信号</h4><p>　　如果某进程接受了一个该进程正在阻塞的信号，那么会将该信号添加到进程的等待信号之中，如果之后解除了对该信号的锁定，会随之将信号传递给该进程。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigspending(sigset_t *set);
+</code></pre><p>　　suspending()系统调用为调用进程返回处于等待状态的信号集，并将其置于set指向的sigset_t结构中。  </p>
+<h4 id="不对信号进行排队处理"><a href="#不对信号进行排队处理" class="headerlink" title="不对信号进行排队处理"></a>不对信号进行排队处理</h4><p>　　等待信号集只是一个掩码，仅表明一个信号是否发生，未表明信号发生的次数，即如果同同一信号在阻塞状态下产生多次，那么会将该信号记录在等待信号集中，并在解除阻塞之后传递一个。  </p>
+<h4 id="改变信号处置：sigaction"><a href="#改变信号处置：sigaction" class="headerlink" title="改变信号处置：sigaction()"></a>改变信号处置：sigaction()</h4><p>　　sigaction()系统调用比之signal()更具灵活性，可移植性更佳。  </p>
+<pre><code>#include &lt;signal.h&gt;
+int sigaction(int sig,struct sigaction *act,struct sigaction *oldact); 
+</code></pre><p>　　sig是想要获取或者改变的信号编号，该参数可以除去SIGKILL和SIGSTOP之外的任何信号。<br>　　act参数是一个指针，指向描述信号新处置的数据结构，如果仅仅对信号的现有处置感兴趣，那么可将该参数指定为NULL。oldact参数是指向同一结构类型的指针，用来返回之前信号处置相关的信息，如果无意读取该信息，则可将该参数指定为NULL，act和oldact所指向的结构类型如下：</p>
+<pre><code>struct sigaction{
+    void (*sa_handler) int ;/*access of handler*/
+    sigset_t samask;/*signals blocked during handler invocation*/
+    int sa_flags;/*flags controlling handler innovation*/
+    void (*sa_restorer)(void);/*not for application use*/
+</code></pre><ul>
+<li>sg_handler 字段对应于signal()函数的handler参数，其所指定的值为信号处理器的地址，或者是常量SIG_IGN,SIG_DFL之一。仅当sa_handler的取值为信号处理器地址时，才会对sa_mask和sa_flags字段加以处理。  </li>
+<li>sa_mask定义了一组信号，在调用由sa_handler所定义的信号处理器程序时将阻塞该组信号，当调用信号处理器之前，将该组信号中当前未处于进程掩码之列的任何信号自动添加到进程掩码中，直到信号处理器函数返回。这样信号处理器函数不会递归中断自己，由于不会对阻塞的信号进行排队处理，无论在阻塞过程中产生多少同一信号，稍后对信号的传递将会是一次性的。</li>
+<li><p>sa_flags 字段将是一个位掩码，指定用于控制信号处理时的各种选项。  </p>
+<h4 id="等待信号-pause"><a href="#等待信号-pause" class="headerlink" title="等待信号:pause()"></a>等待信号:pause()</h4><p>　　调用pause()将暂停进程的执行，直至信号处理器函数中断该调用为止，或者直至一个未处理的信号终止进程为止。  </p>
+<p> #include &lt;unistd.h&gt;<br> int pause(void);</p>
+</li>
+</ul>
+<p>　　处理信号时，pause()遭到中断，并总是返回-1，并将errno置为EINTR.
+　　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/10/18/" rel="next" title="目录和链接">
+                <i class="fa fa-chevron-left"></i> 目录和链接
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#信号默认类型和默认行为"><span class="nav-number">1.</span> <span class="nav-text">信号默认类型和默认行为</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改变信号量：signal"><span class="nav-number">2.</span> <span class="nav-text">改变信号量：signal()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发送信号kill"><span class="nav-number">3.</span> <span class="nav-text">发送信号kill()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#检查进程的存在"><span class="nav-number">4.</span> <span class="nav-text">检查进程的存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发送信号的其他方式：raise-和killpg"><span class="nav-number">5.</span> <span class="nav-text">发送信号的其他方式：raise()和killpg()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示信号描述"><span class="nav-number">6.</span> <span class="nav-text">显示信号描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号集"><span class="nav-number">7.</span> <span class="nav-text">信号集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号掩码"><span class="nav-number">8.</span> <span class="nav-text">信号掩码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处于等待状态的信号"><span class="nav-number">9.</span> <span class="nav-text">处于等待状态的信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不对信号进行排队处理"><span class="nav-number">10.</span> <span class="nav-text">不对信号进行排队处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改变信号处置：sigaction"><span class="nav-number">11.</span> <span class="nav-text">改变信号处置：sigaction()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#等待信号-pause"><span class="nav-number">12.</span> <span class="nav-text">等待信号:pause()</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
