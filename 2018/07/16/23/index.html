@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta name="description" content="进程的终止　　进程的终止有两种方式，其一异常终止，由接收到一信号引发，默认动作是终止当前进程，并产生核心转储。其二是通过exit()系统调用正常终止。">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程凭证">
-<meta property="og:url" content="https://www.yixuan.tech/2018/06/08/9/index.html">
+<meta property="og:title" content="进程的终止">
+<meta property="og:url" content="https://www.yixuan.tech/2018/07/16/23/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta property="og:description" content="进程的终止　　进程的终止有两种方式，其一异常终止，由接收到一信号引发，默认动作是终止当前进程，并产生核心转储。其二是通过exit()系统调用正常终止。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-12T10:48:33.000Z">
+<meta property="og:updated_time" content="2018-07-16T13:24:19.610Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="进程凭证">
-<meta name="twitter:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta name="twitter:title" content="进程的终止">
+<meta name="twitter:description" content="进程的终止　　进程的终止有两种方式，其一异常终止，由接收到一信号引发，默认动作是终止当前进程，并产生核心转储。其二是通过exit()系统调用正常终止。">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/06/08/9/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/07/16/23/"/>
 
 
 
 
 
-  <title>进程凭证 | A new cpp learner</title>
+  <title>进程的终止 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/08/9/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/07/16/23/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">进程凭证</h1>
+          <h1 class="post-title" itemprop="name headline">进程的终止</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-08T18:23:34+08:00">
-                2018-06-08
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-16T21:23:06+08:00">
+                2018-07-16
               </time>
             
 
@@ -300,28 +300,25 @@
       
 
       
-        <h1 id="进程凭证"><a href="#进程凭证" class="headerlink" title="进程凭证"></a>进程凭证</h1><h4 id="有效用户ID和有效组ID及其设置"><a href="#有效用户ID和有效组ID及其设置" class="headerlink" title="有效用户ID和有效组ID及其设置"></a>有效用户ID和有效组ID及其设置</h4><p>　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。<br>　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权限位。<br><a id="more"></a><br>　　运行set-user-ID和set-group-ID位，可以修改进程的有效用户ID和组ID，能够是进程获得对文件的执行权限。如果可执行文件的属主是root，还可以使得进程获得超级用户权限。<br>　　set-user-ID-root来表示root用户所拥有的set-user-ID程序，set-user-ID仅为进程提供其属主的权限。  </p>
-<h4 id="保存set-user-ID和保存set-group-ID"><a href="#保存set-user-ID和保存set-group-ID" class="headerlink" title="保存set-user-ID和保存set-group-ID"></a>保存set-user-ID和保存set-group-ID</h4><p>　　1.如果可执行文件的set-user-ID（set-group-ID)开启，则进程的有效用户（组）ID设置为可执行文件的属主，如未设置，进程的有效ID保持不变。<br>　　2.保存set-user-ID和保存set-group-ID的值由对应的有效ID复制而来，无论set-user-ID（set-group-ID)是否设置，这一复制都将进行。<br>　　由很多系统调用允许将set-user-ID程序的有效ID在实际用户ID和保存set-user-ID之间切换。  </p>
-<h4 id="获取及修改进程凭证"><a href="#获取及修改进程凭证" class="headerlink" title="获取及修改进程凭证"></a>获取及修改进程凭证</h4><p>　　getuid()/getgid()分别返回进程的实际用户ID和组ID<br>　　geteuid()/getegid()分别返回进程的有效ID和有效组ID<br>　　1.当非特权进程调用setuid()，仅能修改进程的有效用户ID,且仅能将有效用户ID设置为相应的实际ID或保存set-user-ID。<br>　　2.当特权进程以一个非0参数调用setuid()，其实际用户ID,有效用户ID，和保存set-user-ID均被置位为uid参数制定的值。这一操作是单向的，一旦进行，不可再将进程的有效ID重置为0。如果不希望这样，使用seteuid()更为可取。  </p>
-<h4 id="修改实际ID和有效ID"><a href="#修改实际ID和有效ID" class="headerlink" title="修改实际ID和有效ID"></a>修改实际ID和有效ID</h4><p>　　<strong>setreuid()系统调用</strong>允许调用进程独立修改其实际和有效用户ID，setregid()对实际和有效组实现类似功能。  </p>
+        <h1 id="进程的终止"><a href="#进程的终止" class="headerlink" title="进程的终止"></a>进程的终止</h1><p>　　进程的终止有两种方式，其一异常终止，由接收到一信号引发，默认动作是终止当前进程，并产生核心转储。其二是通过exit()系统调用正常终止。<br><a id="more"></a></p>
 <pre><code>#include &lt;unistd.h&gt;
-int setreuid(uid_t ruid,uid_t  euid);
-int setregid(gid_t rgid,gid_t egid);//成功返回0，失败返回-1  
-</code></pre><p>　　这两个系统调用的第一个参数都是实际ID，第二个参数都是有效ID，只修改一个ID，可以另一个参数设为-1。<br>　　1.非特权进程只能将实际用户ID设置为当前实际用户ID值（即保持不变）或有效用户ID值，且只能将有效用户ID设置为当前实际用户ID,有效用户ID，或保存set-user-ID。<br>　　2.特权级进程能够将其实际用户ID和有效用户ID设置为任意值。<br>　　3.不管进程是否拥有特权，以下条件满足之一就能将保存set-user-ID设成新的有效用户ID<br>　　 　　a.   ruid不是-1<br>　　 　　b.对有效用户ID所设置的值不同于系统调用之前的实际用户ID。<br>　　 　　<br>　　如果进程使用setreuid()仅将有效用户ID修改为实际用户的当前值，那么保存set-user-ID的值将保存不变，并且后续可调用setreuid()(或seteuid())将有效用户ID恢复为保存set-user-ID值。   </p>
-<h4 id="获取实际，有效，保存设置ID"><a href="#获取实际，有效，保存设置ID" class="headerlink" title="获取实际，有效，保存设置ID"></a>获取实际，有效，保存设置ID</h4><p>　　setreuid()系统调用允许调用进程独立修改其三个用户ID值，每个用户ID的新值由系统调用的三个参数给定。  </p>
-<pre><code>int setresuid(uid_t ruid,uid_t euid,uid_t suid);
-int setresgid(gid_t rgid,gid_t egid,gid_t sgid);//成功返回0，失败返回-1  
-</code></pre><p>　　1.非特权进程能够将实际用户ID,有效用户ID和保存set-user-ID中的任一ID设置为实际用户ID,有效用户ID或保存set-user-ID之中的任一当前值。<br>　　2.特权进程能够将三个ID进行任意设置。<br>　　3.不管系统调用是否对其他用户ID做了改动，总是将文件系统用户ID设置为与有效ID相同。<br>　　setresuid()和setresgid()具有 0/1效应，即对ID的修改要么全成功，要么全失败。  </p>
-<h4 id="获取和修改文件系统ID以及辅助组ID"><a href="#获取和修改文件系统ID以及辅助组ID" class="headerlink" title="获取和修改文件系统ID以及辅助组ID"></a>获取和修改文件系统ID以及辅助组ID</h4><pre><code>#include &lt;sys/fsuid.h&gt;
-int setfsuid(uid fsuid);
-int setfsgid(gid_t fsgid);//总是返回先前文件系统用户ID  
-</code></pre><p>　　1，非特权进程能够将文件系统用户ID设置为实际用户ID，有效用户ID,文件系统ID或保存set-user-ID值。<br>　　2，特权级进程能够将文件系统用户ID设置为任意值。  </p>
-<pre><code>#include &lt;unistd.h&gt;
-int getgroups(int gidsetsize,gid_t grouplist[]);//成功则返回组ID,失败返回-1
-</code></pre><p>　　getgroups()返回调用进程的辅助组ID，调度程序为grouplist数组分配空间，并在gidsetsize指定其长度，如果调用成功，则返回置于grouplist中的组ID数量。<br>　　如果进程组的数量超过gidsetsize，则返回错误。  </p>
-<pre><code>int setgroups(size_t gidsetsize,const gid_t *grouplist);
-int initgroups(const char *user,git_t group);//用于设置和初始化进程的辅助组ID。  
-</code></pre>
+void _exit(int status);
+</code></pre><p>　　exit的参数定义了进程的终止状态，父进程可调用wait()获取该状态，虽然将其定义为int类型，但仅有8位可为父进程所用，调用_exi()的函数总会成功终止。（_exit()从不返回）<br>　　程序一般不会直接调用_exit(),而是调用库函数exit()，它会在调用_exit()前执行各种动作。  </p>
+<pre><code>#include &lt;stdlib.h&gt;
+void _exit(int status);
+</code></pre><p>　　exit()会执行以下动作：<br>　　　　1.调用退出处理程序（通过atexit()和on_exit()注册的函数），其执行顺序与注册顺序相反。<br>　　　　2.刷新stdio流缓冲区<br>　　　　3.使用由status提供的值执行_exit()系统调用。<br>　　程序终止的另一种方法就是从main()函数中返回（return），或者一直执行到main()函数的结尾。执行return n 等同于执行对exit(n)的调用，调用main()的运行时函数会将main()的返回值作为exit()的参数。<br>　　执行时未指定返回值的return，或是无声无息的执行到main()函数结尾同样会导致main()的调用者执行exit()函数。</p>
+<h4 id="退出处理程序"><a href="#退出处理程序" class="headerlink" title="退出处理程序"></a>退出处理程序</h4><p>　　退出处理程序就是程序设计者提供的函数，可在进程生命周期的任意时点注册，并在该进程调用exit()正常终止时自动执行。如果程序直接调用_exit()或者因信号而异常终止，则不会调用退出处理程序。  </p>
+<pre><code>#include &lt;stdlib.h&gt;
+int atexit(void (*func)(void));
+</code></pre><p>　　函数atexit()将func加到一个函数列表中，进程终止时会调用该函数列表的所有函数。先注册的程序执行更为基本的清理动作，故所有程序的执行顺序与注册顺序相反。<br>　　atexit()注册的退出处理程序收到两个限制：<br>　　　　1.退出处理程序在执行时无法获取传递给exit()的状态。<br>　　　　2.无法给退出处理程序制定参数。<br>　　on_exit()可以解除以上限制。其参数func是一个指针，指向以下类型的函数：</p>
+<pre><code>void
+func(int status,void *arg)
+{
+    /*perform cleanup actions*/
+}
+</code></pre><p>　　提供给exit()的status参数和注册时提供给on_exit()的一份arg参数拷贝。<br>　　使用atexit()和on_exit()注册的退出处理程序（相关函数）位于同一函数列表。</p>
+<h4 id="fork-stdio缓冲区以及-exit-之间的交互"><a href="#fork-stdio缓冲区以及-exit-之间的交互" class="headerlink" title="fork(),stdio缓冲区以及_exit()之间的交互"></a>fork(),stdio缓冲区以及_exit()之间的交互</h4><p>　　进程是在进程的用户空间内内存中维护stdio缓冲区的，因此，通过fork()创建子进程时，会复制这些缓冲区。有时候可能在子进程退出时导致重复输出等动作。解决方案：<br>　　　　1.在调用fork()之前使用函数fflush()刷新stdio缓冲区，也可以使用setvbuf()和setbuf()来关闭stdio流的缓冲功能。<br>　　　　2.子进程可以调用_exit()而不是exit()，以便不在刷新stdio缓冲区。一般父进程通过exit()终止，其他进程通过_exit()终止。</p>
+
       
     </div>
     
@@ -345,8 +342,8 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/07/8/" rel="next" title="用户和组">
-                <i class="fa fa-chevron-left"></i> 用户和组
+              <a href="/2018/07/14/21/" rel="next" title="信号">
+                <i class="fa fa-chevron-left"></i> 信号
               </a>
             
           </div>
@@ -355,8 +352,8 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/06/09/10/" rel="prev" title="时间">
-                时间 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/16/25/" rel="prev" title="进程的创建">
+                进程的创建 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -475,7 +472,7 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程凭证"><span class="nav-number">1.</span> <span class="nav-text">进程凭证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#有效用户ID和有效组ID及其设置"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">有效用户ID和有效组ID及其设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#保存set-user-ID和保存set-group-ID"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">保存set-user-ID和保存set-group-ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取及修改进程凭证"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">获取及修改进程凭证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改实际ID和有效ID"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">修改实际ID和有效ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取实际，有效，保存设置ID"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">获取实际，有效，保存设置ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取和修改文件系统ID以及辅助组ID"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">获取和修改文件系统ID以及辅助组ID</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程的终止"><span class="nav-number">1.</span> <span class="nav-text">进程的终止</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#退出处理程序"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">退出处理程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-stdio缓冲区以及-exit-之间的交互"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">fork(),stdio缓冲区以及_exit()之间的交互</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
