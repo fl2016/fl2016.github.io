@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="监控子进程等待子进程　　系统调用wait()等待调用进程的任一子进程终止，同时在参数status所指向的缓冲区中返回该进程的终止状态。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监控子进程">
+<meta property="og:url" content="https://www.yixuan.tech/2018/07/17/24/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="监控子进程等待子进程　　系统调用wait()等待调用进程的任一子进程终止，同时在参数status所指向的缓冲区中返回该进程的终止状态。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-17T05:38:23.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="监控子进程">
+<meta name="twitter:description" content="监控子进程等待子进程　　系统调用wait()等待调用进程的任一子进程终止，同时在参数status所指向的缓冲区中返回该进程的终止状态。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/07/17/24/"/>
+
+
+
+
+
+  <title>监控子进程 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/07/17/24/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">监控子进程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-17T13:37:46+08:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="监控子进程"><a href="#监控子进程" class="headerlink" title="监控子进程"></a>监控子进程</h1><h4 id="等待子进程"><a href="#等待子进程" class="headerlink" title="等待子进程"></a>等待子进程</h4><p>　　系统调用wait()等待调用进程的任一子进程终止，同时在参数status所指向的缓冲区中返回该进程的终止状态。<br><a id="more"></a></p>
+<pre><code>#include &lt;sys/wait.h&gt;
+pid_t wait(int *status);
+</code></pre><p>　　系统调用wait()执行如下动作。<br>　　1.如果调用进程并未被之前未被等待的子进程终止，调用将一直阻塞，直到某个子进程终止，如果调用时已有子进程终止，wait()则立即返回。<br>　　2.如果status非空，那么关于子进程如何终止的信息则会通过status指向的整型变量返回。<br>　　3.内核会为父进程下所有子进程的运行总量追加进程CPU时间以及资源使用数据。<br>　　4.将终止子进程的ID作为wait()结果返回。</p>
+<h4 id="系统调用waitpid"><a href="#系统调用waitpid" class="headerlink" title="系统调用waitpid()"></a>系统调用waitpid()</h4><p>　　系统调用wait()存在一些限制：<br>　　　1.如果父进程已经创建了多个子进程，使用wait()将无法等待某个特定子进程的完成，只能按顺序等待下一个子进程的终止。<br>　　　2.如果没有子进程退出，wait()总是保持阻塞，有时候会希望执行非阻塞的等待。<br>　　　3.使用wait()只能发现那些已终止的子进程，对于某子进程因某个信号(如SIGSTOP或SIG TTIN)而终止，或是已停止子进程收到SIGCONT信号后恢复执行的情况就无能为力。</p>
+<pre><code>#include &lt;sys/wait.h&gt;
+pid_t waitpid(pid_t pid,int *status,int options);
+</code></pre><p>　　 waitpid()与wait()的返回值以及参数status的意义相同，参数pid用来表示需要等待的具体子进程。  </p>
+<ul>
+<li>如果pid大于0，表示等待进程ID为pid的子进程。</li>
+<li>pid = 0,则等待与调用进程同属于一个进程组的所有子进程。 </li>
+<li>pid&lt;-1,则会等待进程组标识符与pid绝对值相等的所有子进程。</li>
+<li>pid = -1,等待任意进程。wait(&amp;status)与waitpid(-1,&amp;status,0)等价。<br>　　参数options是一个位掩码，可以包含0个或多个以下标志。<br>　　WUNTRACED/WCONTINUED/WNOHANG<br>　　/返回终止子进程的信息/返回那些因收到SIGCONT信号而恢复执行的已停止子进程的状态信息。/如果pid指定的子进程并未发生状态改变，则立即返回，而不会阻塞，即poll(轮询)。这种状况下，waitpid()返回0，如果调用进程并无与pid匹配的进程，则waitpid()报错，将错误号置为ECHILD。</li>
+</ul>
+<h4 id="等待状态值"><a href="#等待状态值" class="headerlink" title="等待状态值"></a>等待状态值</h4><p>　　由wait()和waitpid()返回的status值，用来区分以下子进程的事件。</p>
+<ul>
+<li>子进程调用_exit()或exit()而终止，并制定一个整形值作为退出状态。</li>
+<li>子进程收到未处理信号而终止。</li>
+<li>子进程因为信号而停止，并以WUNTRACED标志调用waitpid()。</li>
+<li><p>子进程因收到SIGCONT而恢复，并以WCONTINUED标志调用waitpid()。</p>
+<h4 id="从信号处理程序中终止进程"><a href="#从信号处理程序中终止进程" class="headerlink" title="从信号处理程序中终止进程"></a>从信号处理程序中终止进程</h4><p>　　如果在信号处理程序中使用_exit(EXIT_SUCCESS)，父进程会认为子进程是正常终止的。</p>
+<h4 id="系统调用waitid"><a href="#系统调用waitid" class="headerlink" title="系统调用waitid()"></a>系统调用waitid()</h4><p>　　与waitpid()类似，waitid()返回子进程的状态。 </p>
+<p> #include &lt;sys/wait.h&gt;<br> int waitid(idtype_t idtype,id_t id,siginfo_t *infop,int options);</p>
+</li>
+</ul>
+<p>　　参数idtype和id指定需要等待那些子进程。<br>　　idtype为P_ALL，等待任何子进程。<br>　　idtype为P_PID，等待进程ID为id进程的子进程。<br>　　idtype为P_PGID，等待进程组ID为id各进程的所有子进程。<br>　　waitpid和waitid最明显的区别就是对于应该等待的子进程事件，waitid可通过在options中指定一个或多个如下标识来实现这种控制。<br>　　WEXITED 等待已终止的子进程<br>　　WSTOPPED 等待已通过信号终止的子进程<br>　　WCONTINUED 等待经由信号SIGCONT而恢复的子进程。<br>　　WNOHNAG 如果匹配id值的子进程中并无状态信息需要返回，则立即返回，此时，waitid返回0，如果调用进程并无子进程与id的值相匹配，则waitid调用失败，错误号为ECHILD.<br>　　WNOWAIT 指定该位会返回子进程的状态。</p>
+<h4 id="系统调用wait3-和wait4"><a href="#系统调用wait3-和wait4" class="headerlink" title="系统调用wait3()和wait4()"></a>系统调用wait3()和wait4()</h4><p>　　系统调用wait3()和wait4()执行类似的工作，其区别在于参数rusage所指向的结构中返回终止子进程的资源使用情况，包括进程使用的CPU时间总量以及内存管理的统计数据。</p>
+<pre><code>#include &lt;sys/resource.h&gt;
+#include &lt;sys/wait.h&gt;
+pid wait3(int *status,int options,struct rusage *rusage);
+pid_t wait4(pid_t pid,int *status,int options,struct rusage *rusage);
+</code></pre><p>　　除了对参数rusage的使用之外，调用wait3()等同于如下方式调用waitpid()：waitpid(-1,&amp;status,options);<br>　　调用wait4()等同于waitpid()的如下调用：<br>　　waitpid(pid,&amp;status,options);<br>　　wait3()等待的是任意子进程，wait4()则可以等待一个或多个子进程。</p>
+<h4 id="孤儿进程和僵尸进程"><a href="#孤儿进程和僵尸进程" class="headerlink" title="孤儿进程和僵尸进程"></a>孤儿进程和僵尸进程</h4><p>　　孤儿进程：如果一个进程的父进程终止后，一般会由init进程接管(进程ID为1)，可以调用getppid()返回1。这是判断是否父进程是否终结的方法之一。<br>　　在父进程调用wait()之前，其子进程就已经终止，系统通过将子进程转换为僵尸进程来处理，即释放掉大部分资源，只保存该进程在内核进程表中的一条记录。该记录包括了子进程ID，终止状态，资源使用数据。僵尸进程的含义即系统无法通过信号来杀死该进程，即使是SIGKILL，这就确保了父进程总是可以执行wait()方法。<br>　　当父进程调用wait()之后，内核将删除僵尸进程，如果父进程未执行wait()随即退出，init进程将接管子进程并自动调用wait()从而删除僵尸进程。<br>　　如果父进程创建了某一子进程，但未执行wait()，则内核进程表中将为子进程保存一条记录，如果存在大量的这类进程，内核进程表将被填满，新进程将无法创建，既然无法通过信号处理该类进程，只能通过杀死他们的父进程，通过init接管进而将他们从系统中清理掉。</p>
+<h4 id="SIGCHLD信号"><a href="#SIGCHLD信号" class="headerlink" title="SIGCHLD信号"></a>SIGCHLD信号</h4><p>　　进程的终止属于异步事件，父进程无法预知子进程何时终止（即使父进程向子进程发出了SIGKILL信号，子进程的终止的确切事件还依赖于系统的调度：子进程下一次在何时使用CPU。父进程应使用wait()来防止僵尸子进程的积累。<br>　　　　1.父进程调用不带WNOHANG标志的wait()，或waitpid()方法，此时如果尚无已经终止的子进程，那么调用将会阻塞。<br>　　　　2.父进程周期性的调用带有WNOHANG标志的waitpid(),执行针对已终止子进程的非阻塞式检查。</p>
+<h4 id="为SIGCHLD建立信号处理程序"><a href="#为SIGCHLD建立信号处理程序" class="headerlink" title="为SIGCHLD建立信号处理程序"></a>为SIGCHLD建立信号处理程序</h4><p>　　无论一个子进程何时终止，系统都会向其父进程发送SIGCHLD信号，对该信号的默认处理时忽略。</p>
+<h4 id="向已停止的子进程发送SIGCHLD信号"><a href="#向已停止的子进程发送SIGCHLD信号" class="headerlink" title="向已停止的子进程发送SIGCHLD信号"></a>向已停止的子进程发送SIGCHLD信号</h4><p>　　当信号导致子进程终止时，父进程可能收到SIGCHLD信号。调用sigaction()设置SIGCHLD信号处理程序时，如传入SA_NOCLDSTOP标志即可控制这一行为，如果未使用该标志，系统会在子进程停止时向父进程发送SIGCHLD信号。<br>　　如果将对SIGCHLD的处置显式的置为SIG_IGN，系统从而会将其后终止的子进程立即删除，不转化为僵尸进程，后续调用wait()将不返回任何信息。<br>　　如果sigaction()对SIGCHLD的处置进行设置时使用该标志，其作用类似与SIGCHLD的置为SIG_IGN的效果，当指定SA_NOCLDWAIT时允许系统发送SIGCHLD信号，则应用程序即可捕获这一信号。
+　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/16/22/" rel="next" title="进程的创建">
+                <i class="fa fa-chevron-left"></i> 进程的创建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#监控子进程"><span class="nav-number">1.</span> <span class="nav-text">监控子进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#等待子进程"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">等待子进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统调用waitpid"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">系统调用waitpid()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#等待状态值"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">等待状态值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从信号处理程序中终止进程"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">从信号处理程序中终止进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统调用waitid"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">系统调用waitid()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统调用wait3-和wait4"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">系统调用wait3()和wait4()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#孤儿进程和僵尸进程"><span class="nav-number">1.0.0.7.</span> <span class="nav-text">孤儿进程和僵尸进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SIGCHLD信号"><span class="nav-number">1.0.0.8.</span> <span class="nav-text">SIGCHLD信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为SIGCHLD建立信号处理程序"><span class="nav-number">1.0.0.9.</span> <span class="nav-text">为SIGCHLD建立信号处理程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向已停止的子进程发送SIGCHLD信号"><span class="nav-number">1.0.0.10.</span> <span class="nav-text">向已停止的子进程发送SIGCHLD信号</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

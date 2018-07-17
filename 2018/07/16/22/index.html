@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta name="description" content="进程的创建　　系统调用fork()允许一进程（父进程）创建一新进程（子进程），具体做法是新进程的子进程几近于对父进程的翻版：子进程获得父进程的栈，数据段，堆和执行文件段的拷贝，可将此视为父进程一分为二。">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程凭证">
-<meta property="og:url" content="https://www.yixuan.tech/2018/06/08/9/index.html">
+<meta property="og:title" content="进程的创建">
+<meta property="og:url" content="https://www.yixuan.tech/2018/07/16/22/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta property="og:description" content="进程的创建　　系统调用fork()允许一进程（父进程）创建一新进程（子进程），具体做法是新进程的子进程几近于对父进程的翻版：子进程获得父进程的栈，数据段，堆和执行文件段的拷贝，可将此视为父进程一分为二。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-12T10:48:33.000Z">
+<meta property="og:updated_time" content="2018-07-16T13:30:49.621Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="进程凭证">
-<meta name="twitter:description" content="进程凭证有效用户ID和有效组ID及其设置　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权">
+<meta name="twitter:title" content="进程的创建">
+<meta name="twitter:description" content="进程的创建　　系统调用fork()允许一进程（父进程）创建一新进程（子进程），具体做法是新进程的子进程几近于对父进程的翻版：子进程获得父进程的栈，数据段，堆和执行文件段的拷贝，可将此视为父进程一分为二。">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/06/08/9/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/07/16/22/"/>
 
 
 
 
 
-  <title>进程凭证 | A new cpp learner</title>
+  <title>进程的创建 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/08/9/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/07/16/22/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">进程凭证</h1>
+          <h1 class="post-title" itemprop="name headline">进程的创建</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-08T18:23:34+08:00">
-                2018-06-08
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-16T21:30:18+08:00">
+                2018-07-16
               </time>
             
 
@@ -300,28 +300,21 @@
       
 
       
-        <h1 id="进程凭证"><a href="#进程凭证" class="headerlink" title="进程凭证"></a>进程凭证</h1><h4 id="有效用户ID和有效组ID及其设置"><a href="#有效用户ID和有效组ID及其设置" class="headerlink" title="有效用户ID和有效组ID及其设置"></a>有效用户ID和有效组ID及其设置</h4><p>　　实际用户ID和实际组ID确定了进程所属的用户和组，登录shell从/etc/passwd文件中读取相应的用户密码记录的第三和第四字段，置为实际用户ID和实际组ID,创建新进程时，从父进程继承这些ID。<br>　　可执行文件的用户ID和组ID决定了该文件的所有权，另外可执行文件还有set-user-ID和set-group-ID位，可以使用chmod命令更改这些权限位。<br><a id="more"></a><br>　　运行set-user-ID和set-group-ID位，可以修改进程的有效用户ID和组ID，能够是进程获得对文件的执行权限。如果可执行文件的属主是root，还可以使得进程获得超级用户权限。<br>　　set-user-ID-root来表示root用户所拥有的set-user-ID程序，set-user-ID仅为进程提供其属主的权限。  </p>
-<h4 id="保存set-user-ID和保存set-group-ID"><a href="#保存set-user-ID和保存set-group-ID" class="headerlink" title="保存set-user-ID和保存set-group-ID"></a>保存set-user-ID和保存set-group-ID</h4><p>　　1.如果可执行文件的set-user-ID（set-group-ID)开启，则进程的有效用户（组）ID设置为可执行文件的属主，如未设置，进程的有效ID保持不变。<br>　　2.保存set-user-ID和保存set-group-ID的值由对应的有效ID复制而来，无论set-user-ID（set-group-ID)是否设置，这一复制都将进行。<br>　　由很多系统调用允许将set-user-ID程序的有效ID在实际用户ID和保存set-user-ID之间切换。  </p>
-<h4 id="获取及修改进程凭证"><a href="#获取及修改进程凭证" class="headerlink" title="获取及修改进程凭证"></a>获取及修改进程凭证</h4><p>　　getuid()/getgid()分别返回进程的实际用户ID和组ID<br>　　geteuid()/getegid()分别返回进程的有效ID和有效组ID<br>　　1.当非特权进程调用setuid()，仅能修改进程的有效用户ID,且仅能将有效用户ID设置为相应的实际ID或保存set-user-ID。<br>　　2.当特权进程以一个非0参数调用setuid()，其实际用户ID,有效用户ID，和保存set-user-ID均被置位为uid参数制定的值。这一操作是单向的，一旦进行，不可再将进程的有效ID重置为0。如果不希望这样，使用seteuid()更为可取。  </p>
-<h4 id="修改实际ID和有效ID"><a href="#修改实际ID和有效ID" class="headerlink" title="修改实际ID和有效ID"></a>修改实际ID和有效ID</h4><p>　　<strong>setreuid()系统调用</strong>允许调用进程独立修改其实际和有效用户ID，setregid()对实际和有效组实现类似功能。  </p>
+        <h1 id="进程的创建"><a href="#进程的创建" class="headerlink" title="进程的创建"></a>进程的创建</h1><p>　　系统调用fork()允许一进程（父进程）创建一新进程（子进程），具体做法是新进程的子进程几近于对父进程的翻版：子进程获得父进程的栈，数据段，堆和执行文件段的拷贝，可将此视为父进程一分为二。<br><a id="more"></a><br>　　库函数exit()终止一进程，将进程占用的所有资源(内存，文件描述符等)归还内核，交其再次分配。<br>　　系统调用fork()创建一个新进程，几近于对调用进程的翻版。  </p>
 <pre><code>#include &lt;unistd.h&gt;
-int setreuid(uid_t ruid,uid_t  euid);
-int setregid(gid_t rgid,gid_t egid);//成功返回0，失败返回-1  
-</code></pre><p>　　这两个系统调用的第一个参数都是实际ID，第二个参数都是有效ID，只修改一个ID，可以另一个参数设为-1。<br>　　1.非特权进程只能将实际用户ID设置为当前实际用户ID值（即保持不变）或有效用户ID值，且只能将有效用户ID设置为当前实际用户ID,有效用户ID，或保存set-user-ID。<br>　　2.特权级进程能够将其实际用户ID和有效用户ID设置为任意值。<br>　　3.不管进程是否拥有特权，以下条件满足之一就能将保存set-user-ID设成新的有效用户ID<br>　　 　　a.   ruid不是-1<br>　　 　　b.对有效用户ID所设置的值不同于系统调用之前的实际用户ID。<br>　　 　　<br>　　如果进程使用setreuid()仅将有效用户ID修改为实际用户的当前值，那么保存set-user-ID的值将保存不变，并且后续可调用setreuid()(或seteuid())将有效用户ID恢复为保存set-user-ID值。   </p>
-<h4 id="获取实际，有效，保存设置ID"><a href="#获取实际，有效，保存设置ID" class="headerlink" title="获取实际，有效，保存设置ID"></a>获取实际，有效，保存设置ID</h4><p>　　setreuid()系统调用允许调用进程独立修改其三个用户ID值，每个用户ID的新值由系统调用的三个参数给定。  </p>
-<pre><code>int setresuid(uid_t ruid,uid_t euid,uid_t suid);
-int setresgid(gid_t rgid,gid_t egid,gid_t sgid);//成功返回0，失败返回-1  
-</code></pre><p>　　1.非特权进程能够将实际用户ID,有效用户ID和保存set-user-ID中的任一ID设置为实际用户ID,有效用户ID或保存set-user-ID之中的任一当前值。<br>　　2.特权进程能够将三个ID进行任意设置。<br>　　3.不管系统调用是否对其他用户ID做了改动，总是将文件系统用户ID设置为与有效ID相同。<br>　　setresuid()和setresgid()具有 0/1效应，即对ID的修改要么全成功，要么全失败。  </p>
-<h4 id="获取和修改文件系统ID以及辅助组ID"><a href="#获取和修改文件系统ID以及辅助组ID" class="headerlink" title="获取和修改文件系统ID以及辅助组ID"></a>获取和修改文件系统ID以及辅助组ID</h4><pre><code>#include &lt;sys/fsuid.h&gt;
-int setfsuid(uid fsuid);
-int setfsgid(gid_t fsgid);//总是返回先前文件系统用户ID  
-</code></pre><p>　　1，非特权进程能够将文件系统用户ID设置为实际用户ID，有效用户ID,文件系统ID或保存set-user-ID值。<br>　　2，特权级进程能够将文件系统用户ID设置为任意值。  </p>
+pid_t fork(void);  
+</code></pre><p>  完成对fork()调用后将存在两个进程，且每个进程都会从fork()的返回处继续执行。<br>  子进程和父进程相比，相同之处：执行相同的程序文本段，但却各自拥有独立的栈段，数据段和堆段拷贝。子进程的栈，数据以及栈段开始时是对父进程内存相应各部分的完全复制。执行fork()之后，每个进程均可修改各自的栈数据，以及堆段中的变量，并不影响另一进程。<br>  父进程中fork()将返回新创建的子进程的进程ID。fork()进程在子进程中将返回0，子进程可以调用getpid()来获取自身ID，调用getppid()来获取父进程的ID。<br>  无法创建子进程，fork()将返回-1。<br>  父子进程中对应的文件描述符均指向相同的打开文件句柄，打开文件句柄包含有当前文件偏移量（read()，write()和lseek()修改）以及文件状态标志(由open()设置，通过fcntl()的F_SETFL操作改变)。</p>
+<h4 id="fork-的内存语义"><a href="#fork-的内存语义" class="headerlink" title="fork()的内存语义"></a>fork()的内存语义</h4><p>　　可以将fork()认做对父进程程序段，数据段，堆段以及栈段创建拷贝。<br>　　fork()采用两种技术来避免浪费：<br>　　　　1.内核为每一进程的代码段标记为只读，从而使进程无法修改自身代码。父子进程共享同一代码段，系统调用fork()在为子进程创建代码段时，其构建的一些类进程级页表项均指向与父进程相同的物理内存页帧。<br>　　　　2.对于父进程数据段，堆段和栈段中的各页，内核采用写时复制技术来处理。(copy on write)。调用fork()之后，内核会捕获所有父进程或子进程对这些页面的修改企图，并将将要修改的页面创建拷贝分配给内核捕获的进程，还会对子进程的相应表项做相应调整 。</p>
+<h4 id="控制进程的内存要求"><a href="#控制进程的内存要求" class="headerlink" title="控制进程的内存要求"></a>控制进程的内存要求</h4><p>　　通过将fork()和wait()组合使用，可以控制一个进程的内存需求，进程的内存需求量，亦即进程所使用的虚拟内存页范围，收到多种因素影响：调用函数，或从函数返回时栈的变化情况，对exec的调用，以及因调用malloc()和free()而对堆所做的修改。</p>
+<h4 id="系统调用vfork"><a href="#系统调用vfork" class="headerlink" title="系统调用vfork()"></a>系统调用vfork()</h4><p>　　vfork()可以为调用进程创建一个子进程,使用写时复制技术，是为子进程立即执行exec()的程序专门设计的。  </p>
 <pre><code>#include &lt;unistd.h&gt;
-int getgroups(int gidsetsize,gid_t grouplist[]);//成功则返回组ID,失败返回-1
-</code></pre><p>　　getgroups()返回调用进程的辅助组ID，调度程序为grouplist数组分配空间，并在gidsetsize指定其长度，如果调用成功，则返回置于grouplist中的组ID数量。<br>　　如果进程组的数量超过gidsetsize，则返回错误。  </p>
-<pre><code>int setgroups(size_t gidsetsize,const gid_t *grouplist);
-int initgroups(const char *user,git_t group);//用于设置和初始化进程的辅助组ID。  
-</code></pre>
+pid_t vfork(void);
+</code></pre><p>　　vfork()因为以下两个特性更有效率，也是与fork()的区别所在。</p>
+<ul>
+<li>无需为子进程复制虚拟内存页或者页表，相反，子进程复制父进程的内存，直至其成功执行了exec()或者调用_exit()退出。 </li>
+<li>在子进程调用exec()或_exit()之前，将暂停执行父进程。<br>　　在不影响父进程的前提下，子进程能在。<h4 id="fork-之后的竞争条件（race-condition"><a href="#fork-之后的竞争条件（race-condition" class="headerlink" title="fork()之后的竞争条件（race condition)"></a>fork()之后的竞争条件（race condition)</h4>　　调用fork()之后无法确定父进程和子进程谁将率先访问CPU。<h4 id="同步信号规避竞争条件"><a href="#同步信号规避竞争条件" class="headerlink" title="同步信号规避竞争条件"></a>同步信号规避竞争条件</h4>　　如果父进程必须等待子进程完成某些操作，反之，如果子进程反过来要等待父进程，那么父子进程中与信号相关的调用对调即可，父子进程甚至可能发生多次互发信号以协调彼此行为，实际上更有可能采用信号量，文件锁或信息传递技术来进行此类协调。  </li>
+</ul>
+
       
     </div>
     
@@ -345,8 +338,8 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/07/8/" rel="next" title="用户和组">
-                <i class="fa fa-chevron-left"></i> 用户和组
+              <a href="/2018/07/16/23/" rel="next" title="进程的终止">
+                <i class="fa fa-chevron-left"></i> 进程的终止
               </a>
             
           </div>
@@ -355,8 +348,8 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/06/09/10/" rel="prev" title="时间">
-                时间 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/17/24/" rel="prev" title="监控子进程">
+                监控子进程 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -475,7 +468,7 @@ int initgroups(const char *user,git_t group);//用于设置和初始化进程的
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程凭证"><span class="nav-number">1.</span> <span class="nav-text">进程凭证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#有效用户ID和有效组ID及其设置"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">有效用户ID和有效组ID及其设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#保存set-user-ID和保存set-group-ID"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">保存set-user-ID和保存set-group-ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取及修改进程凭证"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">获取及修改进程凭证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改实际ID和有效ID"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">修改实际ID和有效ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取实际，有效，保存设置ID"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">获取实际，有效，保存设置ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取和修改文件系统ID以及辅助组ID"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">获取和修改文件系统ID以及辅助组ID</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程的创建"><span class="nav-number">1.</span> <span class="nav-text">进程的创建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-的内存语义"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">fork()的内存语义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制进程的内存要求"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">控制进程的内存要求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统调用vfork"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">系统调用vfork()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-之后的竞争条件（race-condition"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">fork()之后的竞争条件（race condition)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同步信号规避竞争条件"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">同步信号规避竞争条件</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
