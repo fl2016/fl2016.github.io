@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="程序的执行　　系统调用execve()可以将新程序加载到某一进程的内存空间，在这一操作中，将丢弃旧有程序，而进程的栈，数据，堆段会被新程序的相应部件所替换。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序的执行">
+<meta property="og:url" content="https://www.yixuan.tech/2018/07/19/25/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="程序的执行　　系统调用execve()可以将新程序加载到某一进程的内存空间，在这一操作中，将丢弃旧有程序，而进程的栈，数据，堆段会被新程序的相应部件所替换。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-18T19:06:04.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="程序的执行">
+<meta name="twitter:description" content="程序的执行　　系统调用execve()可以将新程序加载到某一进程的内存空间，在这一操作中，将丢弃旧有程序，而进程的栈，数据，堆段会被新程序的相应部件所替换。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/07/19/25/"/>
+
+
+
+
+
+  <title>程序的执行 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/07/19/25/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">程序的执行</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-19T03:04:37+08:00">
+                2018-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="程序的执行"><a href="#程序的执行" class="headerlink" title="程序的执行"></a>程序的执行</h1><p>　　系统调用execve()可以将新程序加载到某一进程的内存空间，在这一操作中，将丢弃旧有程序，而进程的栈，数据，堆段会被新程序的相应部件所替换。<br><a id="more"></a><br>　　由fork()生成的子进程对execve()的调用最为频繁，不以 fork()调用为先导而单独调用execve()的做法在应用中实属罕见。<br>　　基于系统调用execve(),还提供了一系列以exec来命名的上层函数，虽然接口方式各异，但功能相同，通常将这些函数加载一个新程序的过程称为exec操作，或是简单以exec()来表示。</p>
+<pre><code>#include &lt;unistd.h&gt;
+int execve(const char *pathname,char *const argve[],char *const envp[]);
+</code></pre><p>　　参数pathname包含准备载入当前进程空间的新程序的路径，可以使绝对路径，也可以是相对于调用进程的CWD的相对路径。<br>　　参数argv则指定了传递给新进程的命令行参数。<br>　　envp指定了新程序的环境列表，envp对应于新程序的environ数组，也可以是字符串指针组li列表，所指向的字符串格式为name = value。<br>　　调用execve()之后，因为同一进程仍然存在，所以进程ID仍然保持不变。<br>　　如果对pathname所指定的程序文件设定了set-user-ID(set-group-ID）权限位，那么系统调用会在执行此文件时将进程的有效用户(组)ID置为程序文件的属组ID，利用这一机制，可以令用户在运行特定程序时获得临时特权。<br>　　无论是否更改了有效ID,也无论这一变化是否生效，execve()都会以进程的有效ID去覆盖已经保存的set-user-ID，以进程的有效组ID去覆盖已保存的(saved)set-group-ID。<br>　　由于是将调用程序取而代之，对execve()的成功调用将永不返回，也无需检查execve()的返回值，该值总是-1。</p>
+<h4 id="exec库函数"><a href="#exec库函数" class="headerlink" title="exec库函数"></a>exec库函数</h4><p>　　本节所有的这些函数均构建与execve()调用之上。</p>
+<pre><code>#include &lt;unistd.h&gt;
+int execle(const char *pathname,const char *arg,../,(char *)NULL,char *const envp[]*/);
+int execlp(const char *filename,const char *arg,.../*,(char *)NULL*/);
+int execvp(const char *filename,char *const argv[]);
+int execv(const char*pathname,char *const argv[]);
+int execl(const char *pathname,const char *arg,.../*,(char *)NULL*/)；
+</code></pre><h4 id="环境变量PATH"><a href="#环境变量PATH" class="headerlink" title="环境变量PATH"></a>环境变量PATH</h4><p>　　函数execvp()和execlp()允许调用者只提供欲执行文件的文件名，二者均使用环境变量PATH来搜索文件。<br>　　<strong>出于安全方面的考虑，通常会将当前工作目录排除在超级用户(root)的PATH之外，这是为了防止root用户执行与标准命令同名的程序。</strong></p>
+<p>####　将程序参数指定为列表<br>　　如果在编程时一直某个exec的参数个数，调用execle()，execlp()或者execl()时就可以将参数作为列表传入。</p>
+<h4 id="将调用者的环境传递给新程序"><a href="#将调用者的环境传递给新程序" class="headerlink" title="将调用者的环境传递给新程序"></a>将调用者的环境传递给新程序</h4><p>　　将execlp()，execvp()，execl()和execv()不允许开发者显式指定环境列表，新程序的环境继承自调用进程。</p>
+<h4 id="执行由文件描述符指代的程序：fexecve"><a href="#执行由文件描述符指代的程序：fexecve" class="headerlink" title="执行由文件描述符指代的程序：fexecve()"></a>执行由文件描述符指代的程序：fexecve()</h4><pre><code>#include &lt;unistd.h&gt;
+int fexecve(int fd,char *const argv[],char *const envp[]);
+</code></pre><p>　　即便没有fexecve()函数，也可以调用open()打开文件，读取并验证其内容，并最终运行。然而，在打开与执行文件之间，存在将该文件替换的可能性（持有打开文件描述符并不能zuh阻止创建同名新文件），最终造成验证者并非执行者的情况。</p>
+<h4 id="解释器文本"><a href="#解释器文本" class="headerlink" title="解释器文本"></a>解释器文本</h4><p>　　解释器(interpreter),就是能够读取并执行文本格式命令的程序。<br>　　文件的起始行必须指定运行脚本解释器的路径名。</p>
+<pre><code>#! interpreter-path [optional-arg]
+</code></pre><p>　　字符#!必须置于改行的起始处，解释该路径名时不会使用环境变量PATH，因而一般采用绝对路径。</p>
+<h4 id="解释器脚本的执行"><a href="#解释器脚本的执行" class="headerlink" title="解释器脚本的执行"></a>解释器脚本的执行</h4><p>　　因为脚本并不包含二进制机器码，所以当调用execve()来运行脚本时，显然发生了一些不寻常事件，ececve()如果检测到传入的文件以两字节序列 “!#”开始，就会析取该行的剩余部分（路径名和参数），按如下参数列表执行解释器程序。</p>
+<pre><code>#interpreter-path [optional-arg] script-path org... 
+</code></pre><p>　　interpreter-path和optional-arg都取自脚本的执行，script-path是传递给脚本的路径名，arg..则是通过变量argv传递给execve()的参数列表(不过将argv[0]排除在外)。</p>
+<h4 id="文件描述符与exec"><a href="#文件描述符与exec" class="headerlink" title="文件描述符与exec()"></a>文件描述符与exec()</h4><p>　　默认情况下，由exec()的调用程序所打开的所有文件描述符在exec()的执行过程中会保持打开状态，且在新程序中依然有效。<br>　　<strong>执行时关闭(close-on-exec)标志(FD_CLOEXEC)</strong><br>　　内核为每个文件描述符提供了执行时关闭标志，如果设置了这一个标志，成功执行exec()时，会自动关闭该文件描述符，如果exec()失败，文件描述符会保持打开状态。</p>
+<h4 id="信号与exec"><a href="#信号与exec" class="headerlink" title="信号与exec()"></a>信号与exec()</h4><p>　　exec()在执行时会将现有进程的文本段丢弃，该文本段可能包含了由调用进程创建的文本处理器程序，老程序的数据段，堆和栈全部被毁，通过signaltstack()创建的任何备选信号栈都会丢失。内核会将所有已设信号的处置重置为SIG_DFL，而对其他信号的处置保持不变。</p>
+<h4 id="执行shell命令：system"><a href="#执行shell命令：system" class="headerlink" title="执行shell命令：system()"></a>执行shell命令：system()</h4><pre><code>#include &lt;stdlib.h&gt;
+int system(const char *command);
+</code></pre><p>　　函数system()创建一个子进程来运行shell，并用这个shell来执行命令。<br>　　使用system()的有点：简便<br>　　　　1.无需处理fork()，exec()，wait(),exit()的调用细节。<br>　　　　2.system()会为之处理错误和信号。<br>　　　　3.因为system()使用shell来执行命令，所以会在执行command之前对其进行所有常规的shell处理，替换以及重定向等操作。<br>　　缺点：低效率<br>　　　　：使用system()运行命令至少创建两个进程。一个用于运行shell,另外一个或者多个用于shell所执行的命令，执行每个命令都需要调用一次exec()。<br>　　system()返回值：<br>　　　　1.当command为NULL指针时，shell可用则返回非0值。<br>　　　　2.如果无法创建子进程或者无法获知其最终状态，返回-1.<br>　　　　3.子进程不能执行shell,system()的返回值会与子shell调用_exit(127)终止时一样。<br>　　　　4.如果所有的系统调用都成功，system()会返回与子shelll的终止状态，即shell执行最后一条命令时的退出状态。</p>
+<h4 id="在设置用户ID和组ID中尽量避免使用system"><a href="#在设置用户ID和组ID中尽量避免使用system" class="headerlink" title="在设置用户ID和组ID中尽量避免使用system()"></a>在设置用户ID和组ID中尽量避免使用system()</h4><p>　　当设置了用户ID和组ID的程序在特权模式下运行时，决不能调用system()，即使此类程序并未允许用户指定需要执行的命令文本，鉴于shell对操作的控制有赖于各种环境变量，使用system()会不可避免的给系统带来安全隐患。  </p>
+<h4 id="system-的实现"><a href="#system-的实现" class="headerlink" title="system()的实现"></a>system()的实现</h4><h5 id="在system-内部正确处理信号"><a href="#在system-内部正确处理信号" class="headerlink" title="在system()内部正确处理信号"></a>在system()内部正确处理信号</h5><p>　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/17/24/" rel="next" title="监控子进程">
+                <i class="fa fa-chevron-left"></i> 监控子进程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#程序的执行"><span class="nav-number">1.</span> <span class="nav-text">程序的执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#exec库函数"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">exec库函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环境变量PATH"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">环境变量PATH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#将调用者的环境传递给新程序"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">将调用者的环境传递给新程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行由文件描述符指代的程序：fexecve"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">执行由文件描述符指代的程序：fexecve()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解释器文本"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">解释器文本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解释器脚本的执行"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">解释器脚本的执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件描述符与exec"><span class="nav-number">1.0.0.7.</span> <span class="nav-text">文件描述符与exec()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号与exec"><span class="nav-number">1.0.0.8.</span> <span class="nav-text">信号与exec()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行shell命令：system"><span class="nav-number">1.0.0.9.</span> <span class="nav-text">执行shell命令：system()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在设置用户ID和组ID中尽量避免使用system"><span class="nav-number">1.0.0.10.</span> <span class="nav-text">在设置用户ID和组ID中尽量避免使用system()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#system-的实现"><span class="nav-number">1.0.0.11.</span> <span class="nav-text">system()的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#在system-内部正确处理信号"><span class="nav-number">1.0.0.11.1.</span> <span class="nav-text">在system()内部正确处理信号</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
