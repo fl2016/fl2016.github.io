@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="时间　　程序一般关注两种时间，真实时间和进程时间。　　真实时间：度量点有两个，一个为标准时间点，二为进程生命周期内的某个固定时间点，前者是日历时间点，需要对数据库记录或文件打上时间戳的程序；后者则称之为流失时间或者挂钟时间，主要针对需要周期性的操作或定期从外部输入设备进行度量的程序。">
+<meta name="description" content="线程　　与进程类似，线程是允许应用程序并发执行多个任务的一种机制。一个进程可以包含多个线程。同一个程序中的所有线程均会独立的执行相同程序，且共享同一份全局内存区域，包括初始化数据段，未初始化数据段，以及堆内存段。">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="时间">
-<meta property="og:url" content="https://www.yixuan.tech/2018/06/09/10/index.html">
+<meta property="og:title" content="线程">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/12/27/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="时间　　程序一般关注两种时间，真实时间和进程时间。　　真实时间：度量点有两个，一个为标准时间点，二为进程生命周期内的某个固定时间点，前者是日历时间点，需要对数据库记录或文件打上时间戳的程序；后者则称之为流失时间或者挂钟时间，主要针对需要周期性的操作或定期从外部输入设备进行度量的程序。">
+<meta property="og:description" content="线程　　与进程类似，线程是允许应用程序并发执行多个任务的一种机制。一个进程可以包含多个线程。同一个程序中的所有线程均会独立的执行相同程序，且共享同一份全局内存区域，包括初始化数据段，未初始化数据段，以及堆内存段。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-12T10:48:38.000Z">
+<meta property="og:updated_time" content="2018-08-12T13:13:00.652Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="时间">
-<meta name="twitter:description" content="时间　　程序一般关注两种时间，真实时间和进程时间。　　真实时间：度量点有两个，一个为标准时间点，二为进程生命周期内的某个固定时间点，前者是日历时间点，需要对数据库记录或文件打上时间戳的程序；后者则称之为流失时间或者挂钟时间，主要针对需要周期性的操作或定期从外部输入设备进行度量的程序。">
+<meta name="twitter:title" content="线程">
+<meta name="twitter:description" content="线程　　与进程类似，线程是允许应用程序并发执行多个任务的一种机制。一个进程可以包含多个线程。同一个程序中的所有线程均会独立的执行相同程序，且共享同一份全局内存区域，包括初始化数据段，未初始化数据段，以及堆内存段。">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/06/09/10/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/12/27/"/>
 
 
 
 
 
-  <title>时间 | A new cpp learner</title>
+  <title>线程 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/09/10/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/12/27/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">时间</h1>
+          <h1 class="post-title" itemprop="name headline">线程</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-09T18:23:38+08:00">
-                2018-06-09
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-12T21:10:37+08:00">
+                2018-08-12
               </time>
             
 
@@ -300,18 +300,39 @@
       
 
       
-        <h1 id="时间"><a href="#时间" class="headerlink" title="时间"></a>时间</h1><p>　　程序一般关注两种时间，真实时间和进程时间。<br>　　真实时间：度量点有两个，一个为标准时间点，二为进程生命周期内的某个固定时间点，前者是日历时间点，需要对数据库记录或文件打上时间戳的程序；后者则称之为流失时间或者挂钟时间，主要针对需要周期性的操作或定期从外部输入设备进行度量的程序。<br><a id="more"></a><br>　　进程时间：一个进程所使用的CPU时间总量，适用于对程序和算法性能的检查和优化。<br>　　系统调用gettimeofday()，可用tv指向的缓冲区中返回日历时间。  </p>
-<pre><code>#include &lt;sys/time.h&gt;
-int gettimeday(struct timeval *tv,struct timezone *tz);//成功返回0，错误返回-1  
-</code></pre><p>　　参数tv指向如下数据结构的指针:  </p>
-<pre><code>struct timeval{
-    time_t tv_sec;//从UTC 1970开始的秒；
-    suseconds_t tv_usec;//额外的微秒  
-</code></pre><p>　　在现代的X86-32系统上，gettimeofday()能够提供微秒级的精度。  
+        <h4 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h4><p>　　与进程类似，线程是允许应用程序并发执行多个任务的一种机制。一个进程可以包含多个线程。同一个程序中的所有线程均会独立的执行相同程序，且共享同一份全局内存区域，包括初始化数据段，未初始化数据段，以及堆内存段。<br><a id="more"></a></p>
+<h5 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h5><p>　　进程间的信息难以共享，由于除去只读代码段之外，父子进程并未共享内存，因此采用IPC在进程间进行信息交换。<br>　　调用fork()相对代价较高，即使使用copy-on-write技术，仍然需要复制诸如内存页表，文件描述符表之类的多种进程属性。<br>　　线程解决了以上两个问题。</p>
+<ul>
+<li>线程之间只需要将数据复制到共享(全局或堆)变量中即可。</li>
+<li>创建线程要比进程快快很多，通过系统调用clone()来实现</li>
+</ul>
+<h5 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h5><p>　　启动程序时，产生的线程只有单挑线程，称之为初始或主线程。</p>
+<pre><code>#include &lt;pthread.h&gt;
+int pthread_create(pthread_t *thread,const pthread_attr_t *attr,void *(*start)(void *),void *arg);
+</code></pre><p>　　新线程通过调用带有参数arg的函数start而开始执行，调用pthread_create()的线程会继续执行该调用之后的语句。</p>
+<h5 id="终止线程"><a href="#终止线程" class="headerlink" title="终止线程"></a>终止线程</h5><ul>
+<li>线程start 函数执行return 语句后并返回指定值。</li>
+<li>线程调用pthread_exit()。</li>
+<li>调用pthread_cancel()取消线程。</li>
+<li>任意线程调用了exit()，或者主线程执行了return 语句，都会导致进程中的所有线程终止。</li>
+</ul>
+<p>　　pthread_exit()函数将终止调用进程，且其返回值可由另一线程通过调用pthread_join()来获取。</p>
+<pre><code>#include &lt;pthread.h&gt;
+void pthread_exit(void *retval);
+</code></pre><p>　　调用pthread_exit()相当于在线程的start函数中执行return ,不同在于，可以在线程start函数所调用的任意函数中调用pthread_exit()。<br>　　如果主线程调用了pthread_exit()，而非调用exit()或是执行return语句，那么其他线程将继续运行。</p>
+<h5 id="线程ID"><a href="#线程ID" class="headerlink" title="线程ID"></a>线程ID</h5><p>　　线程ID会返回给pthread_create()的调用者，一个线程可以通过调用pthread_self()来获取自身的线程ID。<br>　　pthread_equal()用于比较线程ID是否相等。</p>
+<h5 id="连接已终止的线程"><a href="#连接已终止的线程" class="headerlink" title="连接已终止的线程"></a>连接已终止的线程</h5><p>　　pthread_join()等待由thread标识的线程终止（如果线程已经终止，线程会立即返回），这种操作称为连接。<br>　　如果向pthread_join()传入一个之前已经连接过的线程ID，将导致无法预知的行为。<br>　　若线程并未分离，则必须使用pthread_join()来进行连接，如果未能连接，将产生僵尸进程。<br>　　pthread_join()执行的功能类似与针对进程waitpid()调用，区别在于：</p>
+<ul>
+<li>线程之间的关系时对等的，进程中的任意线程均可以调用pthread_join()与g该进程的任何其他线程连接起来。只有父进程可以通过wait()来对子进程进行回收。</li>
+<li>无法“连接任意线程”，也不能以非阻塞方式进行连接。</li>
+</ul>
+<h5 id="线程的分离"><a href="#线程的分离" class="headerlink" title="线程的分离"></a>线程的分离</h5><p>　　默认状态下线程是可连接的(joinable),即线程退出时，其他线程可以通过pthread_join()来获取其状态。</p>
+<pre><code>#include &lt;pthread.h&gt;
+int pthread_detach(pthread_t thread);
+</code></pre><p>　　可以调用pthread_detach()，将线程标记处于分离状态，线程可以自行分离。<br>　　一旦线程处于分离状态，就不能再使用pthread_join()来获取其状态，也无法使其返回可连接状态。<br>　　如果其他线程调用了exit()，或是主线程执行return语句时，包括遭到分离的线程，进程的所有线程都会终止。pthread_detach()只控制线程终止之后发生的事情，而非何时或如何终止线程。
 　　
-　　
-　</p>
-<h4 id="时间转换函数"><a href="#时间转换函数" class="headerlink" title="时间转换函数"></a>时间转换函数</h4><p>　　 未完待续。。。。。。</p>
+　　</p>
+<p>　　</p>
 
       
     </div>
@@ -336,8 +357,8 @@ int gettimeday(struct timeval *tv,struct timezone *tz);//成功返回0，错误�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/08/9/" rel="next" title="进程凭证">
-                <i class="fa fa-chevron-left"></i> 进程凭证
+              <a href="/2018/08/12/26/" rel="next" title="Algorithm">
+                <i class="fa fa-chevron-left"></i> Algorithm
               </a>
             
           </div>
@@ -346,8 +367,8 @@ int gettimeday(struct timeval *tv,struct timezone *tz);//成功返回0，错误�
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/06/10/11/" rel="prev" title="系统限制">
-                系统限制 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/12/28/" rel="prev" title="进程创建和程序执行深入">
+                进程创建和程序执行深入 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -466,7 +487,7 @@ int gettimeday(struct timeval *tv,struct timezone *tz);//成功返回0，错误�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#时间"><span class="nav-number">1.</span> <span class="nav-text">时间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#时间转换函数"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">时间转换函数</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程"><span class="nav-number">1.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#问题"><span class="nav-number">1.1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建线程"><span class="nav-number">1.2.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#终止线程"><span class="nav-number">1.3.</span> <span class="nav-text">终止线程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程ID"><span class="nav-number">1.4.</span> <span class="nav-text">线程ID</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#连接已终止的线程"><span class="nav-number">1.5.</span> <span class="nav-text">连接已终止的线程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程的分离"><span class="nav-number">1.6.</span> <span class="nav-text">线程的分离</span></a></li></ol></li></ol></div>
             
 
           </div>
