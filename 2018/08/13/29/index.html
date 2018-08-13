@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="系统编程进程进程的基本元素　　1. 程序执行代码　　 2.与代码关联的数据集进程控制块　　1.标识符　　2.状态 　　3.优先级　　4.程序计数器　　5.内存指针  　6.上下文数据　　7.I/O状态数据 　 8.记账信息">
+<meta name="description" content="线程：线程同步　　临界区：指访问某一共享资源的代码片段，并且这段代码的执行应为原子操作，即同时访问同一共享资源的其他进程不应中断该片段的执行。　　互斥量：（mutex,即mutual exclusion的缩写）来确保同时仅有一个线程可以访问某项共享资源，可以使用互斥量来保证对任意共享资源的原子访问。　　互斥量两种状态：已锁定(locked)和未锁定(unlocked)。任何时候，至多只有一个线程可">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程初步">
-<meta property="og:url" content="https://www.yixuan.tech/2018/06/01/2/index.html">
+<meta property="og:title" content="线程同步">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/13/29/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="系统编程进程进程的基本元素　　1. 程序执行代码　　 2.与代码关联的数据集进程控制块　　1.标识符　　2.状态 　　3.优先级　　4.程序计数器　　5.内存指针  　6.上下文数据　　7.I/O状态数据 　 8.记账信息">
+<meta property="og:description" content="线程：线程同步　　临界区：指访问某一共享资源的代码片段，并且这段代码的执行应为原子操作，即同时访问同一共享资源的其他进程不应中断该片段的执行。　　互斥量：（mutex,即mutual exclusion的缩写）来确保同时仅有一个线程可以访问某项共享资源，可以使用互斥量来保证对任意共享资源的原子访问。　　互斥量两种状态：已锁定(locked)和未锁定(unlocked)。任何时候，至多只有一个线程可">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-12T10:49:48.000Z">
+<meta property="og:updated_time" content="2018-08-13T13:05:12.786Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="进程初步">
-<meta name="twitter:description" content="系统编程进程进程的基本元素　　1. 程序执行代码　　 2.与代码关联的数据集进程控制块　　1.标识符　　2.状态 　　3.优先级　　4.程序计数器　　5.内存指针  　6.上下文数据　　7.I/O状态数据 　 8.记账信息">
+<meta name="twitter:title" content="线程同步">
+<meta name="twitter:description" content="线程：线程同步　　临界区：指访问某一共享资源的代码片段，并且这段代码的执行应为原子操作，即同时访问同一共享资源的其他进程不应中断该片段的执行。　　互斥量：（mutex,即mutual exclusion的缩写）来确保同时仅有一个线程可以访问某项共享资源，可以使用互斥量来保证对任意共享资源的原子访问。　　互斥量两种状态：已锁定(locked)和未锁定(unlocked)。任何时候，至多只有一个线程可">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/06/01/2/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/13/29/"/>
 
 
 
 
 
-  <title>进程初步 | A new cpp learner</title>
+  <title>线程同步 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/06/01/2/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/13/29/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">进程初步</h1>
+          <h1 class="post-title" itemprop="name headline">线程同步</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-01T18:23:05+08:00">
-                2018-06-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-13T13:04:10+08:00">
+                2018-08-13
               </time>
             
 
@@ -300,16 +300,42 @@
       
 
       
-        <h1 id="系统编程"><a href="#系统编程" class="headerlink" title="系统编程"></a>系统编程<1></1></h1><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p><strong>进程的基本元素</strong><br>　　1. 程序执行代码　　 2.与代码关联的数据集<br><strong>进程控制块</strong><br>　　1.标识符　　2.状态 　　3.优先级　　4.程序计数器　　5.内存指针  　6.上下文数据　　7.I/O状态数据 　 8.记账信息<br><a id="more"></a><br><strong>linux单根目录文件类型</strong><br>　　1.目录：内容采用表格形式，数据项是”文件名+引用”<br>　　2.符号链接：符号链接是给文件起了一个别号，内容是“文件名+指针”<br>　　3.文件名：包括除“\“和空字符外的所有字符，如包含特殊字符的文件名，尽量使用”\“进行转义，避免使用”-“作为文件名的起始字符<br>　　4.路径名：路径名是由一系列文件名组成的字符串，彼此以”/“间隔，首字符可以是”/“（非强制），有时将最后一个”/“字符之前的部分成为路径名的目录部分，将之后的部分成为路径名的基础部分。  </p>
-<h5 id="当前工作目录"><a href="#当前工作目录" class="headerlink" title="当前工作目录"></a>当前工作目录</h5><p>定义：每个进程都有一个当前工作目录，是进程解释相对路径名的参照点。<br><strong>linux的文件I/O模型</strong><br>　　unix文件系统最为显著的特性之一就是I/O通用性的概念，也就是说，同一套系统调用所执行的I/O操作，可使用于所有文件类型，包括设备文件在内，应用程序发起的I/O请求，内核会将其转化为相应的文件系统操作，或者设备驱动程序操作，以此来执行对目标文件和设备的I/O操作。<br>　　就本质而言，内核只提供一种文件类型：字节流序列，在处理磁盘文件，磁盘或磁带设备时，可通过lseek()系统调用随机访问。<br><strong>进程的标识符</strong><br>　　1.真实ID和组ID:标识进程所属的用户和组，新进程从父进程继承这些ID，登录shell则从系统密码文件的相应字段中获取器真实ID和组ID。<br>　　2.有效ID和组ID:进程在访问受保护资源（如文件和进程间通信对象）时，会使用这两个ID（并结合附属组ID)确定访问权限。一般情况下，进程组的有效ID和其真实ID相同，改变进程有效ID是一种机制，可以使进程具有其他用户和组的权限。<br>　　3.附属组ID:标识进程所属的额外组，子进程从父进程继承附属组iD,登录shell则从系统组文件中获取器附属组ID。  </p>
-<p><strong>特权进程和一般用户进程</strong><br>　　特权进程是指有效ID为0的进程，通常内核所加的权限对此类进程无效；<br>　　一般用户进程（无特权）进程是指有效ID非0值，且遵守由内核所加的权限规则。  </p>
-<h3 id="超级进程init"><a href="#超级进程init" class="headerlink" title="超级进程init"></a>超级进程init</h3><p>　　系统引导时，内核会创建一个init的进程，进程号总为1，且总是以超级用户权限运行，只有关闭系统才能终止该进程，系统中所有进程都是直接由init进程直接或者间接创建。  
-　　 </p>
-<h3 id="守护进程"><a href="#守护进程" class="headerlink" title="守护进程"></a>守护进程</h3><p>　　守护进程具有以下特征：<br>　　1.长生不老。守护进程通常是在系统引导时启动，直到系统关闭都一直存在。<br>　　2.守护进程在后台运行，且无法控制终端供其读取或者写入数据。  </p>
-<h3 id="资源限制"><a href="#资源限制" class="headerlink" title="资源限制"></a>资源限制</h3><p>　　每个进程打开资源时，会使用系统调用setrlimit()，进程会为自己使用的资源设置一个上限，软限制限制了进程可以消耗的资源总量，硬限制是软限制的调整上限，非特权进程在针对特定资源调整软限制值时，可将其设置为0到相应硬限制值之间的任意值。<br>　　由fork()创建的新进程，会继承其父进程对资源限制的设置。  </p>
-<h3 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h3><p>　　调用系统函数mmap()的进程，会在其虚拟地址空间创建一个新的内存映射。<br>　　文件映射：将文件的部分区域映射调入进程的虚拟内存，映射一旦完成，对文件映射内容的访问则转化为对相应内存区域的字节操作，映射页面按需从内存中自动加载。<br>　　匿名映射：其映射页面的内容会被初始化为0。  </p>
-<h3 id="linux进程通信机制（IPC）"><a href="#linux进程通信机制（IPC）" class="headerlink" title="linux进程通信机制（IPC）"></a>linux进程通信机制（IPC）</h3><p>　　1.信号<br>　　2.管道<br>　　3.套接字<br>　　4.文件锁定<br>　　5.消息队列<br>　　6.信号量：用于同步进程动作<br>　　7.共享内存：允许两个以及两个以上的进程共享一块内存，当某进程改变了共享内存的内容时，其他所有进程都会了解到这一边哈。  </p>
-<h3 id="proc文件系统"><a href="#proc文件系统" class="headerlink" title="/proc文件系统"></a>/proc文件系统</h3><p>　　/proc是一种虚拟文件系统，以文件系统目录和文件形式，提供一个指向内核数据结构的接口，可以通过一组/proc/PID形式命名的目录查看系统中运行各进程的相关信息。</p>
+        <h4 id="线程：线程同步"><a href="#线程：线程同步" class="headerlink" title="线程：线程同步"></a>线程：线程同步</h4><p>　　临界区：指访问某一共享资源的代码片段，并且这段代码的执行应为原子操作，即同时访问同一共享资源的其他进程不应中断该片段的执行。<br>　　互斥量：（mutex,即mutual exclusion的缩写）来确保同时仅有一个线程可以访问某项共享资源，可以使用互斥量来保证对任意共享资源的原子访问。<br>　　互斥量两种状态：已锁定(locked)和未锁定(unlocked)。任何时候，至多只有一个线程可以锁定该互斥量。锁定的线程称为所有者，只有所有者可以解锁，也称释放，加锁称为获取(acquire)。<br>　　一般情况下，对每一共享资源会使用不同的互斥量，每一线程在访问同一资源时会采用以下协议：</p>
+<ul>
+<li>针对共享资源锁定互斥量。</li>
+<li>访问互斥量</li>
+<li>对共享资源解锁</li>
+</ul>
+<p>　　互斥锁只是一种建议，线程可以不使用互斥锁访问相应的共享变量。</p>
+<h5 id="静态分配的互斥量"><a href="#静态分配的互斥量" class="headerlink" title="静态分配的互斥量"></a>静态分配的互斥量</h5><p>　　互斥量既可以像静态变量那样分配，也可以通过malloc()在一块内存中分配进行动态创建。<br>　　初始化：<br>　　  pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER（互斥量时pthread_mutex_t类型的变量）</p>
+<h5 id="加锁和解锁"><a href="#加锁和解锁" class="headerlink" title="加锁和解锁"></a>加锁和解锁</h5><p>　　　初始化后，互斥量处于未锁定状态。以下时加锁和解锁函数。</p>
+<pre><code>#include&lt;pthread.h&gt;
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+</code></pre><p>　　如果调用pthread_mutex_lock()时其他线程已经锁定了该互斥量，那么pthread_mutex_lock()将会一直阻塞，直至该互斥量被解锁。<br>　　如果调用pthread_mutex_lock()的线程事前已经将互斥量锁定，那么要么线程阻塞，陷入死锁；要么线程调用失败。默认情况下陷入死锁。</p>
+<h5 id="互斥量的死锁"><a href="#互斥量的死锁" class="headerlink" title="互斥量的死锁"></a>互斥量的死锁</h5><p>　　避免死锁，最简单的定义互斥量的层级关系：当多个线程对一组互斥量进行操作时，总是应该以相同的顺序对该组互斥量进行锁定。
+　　
+　　</p>
+<h5 id="动态初始化"><a href="#动态初始化" class="headerlink" title="动态初始化"></a>动态初始化</h5><pre><code>#include &lt;pthread.h&gt;
+int pthread_mutex_init(pthread_mutex_t *mutex,const pthread_mutexattr_t *attr);
+</code></pre><p>　　参数mutex指定函数初始化操作的目标互斥量。参数attr是指向设定互斥量对象属性的指针，如果attr设置为NULL，则该互斥量的各属性会取默认值。<br>　　<br>　　以下情况下，必须使用pthread_mutex_init()：</p>
+<ul>
+<li>动态分配于堆中的互斥量，如动态链表。</li>
+<li>互斥量是在栈中分配的自动变量。</li>
+<li>初始化经由静态分配，且不适用默认属性的互斥量。</li>
+</ul>
+<p>　　对于不在需要自动或者动态分配的互斥量，使用pthread_mutex_destory()进行销毁。<br>　　只有当互斥量处于未锁定状态，且后续无任何线程企图锁定它时，将其销毁才是最安全的，如果互斥量驻留于一个动态分配的内存区域，应在free该区域前将其销毁。对自动分配的互斥量，应在宿主函数返回前将其销毁。销毁后的互斥量可以调用pthread_mutex_init()将其重新初始化。</p>
+<h5 id="通知状态的改变：条件变量"><a href="#通知状态的改变：条件变量" class="headerlink" title="通知状态的改变：条件变量"></a>通知状态的改变：条件变量</h5><p>　　条件变量允许线程就一个共享变量的状态变化通知其他线程，并让其他线程等待这一个通知。<br>　　条件变量分两种：静态条件变量和动态条件变量<br>　　静态条件变量的初始化：pthread_cond_t = PTHREAD_COND_INITIALIZER </p>
+<h5 id="通知和等待条件变量"><a href="#通知和等待条件变量" class="headerlink" title="通知和等待条件变量"></a>通知和等待条件变量</h5><p>　　互斥量和条件变量关系：<br>　　　　1.线程在准备检查共享变量状态时锁定互斥量<br>　　　　2.检查共享变量的状态。<br>　　　　3.如共享变量未处于预期状态，线程陷入休眠并解锁互斥量(属于原子操作)。<br>　　　　4.线程因为条件变量的通知而再次唤醒时，再次加锁。
+　</p>
+<h5 id="经由动态分配的条件变量"><a href="#经由动态分配的条件变量" class="headerlink" title="经由动态分配的条件变量"></a>经由动态分配的条件变量</h5><p>　　对自动或动态分配的条件变量进行初始化时，或是未采用默认属性而经由静态分配的条件变量进行初始化时，使用函数pthread_cond_init()对条件变量进行初始化。</p>
+<pre><code>#include &lt;pthread.h&gt;
+int pthread_cond_init(pthread_cond_t *cond,const pthread_condattr_t *attr);
+</code></pre><p>　　<br>　　对于不在需要自动或者动态分配的互斥量，使用pthread_cond_destory()进行销毁。<br>　　只有当互斥量处于未锁定状态，且后续无任何线程企图锁定它时，将其销毁才是最安全的，如果互斥量驻留于一个动态分配的内存区域，应在free该区域前将其销毁。对自动分配的互斥量，应在宿主函数返回前将其销毁。销毁后的互斥量可以调用pthread_cond_init()将其重新初始化。
+　　　　
+　　
+　　
+　　</p>
 
       
     </div>
@@ -334,8 +360,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/31/1/" rel="next" title="C++泛型思想">
-                <i class="fa fa-chevron-left"></i> C++泛型思想
+              <a href="/2018/08/12/28/" rel="next" title="进程创建和程序执行深入">
+                <i class="fa fa-chevron-left"></i> 进程创建和程序执行深入
               </a>
             
           </div>
@@ -343,10 +369,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/02/3/" rel="prev" title="系统调用">
-                系统调用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -464,7 +486,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系统编程"><span class="nav-number">1.</span> <span class="nav-text">系统编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">1.0.1.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#当前工作目录"><span class="nav-number">1.0.1.0.1.</span> <span class="nav-text">当前工作目录</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#超级进程init"><span class="nav-number">1.0.2.</span> <span class="nav-text">超级进程init</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#守护进程"><span class="nav-number">1.0.3.</span> <span class="nav-text">守护进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源限制"><span class="nav-number">1.0.4.</span> <span class="nav-text">资源限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存映射"><span class="nav-number">1.0.5.</span> <span class="nav-text">内存映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux进程通信机制（IPC）"><span class="nav-number">1.0.6.</span> <span class="nav-text">linux进程通信机制（IPC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proc文件系统"><span class="nav-number">1.0.7.</span> <span class="nav-text">/proc文件系统</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程：线程同步"><span class="nav-number">1.</span> <span class="nav-text">线程：线程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态分配的互斥量"><span class="nav-number">1.1.</span> <span class="nav-text">静态分配的互斥量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#加锁和解锁"><span class="nav-number">1.2.</span> <span class="nav-text">加锁和解锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#互斥量的死锁"><span class="nav-number">1.3.</span> <span class="nav-text">互斥量的死锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#动态初始化"><span class="nav-number">1.4.</span> <span class="nav-text">动态初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通知状态的改变：条件变量"><span class="nav-number">1.5.</span> <span class="nav-text">通知状态的改变：条件变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通知和等待条件变量"><span class="nav-number">1.6.</span> <span class="nav-text">通知和等待条件变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#经由动态分配的条件变量"><span class="nav-number">1.7.</span> <span class="nav-text">经由动态分配的条件变量</span></a></li></ol></li></ol></div>
             
 
           </div>
