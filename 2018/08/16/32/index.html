@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线程相关细节　　线程调度模型分为三种，三种模型的差异体现在线程如何与内核调度实体相映射。　　 1.多对一(M：1)实现(用户级线程)　　 　在M:1线程实现中，关于线程创建，调度以及同步的的所有细节都是由进程内的用户空间的线程库来处理的，对于进程中的存在的多个线程，内核并不知晓。　　 　M:1的优点在于，许多线程操作，例如线程的创建与终止，线程的上下文切换，互斥量以及条件变量操作很快，无需切换到内">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程相关细节">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/16/32/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="线程相关细节　　线程调度模型分为三种，三种模型的差异体现在线程如何与内核调度实体相映射。　　 1.多对一(M：1)实现(用户级线程)　　 　在M:1线程实现中，关于线程创建，调度以及同步的的所有细节都是由进程内的用户空间的线程库来处理的，对于进程中的存在的多个线程，内核并不知晓。　　 　M:1的优点在于，许多线程操作，例如线程的创建与终止，线程的上下文切换，互斥量以及条件变量操作很快，无需切换到内">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-16T04:30:38.407Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线程相关细节">
+<meta name="twitter:description" content="线程相关细节　　线程调度模型分为三种，三种模型的差异体现在线程如何与内核调度实体相映射。　　 1.多对一(M：1)实现(用户级线程)　　 　在M:1线程实现中，关于线程创建，调度以及同步的的所有细节都是由进程内的用户空间的线程库来处理的，对于进程中的存在的多个线程，内核并不知晓。　　 　M:1的优点在于，许多线程操作，例如线程的创建与终止，线程的上下文切换，互斥量以及条件变量操作很快，无需切换到内">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/16/32/"/>
+
+
+
+
+
+  <title>线程相关细节 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/16/32/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">线程相关细节</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-16T12:29:26+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="线程相关细节"><a href="#线程相关细节" class="headerlink" title="线程相关细节"></a>线程相关细节</h4><p>　　线程调度模型分为三种，三种模型的差异体现在线程如何与内核调度实体相映射。<br>　　 1.多对一(M：1)实现(用户级线程)<br>　　 　在M:1线程实现中，关于线程创建，调度以及同步的的所有细节都是由进程内的用户空间的线程库来处理的，对于进程中的存在的多个线程，内核并不知晓。<br>　　 　M:1的优点在于，许多线程操作，例如线程的创建与终止，线程的上下文切换，互斥量以及条件变量操作很快，无需切换到内核模式，此外线程库也无需内核支持，因此在系统间的移植相对容易一些。<br>　　 　M:1的缺点在于：当线程发起一些系统调用时，控制会由用户空间的线程库转交给内核，这就意味着如果read()遭到阻塞，那么所有的线程都会阻塞。<br>    2.一对一(1:1)实现（内核级线程）<br>      在1:1线程实现中，每个线程映射一个单独的KSE，内核分别对每个线程做调度处理，线程的同步操作由内核实现。<br>      1:1实现，遭阻塞的系统调用不会导致进程的所有线程被阻塞，在多处理其平台上，内核可以将进程中的多个线程调度到不同的CPU上。<br>      因为切换到内核模式，诸如进程创建，上下文切换，以及同步操作就要慢一些，每个线程维护一个KSE也要开销，如果应用程序包含大量线程，内核调度器负担较大，降低系统的整体性能。<br>      1:1实现通常情况下还是胜于M:1实现，LinuxThreads和NPTL使用1：1模型<br>    3.M:N两级模型<br>      结合以上两种模型的优点，避免两者的缺点。<br>      M:N模型中，每个进程都可拥有多个与之相关的KSE，并且也可以将多个线程映射到一个KSE。<br>      M:N模型过于复杂，线程调度任务由内核和用户空间的线程库共同承担，二者之间要进行分工协作和信息交换，管理较为麻烦。</p>
+<h4 id="信号高级特性"><a href="#信号高级特性" class="headerlink" title="信号高级特性"></a>信号高级特性</h4><h5 id="核心转储文件"><a href="#核心转储文件" class="headerlink" title="核心转储文件"></a>核心转储文件</h5><p>　　特定信号会引发进程创建一个核心转储文件并停止运行，核心转储就是内核进程终止时内核映像的一个文件，将该该内核映像加载到调试器中，即可查明信号到达时程序代码和数据的状态 。<br>　　内核转储文件位于进程的工作目录中，命名为core，这是核心转储文件的默认位置和名称。<br>　　不产生核心转储文件的情况：<br>　　　1.进程对于核心转储文件没有写权限，进程对于将要创建的核心转储文件的的所在目录没有写权限，或者存在同名不可写文件(如非常规文件，目录或符号连接)。<br>　　　2.存在一个同名，可写的普通文件，但指向该文件的硬链接数超过一个。<br>　　　3.创建核心转储文件的目录不存在，将进程核心转储文件的大小设置为0。<br>　　　4.将进程核心转储文件大小设置为0.<br>　　　5.将进程可创建文件大小这一资源设置为0.<br>　　　6.对进程正在执行的二进制可执行文件没有写权限，这样就防止了用户借助于核心转储文件来获取无法获取的程序代码。<br>　　　7.以只读方式挂在当前工作目录所在的文件系统，或者文件系统空间已满，或者i-node资源耗尽。<br>　　　8.set-user-ID程序由非文件属主或属组执行时，不会产生核心转储文件。<br>　　如果一个进程处于终止状态，那么一个SIGCONT信号的到来总是会促使其恢复运行，即使是该进程正在阻塞或者忽略SIGCONT信号。<br>　　每当进程收到SIGCONT信号，会将处于等待状态的信号丢弃。<br>　　任何停止型号传递给了进程，那么进程也将自动丢弃任何处于等待状态的SIGCONT信号。</p>
+<h5 id="硬件产生的信号"><a href="#硬件产生的信号" class="headerlink" title="硬件产生的信号"></a>硬件产生的信号</h5><p>　　硬件异常可以产生SIGBUS，SIGFPE，SIGILL，SIGSEGV信号，调用kill()发送此类信号是另一类途径，但较为少见。在硬件异常的情况下，如果进程从此类信号的处理器函数中返回，或是进程忽略或者阻塞了此类信号，那么进程的行为未定义。<br>　　处理硬件产生信号的方法有二：接受信号的默认行为(进程终止);编写不会正常返回的处理器函数(防止因为正常返回陷入无限循环)；调用_exit()以终止进程；调用setlongjmp()确保将控制传回到程序中(产生信号的指令为止之外)的某个位置。
+　　</p>
+<h5 id="信号的同步生成和异步生成"><a href="#信号的同步生成和异步生成" class="headerlink" title="信号的同步生成和异步生成"></a>信号的同步生成和异步生成</h5><p>　　异步生成：引发信号产生的事件，其发生与进程的执行无关。<br>　　同步生成：信号的产生是由进程本身产生的。同步是针对信号产生方式的描述，并不是对信号本身，例如kill()既可以由进程本身向自身发送，也可以由其他进程使用kill()来发送信号。</p>
+<h5 id="使用掩码来等待信号-sigsuspend"><a href="#使用掩码来等待信号-sigsuspend" class="headerlink" title="使用掩码来等待信号:sigsuspend()"></a>使用掩码来等待信号:sigsuspend()</h5><p>　　sigsupend()系统调用将解除信号阻塞和挂起进程这两个操作封装成一个原子操作。</p>
+<pre><code>#include &lt;signal.h&gt;
+int sigsuspend(const sigset_t *mast);
+</code></pre><p>　　sigsupend()系统调用将mask指向的信号集来替换进程的信号掩码，然后挂起进程的执行，直到捕获该信号，并从信号处理器中返回。一旦信号处理器返回，sigsupend()系统调用将进程的信号掩码恢复为调用之前的值。这样可以避免在反复等待信号的条件下发生竞态条件，若sigsupend()因信号的传递而终端，则返回-1，并将errno置为EINTR，如果mask指向的地址无效，则sigsuspend()指调用无效，并将errno置位EFAULT。
+　　</p>
+<h5 id="以同步方式等待信号"><a href="#以同步方式等待信号" class="headerlink" title="以同步方式等待信号"></a>以同步方式等待信号</h5><p>　　</p>
+<pre><code>#include &lt;signal.h&gt;
+int sigwaitinfo(const sigset_t *set,siginfo_t *info);
+</code></pre><p>　　sigwaitinfo()系统调用会挂起系统的执行，直至set指向信号集中的某一个信号到达，如果调用sigwaitinfo()时，set中的某一信号已经处于等待状态，那么sigwaitinfo()将立即返回。传递来的信号就此从信号的等待信号序列中移除，并将返回信号编号作为函数结果。<br>　　sigwaitinfo()所接受的信号传递顺序与排队特性与信号处理器所捕获的信号相同。即不对标准信号而对实时信号进行排队处理，并且对实时信号的传递遵循低编号优先的原则。<br>　　sigwaitinfo()来等待信号要比信号处理器加sigsupend()组合要稍快一点。</p>
+<pre><code>#include &lt;signal.h&gt;
+int sigtimedwait(const sigset_t *set,siginfo_t *info,const struct timespec *timeout);
+</code></pre><p>　　sigtimedwait()和sigwaitinfo()基本相同，唯一的区别在于sigtimedwait()允许指定等待时限。timespec结构所属字段，指定了函数等待的最大时间，如果调用超时又没有收到信号，sigtimedwait()将导致调用失败，并将errno置为EAGAIN。<br>　　如果将timeout参数指定为NULL，两个函数等同。</p>
+<h5 id="利用文件描述符来获取信号"><a href="#利用文件描述符来获取信号" class="headerlink" title="利用文件描述符来获取信号"></a>利用文件描述符来获取信号</h5><p>　　signalfd()系统调用:利用该调用可以创建一个特殊的文件描述符，发往调用者的信号都可以从这个文件描述符中获取。(lINUX都有的系统调用)</p>
+<pre><code>#include &lt;sys/signalfd.h&gt;
+int signalfd(int fd,const sigset_t *mask,int flags);
+</code></pre><p>　　mask参数是一个信号集，指定了有意通过signalfd文件描述符来读取的信号，如同sigwaitinfo()一样，通常也需要使用sigprocmask()阻塞mask中的所有信号，以确保在有机会读取这些信号之前，不会按照默认处置读取这些信号。<br>　　如果指定fd = -1,那么signafld()将会创建一个新的文件描述符，用于读取mask中的信号，否则，将修改与fd相关的mask值，且该fd一定是之前调用signafld()的一次调用形成的。
+　　
+　　</p>
+<p>　　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/15/31/" rel="next" title="线程取消">
+                <i class="fa fa-chevron-left"></i> 线程取消
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程相关细节"><span class="nav-number">1.</span> <span class="nav-text">线程相关细节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号高级特性"><span class="nav-number">2.</span> <span class="nav-text">信号高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#核心转储文件"><span class="nav-number">2.1.</span> <span class="nav-text">核心转储文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#硬件产生的信号"><span class="nav-number">2.2.</span> <span class="nav-text">硬件产生的信号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#信号的同步生成和异步生成"><span class="nav-number">2.3.</span> <span class="nav-text">信号的同步生成和异步生成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用掩码来等待信号-sigsuspend"><span class="nav-number">2.4.</span> <span class="nav-text">使用掩码来等待信号:sigsuspend()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#以同步方式等待信号"><span class="nav-number">2.5.</span> <span class="nav-text">以同步方式等待信号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#利用文件描述符来获取信号"><span class="nav-number">2.6.</span> <span class="nav-text">利用文件描述符来获取信号</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
