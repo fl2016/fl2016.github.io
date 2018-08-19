@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进程组 会话和作业控制　　进程组是由一个或者多个共享进程组标识符的进程组成，进程组ID是一个数字，其类型和进程ID一样，进程组拥有的第一个进程称为首进程，也是创建该组的进程，该进程组ID就是首进程ID，进程的子进程会继承父进程的进程组ID。　　进程组的生命周期：开始时间是首进程创建组的时间，结束时间是最后一个成员退出进程组的时间，一个进程可能会因为终止而退出进程组，或者因为加入另一个进程组而退出进">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程组 会话和作业控制">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/19/36/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="进程组 会话和作业控制　　进程组是由一个或者多个共享进程组标识符的进程组成，进程组ID是一个数字，其类型和进程ID一样，进程组拥有的第一个进程称为首进程，也是创建该组的进程，该进程组ID就是首进程ID，进程的子进程会继承父进程的进程组ID。　　进程组的生命周期：开始时间是首进程创建组的时间，结束时间是最后一个成员退出进程组的时间，一个进程可能会因为终止而退出进程组，或者因为加入另一个进程组而退出进">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T12:51:52.541Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程组 会话和作业控制">
+<meta name="twitter:description" content="进程组 会话和作业控制　　进程组是由一个或者多个共享进程组标识符的进程组成，进程组ID是一个数字，其类型和进程ID一样，进程组拥有的第一个进程称为首进程，也是创建该组的进程，该进程组ID就是首进程ID，进程的子进程会继承父进程的进程组ID。　　进程组的生命周期：开始时间是首进程创建组的时间，结束时间是最后一个成员退出进程组的时间，一个进程可能会因为终止而退出进程组，或者因为加入另一个进程组而退出进">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/19/36/"/>
+
+
+
+
+
+  <title>进程组 会话和作业控制 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/19/36/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">进程组 会话和作业控制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-19T20:50:44+08:00">
+                2018-08-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="进程组-会话和作业控制"><a href="#进程组-会话和作业控制" class="headerlink" title="进程组 会话和作业控制"></a>进程组 会话和作业控制</h5><p>　　进程组是由一个或者多个共享进程组标识符的进程组成，进程组ID是一个数字，其类型和进程ID一样，进程组拥有的第一个进程称为首进程，也是创建该组的进程，该进程组ID就是首进程ID，进程的子进程会继承父进程的进程组ID。<br>　　进程组的生命周期：开始时间是首进程创建组的时间，结束时间是最后一个成员退出进程组的时间，一个进程可能会因为终止而退出进程组，或者因为加入另一个进程组而退出进程组，进程组首进程无需是最后一个退出进程组的进程。<br>　　会话是一组进程组的集合，会话的首进程是创建该会话的进程，其进程ID会成为会话ID，新进程会继承父进程的会话ID。<br>　　在任何一个时刻，会话中的任何一个进程组会成为前台进程组，其他进程组称为后台进程组。只有前台进程组中的进程才能从控制终端中读取输入，当用户从控制终端中输入一个信号生成终端字符之后，该信号会被发送到前台进程组的所有成员。<br>　　控制终端的连接建立起来之后，会话的首进程会成为该终端的控制进程，称为控制进程的标志是当断开与终端的连接时内核会向该进程发送一个SIGHUP信号。<br>　　<br>　　登录shell是会话首进程和控制终端的控制进程，也是其自身进程组的唯一成员。<br>　　当命令或管道连接的一组命令以&amp;符号结束时会在后台进程组中运行这些命令，否则，会在前台进程组中运行这些命令。在登录会话中创建的所有进程都会成为该会话的一部分。(在窗口环境中，控制终端就是一个伪终端，每个终端窗口都有一个独立的会话，窗口的启动shell是会话的首进程和终端的控制进程。)
+　　</p>
+<h5 id="进程组"><a href="#进程组" class="headerlink" title="进程组"></a>进程组</h5><p>　　每个进程都有一个数字表示的进程组ID，表示该进程所属的进程组，新进程会继承其父进程的进程组ID。</p>
+<pre><code>#include &lt;unistd.h&gt;
+pid_t getpgrp(void)；
+</code></pre><p>　　如果getpgrp()用于获取一个进程的进程组ID。</p>
+<pre><code>#include &lt;unistd.h&gt;
+int setpgid(pid_t pid,pid_t pgid);
+</code></pre><p>　　setpgid()函数将进程的ID为pid的进程组ID修改为参数pgid。<br>　　如果pid参数值设为0，那么调用进程的额进程组ID就会被改变，如果pgid的值设置为0，那么ID为pid的进程的进程组ID就会被设置成pid的值。以下的调用是等价的。</p>
+<pre><code>setpgid(0,0);
+setpgid(getpid(),0);
+setpgid(getpid(),getpid());
+</code></pre><p>　　如果pid和pgid参数指定了同一个进程(即如果pgid = 0或与ID为pid的进程的进程ID匹配)，那么就会创建一个新的进程组，并且指定的进程会成为这个新组的首进程。(即进程组ID和这个进程的ID相同)<br>　　<br>　　使用setgpid()的限制：<br>　　　　1.pid参数可以仅指定调用进程或者其中一个子进程，违反这条规则见导致ESRCH错误。<br>　　　　2.在组之间移动进程时，调用进程，由pid指定的进程以及目标进程组必须属于同一个会话。<br>　　　　3.pid指定的进程不能是会话首进程。<br>　　　　4.一个进程在其子进程已经执行exec()之后就无法修改该子进程的进程组ID.
+　</p>
+<h5 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h5><p>　　获得指定进程的会话ID用setsid()系统调用。</p>
+<pre><code>#include &lt;unistd.h&gt;
+pid_t getsid(pid_t sid);
+如果pid参数为0，返回调用进程的会话ID。一个系统中，只有调用进程和pid指定的进程同属于一个会话时才会使用getsid()来获取进程的会话ID。
+</code></pre><p>　　如果调用进程不是进程组的首进程，那么setsid()会创建一个新会话。</p>
+<pre><code>#include &lt;unistd.h&gt;
+pid_t setsid(void);
+</code></pre><p>　　创建步骤：<br>　　　　1.调用进程会成为新会话的首进程和该会话中新进程组的首进程，调用进程的进程组ID和会话ID会被设置成为该进程的进程ID。<br>　　　　2.调用进程没有控制终端，所有之前到控制终端的连接都会被断开。如果调用进程是一个首进程，将引发EPERM报错。</p>
+<h5 id="控制终端与控制进程"><a href="#控制终端与控制进程" class="headerlink" title="控制终端与控制进程"></a>控制终端与控制进程</h5><p>　　一个会话中的所有进程可能会拥有一个控制终端，会话被创建出来时候是没有终端的，当会话首进程首次打开某个会话的控制终端的终端时会建立控制终端，除非在调用open()时指定O_NOCTTY标记。一个终端至多只能成为一个会话的控制终端。<br>　　如果一个进程拥有一个控制终端，那么打开特殊文件/dev/tty就能够获得该中的文件描述符。<br>　　使用ioctl(fd,TIOCNOTTY)操作能够删除进程和文件描述符fd指定的控制终端之间的关联关系。在调用这个函数之后再打开/dev/tty文件的话就会失败。<br>　　1.会话的所有进程将会失去与控制终端的关联关系。<br>　　2.内核会向前台控制进程组的所有成员发送一个SIGHUP信号和一个SIGCONT信号来通知他们控制终端的丢失。<br>　　char <em>ctermid(char </em>ttyname)；函数用于返回表示控制终端的路径名。有两种方式返回控制终端的路径名，通过函数结果和通过ttyname指向的缓冲区。</p>
+<h5 id="前台和后台进程组"><a href="#前台和后台进程组" class="headerlink" title="前台和后台进程组"></a>前台和后台进程组</h5><pre><code>#include &lt;unistd.h&gt;
+pid_t tcgetpgrp(int fd);
+int tcsetpgrp(int fd,pid_t pgid);
+</code></pre><p>　　tcgetpgrp()函数返回文件描述符fd指定的终端的前台进程组的进程组ID。该终端必须时调用进程的控制终端。<br>　　tcsetpgrp()函数修改一个终端的前台进程组，如果调用进程拥有一个控制终端，那么fd引用的就是那个终端，接着tcsetpgrp()会将终端的前台进程组设置为pgid参数指定的进程组，该参数必须与调用进程所属的会话中的一个一个进程的进程组ID匹配。</p>
+<h5 id="SIGHUP信号"><a href="#SIGHUP信号" class="headerlink" title="SIGHUP信号"></a>SIGHUP信号</h5><p>　　当一个控制进程终于失去其终端连接之后，内核会向其发送一个SIGHUP信号来通知这个事实。<br>　　SIGHUP信号的默认处理方式就是终止进程。
+　　</p>
+<h5 id="在shell中处理SIGHUP信号"><a href="#在shell中处理SIGHUP信号" class="headerlink" title="在shell中处理SIGHUP信号"></a>在shell中处理SIGHUP信号</h5><p>　　shell不会向不是由它创建的进程组发送SIGHUP信号。</p>
+<h5 id="SIGHUP和控制进程的终止"><a href="#SIGHUP和控制进程的终止" class="headerlink" title="SIGHUP和控制进程的终止"></a>SIGHUP和控制进程的终止</h5><p>　　</p>
+<h5 id="作业控制"><a href="#作业控制" class="headerlink" title="作业控制"></a>作业控制</h5><p>　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/19/35/" rel="next" title="进程优先级">
+                <i class="fa fa-chevron-left"></i> 进程优先级
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程组-会话和作业控制"><span class="nav-number">1.</span> <span class="nav-text">进程组 会话和作业控制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#进程组"><span class="nav-number">2.</span> <span class="nav-text">进程组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#会话"><span class="nav-number">3.</span> <span class="nav-text">会话</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#控制终端与控制进程"><span class="nav-number">4.</span> <span class="nav-text">控制终端与控制进程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#前台和后台进程组"><span class="nav-number">5.</span> <span class="nav-text">前台和后台进程组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SIGHUP信号"><span class="nav-number">6.</span> <span class="nav-text">SIGHUP信号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在shell中处理SIGHUP信号"><span class="nav-number">7.</span> <span class="nav-text">在shell中处理SIGHUP信号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SIGHUP和控制进程的终止"><span class="nav-number">8.</span> <span class="nav-text">SIGHUP和控制进程的终止</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#作业控制"><span class="nav-number">9.</span> <span class="nav-text">作业控制</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

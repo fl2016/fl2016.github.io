@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进程优先级和调度　　每个进程拥有一个nice值，其取值范围是-20(高优先级)~19(低优先级)，在传统的UNIX实现中，只有特权级进程才赋值给自己或其他进程一个高的优先级，非特权进程只能降低自己的优先级。　　使用fork()创建子进程会集成nice值，并且该值会在exec()调用中得到保持。 获取和修改优先级#include &amp;lt;sys/resource.h&amp;gt; int getprior">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程优先级">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/19/35/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="进程优先级和调度　　每个进程拥有一个nice值，其取值范围是-20(高优先级)~19(低优先级)，在传统的UNIX实现中，只有特权级进程才赋值给自己或其他进程一个高的优先级，非特权进程只能降低自己的优先级。　　使用fork()创建子进程会集成nice值，并且该值会在exec()调用中得到保持。 获取和修改优先级#include &amp;lt;sys/resource.h&amp;gt; int getprior">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T12:50:27.168Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程优先级">
+<meta name="twitter:description" content="进程优先级和调度　　每个进程拥有一个nice值，其取值范围是-20(高优先级)~19(低优先级)，在传统的UNIX实现中，只有特权级进程才赋值给自己或其他进程一个高的优先级，非特权进程只能降低自己的优先级。　　使用fork()创建子进程会集成nice值，并且该值会在exec()调用中得到保持。 获取和修改优先级#include &amp;lt;sys/resource.h&amp;gt; int getprior">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/19/35/"/>
+
+
+
+
+
+  <title>进程优先级 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/19/35/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">进程优先级</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-19T20:49:28+08:00">
+                2018-08-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="进程优先级和调度"><a href="#进程优先级和调度" class="headerlink" title="进程优先级和调度"></a>进程优先级和调度</h4><p>　　每个进程拥有一个nice值，其取值范围是-20(高优先级)~19(低优先级)，在传统的UNIX实现中，只有特权级进程才赋值给自己或其他进程一个高的优先级，非特权进程只能降低自己的优先级。<br>　　使用fork()创建子进程会集成nice值，并且该值会在exec()调用中得到保持。</p>
+<h5 id="获取和修改优先级"><a href="#获取和修改优先级" class="headerlink" title="获取和修改优先级"></a>获取和修改优先级</h5><pre><code>#include &lt;sys/resource.h&gt;
+int getpriority(int which,id_t who);
+int setpriority(int which,id_t who,int prio);
+</code></pre><p>　　which和who参数标识需要读取和修改优先级的进程。which决定who的解释方式，为以下参数值中的一个。</p>
+<ul>
+<li>PRIO_PROCESS 操作进程ID为who的进程，如果who为0，那么使用调用者进程ID。</li>
+<li>PRIO_PGRP 操作进程组ID为who的进程组的所有成员，如果who为0，那么使用调用者的进程组。</li>
+<li>PRIO_USER 操作所有真是用户ID为who的进程，如果who为0，那么使用调用者的真是用户ID。</li>
+</ul>
+<p>　　getpriority()系统调用返回由which和who指定的进程的nice值，如果多个进程符合指定的标准，那么将会返回优先级最高的进程的nice值。<br>　　setpriority()系统调用可以将指定的进程的nice值设置为prio，如果试图将设置为超出-12~19时会直接将nice值设置为边界值。</p>
+<h5 id="实时调度策略-SCHED-RR策略和SCHED-FIFO策略"><a href="#实时调度策略-SCHED-RR策略和SCHED-FIFO策略" class="headerlink" title="实时调度策略 SCHED_RR策略和SCHED_FIFO策略"></a>实时调度策略 SCHED_RR策略和SCHED_FIFO策略</h5><p>　　在SCHED_RR策略中，一个进程保持对CPU的控制直到以下条件之一得到满足：</p>
+<ul>
+<li>达到时间片的终点了</li>
+<li>自愿放弃CPU，可能是执行了一个阻塞式系统调用或者调用了sched_yield()系统调用。</li>
+<li>终止了</li>
+<li>被一个优先级更高的进程抢占了<br>　　当运行在SCHED_RR策略下的进程丢掉CPU之后会放在与其优先级相对应的队列的末尾，如果是被一个优先级更高的进程抢占了，被强占的进程其时间片直到其时间片的剩余部分被消耗完。<br>　　被一个优先级更高的进程抢占有以下集中情况：<br>　　　1.前被阻塞的高优先级进程解除阻塞了<br>　　　2.另一个进程的优先级被提高到高于当前运行进程的优先级<br>　　 3.当前运行的进程的优先级被降低到低于其他可运行的进程的优先级了<br>　　SCHED_RR策略与SCHED_OTHER策略最重要的差别就是SCHED_RR策略存在严格的优先级级别，高优先级的进程总是优先于低优先级的进程，而在SCHED_OTHER中，nice值仅仅为进程调度决策时提供了一个比较大的权重。</li>
+</ul>
+<h5 id="SCHED-FIFO策略"><a href="#SCHED-FIFO策略" class="headerlink" title="SCHED_FIFO策略"></a>SCHED_FIFO策略</h5><p>　　SCHED_FIFO策略和SCHED_RR策略相似，他们之间的最主要的差别就是SCHED_FIFO策略中不存在时间片，一旦一个SCHED_FIFO进程获得了CPU的控制权之后，他们会一直执行直到以下条件满足：<br>　　　　1.自动放弃CPU<br>　　　　2.终止了<br>　　　　3.被一个高优先级的进程抢占了<br>　　　　如果时自动放弃CPU，进程会被放置在与其优先级对应的队列的队尾。<br>　　　　如果是被一个高优先级的进程抢占了，高优先级的进程执行完毕后，被强占的进程会继续执行，进程会被放置在与其优先级对应的队列的队头。</p>
+<h5 id="实时优先级范围"><a href="#实时优先级范围" class="headerlink" title="实时优先级范围"></a>实时优先级范围</h5><p>　　以下两个系统调用返回一个调度策略的优先级范围。</p>
+<pre><code>#include &lt;sched.h&gt;
+int sched_get_priority_min(int policy);
+int sched_get_priority_max(int policy);
+</code></pre><p>　　在Linux上，这两个系统调用为SCHED_RR和SCHED_FIFO策略分别返回1-99的数字。<br>　　不同的UNIX之上，实时策略的范围是不同的，因此不能在程序中硬编码优先级，应该根据这两个函数的返回值来指定优先级。
+　　</p>
+<h5 id="修改和获取策略和优先级"><a href="#修改和获取策略和优先级" class="headerlink" title="修改和获取策略和优先级"></a>修改和获取策略和优先级</h5><p>　　sched_setscheduler()系统调用修改进程ID为pid的进程的调度策略和优先级，如果pid = 0,那么将会修改调用进程的特性。</p>
+<pre><code>#incldue &lt;sched.h&gt;
+int sched_setscheduler(pid_t pid,int policy,const struct,sched_param *param);
+</code></pre><p>　　sched_setparam()系统调用提供了sched_setscheduler()函数的一个功能子集，它修改了一个进程的调度策略，但不会修改其优先级。</p>
+<pre><code>#include &lt;sched.h&gt;
+int sched_setparam(pid_t pid,const struct sched_param *param);
+</code></pre><p>　　成功调用sched_setparam()会将pid指定的进程移动到与其优先级相对应的队列的队尾。</p>
+<h5 id="获取调度策略和优先级"><a href="#获取调度策略和优先级" class="headerlink" title="获取调度策略和优先级"></a>获取调度策略和优先级</h5><pre><code>#include &lt;sched.h&gt;
+int sched_getscheduler(pid_t pid);
+int sched_getparam(pid_t pid,struct sched_param *param);
+</code></pre><p>　　pid指定了需要查询信息的进程ID，两个系统调用都可以被非特权进程用来获取任意进程的信息。sched_getparam()系统调用返回由param指向的sched_param结构中的sched_priority字段指定的进程的实时优先级。</p>
+<h5 id="避免子进程继承父进程的调度策略和优先级"><a href="#避免子进程继承父进程的调度策略和优先级" class="headerlink" title="避免子进程继承父进程的调度策略和优先级"></a>避免子进程继承父进程的调度策略和优先级</h5><p>　　在调用sched_setscheduler()时可以将policy参数设置为该常量，那么可以将被设置后的进程在创建子进程时不会继承特权调度策略和优先级。</p>
+<ul>
+<li>如果调用进程拥有一个实时调度策略(sched_RR或sched_FIFO)，那么子进程的策略会被重置为标准的循环时间分享策略SCHED_OTHER.</li>
+<li><p>如果nice值为负值，那么子进程的优先级会被重置为0.<br>　　一个进程一旦启用了SCHED_RESET_ON_FORK标记，那么只有特权级进程才能禁用该标记，当子进程被创建出来之后，他的reset-on-fork标记才会被禁用。</p>
+<h5 id="释放CPU"><a href="#释放CPU" class="headerlink" title="释放CPU"></a>释放CPU</h5><p>　　实时进程有两种方式自愿释放CPU：通过调用一个阻塞进程的系统调用(从终端中read()或调用sched_yield())。</p>
+<p> #include &lt;sched.h&gt;<br> int sched_yield(void);</p>
+</li>
+</ul>
+<p>　　sched_yield()的操作比较简单，如果存在与调用进程优先级相同的其他排队的可运行进程，那么调用进程会被放在队列的结尾，队列中队头的CPU将会被调度使用CPU,如果该队列中不存在可运行的进程，那么该系统调用不做任何事情，调用进程将会继续使用CPU。</p>
+<h5 id="SCHED-RR时间片"><a href="#SCHED-RR时间片" class="headerlink" title="SCHED_RR时间片"></a>SCHED_RR时间片</h5><p>　　sched_rr_get_interval()系统调用用于找出SCHED_RR进程每次被授权使用CPU分配的时间片的长度。</p>
+<pre><code>#include &lt;sched.h&gt;
+int sched_rr_get_interval(pid_t pid,struct timespec *tp);
+</code></pre><p>　　与其他进程调度系统应用一样，pid标识出了需查询信息的进程，返回的时间片是由tp指向的timespec结构。</p>
+<h5 id="CPU亲和力"><a href="#CPU亲和力" class="headerlink" title="CPU亲和力"></a>CPU亲和力</h5><p>　　在一个进程在一个多处理器系统上被重新调度时，无需在上一次执行的CPU上执行，之所以这样可能是原来的CPU处于忙碌状态。<br>　　进程切换CPU对性能有一定的影响，如果原来的CPU的高速缓存器中存在进程的数据，那么将进程的一行数据加载进新CPU的高速缓存器中，首先必须令数据失效(即没被修改的情况下丢弃数据，被修改的情况下将数据写入内存)。linux系统保证了软CPU亲和力，在条件允许的情况下进程重新被调度到原来的进程上运行。<br>　　有时候需要将进程设置为硬CPU亲和力，这样就能显式的将其限制在可用CPU的一个或者一组CPU上运行。<br>　　<br>　　linux提供了一对非标准的系统调用来修改和获取进程的硬CPU亲和力：sched_setaffinity()和sched_getaffinity()。</p>
+<pre><code>#include &lt;sched.h&gt;
+int sched\_setaffinity(pid_t pid,size_t len,cpu_set_t *set);
+</code></pre><p>　　赋予进程的CPU亲和力的由set指向的cpu_set_t结构来指定。<br>　　非特权进程只有在其有效用户ID与目标进程的真实或者有效ID匹配时才能设置目标进程的CPU亲和力。特权进程(CAP_SYS_NICE)进程可以设置任意进程的CPU亲和力。</p>
+<pre><code>#incldue &lt;sched.h&gt;
+int sched\_getaffinity(pid_t pid,size_t len,cpu_set_t *set);
+</code></pre><p>　　如果目标进程的CPU亲和力掩码并没有被修改过，那么sched_getaffinity()返回包含系统所有CPU的集合。<br>　　sched_getaffinity()执行时不会进行权限检查，非特权进程也能获取系统上所有进程的CPU亲和力掩码。<br>　　通过fork()创建的子进程会继承父进程的亲和力掩码并且在执行exec()调用之间掩码得以保留。
+　　
+　　　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/16/32/" rel="next" title="线程相关细节">
+                <i class="fa fa-chevron-left"></i> 线程相关细节
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/19/36/" rel="prev" title="进程组 会话和作业控制">
+                进程组 会话和作业控制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程优先级和调度"><span class="nav-number">1.</span> <span class="nav-text">进程优先级和调度</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取和修改优先级"><span class="nav-number">1.1.</span> <span class="nav-text">获取和修改优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实时调度策略-SCHED-RR策略和SCHED-FIFO策略"><span class="nav-number">1.2.</span> <span class="nav-text">实时调度策略 SCHED_RR策略和SCHED_FIFO策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SCHED-FIFO策略"><span class="nav-number">1.3.</span> <span class="nav-text">SCHED_FIFO策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实时优先级范围"><span class="nav-number">1.4.</span> <span class="nav-text">实时优先级范围</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改和获取策略和优先级"><span class="nav-number">1.5.</span> <span class="nav-text">修改和获取策略和优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取调度策略和优先级"><span class="nav-number">1.6.</span> <span class="nav-text">获取调度策略和优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#避免子进程继承父进程的调度策略和优先级"><span class="nav-number">1.7.</span> <span class="nav-text">避免子进程继承父进程的调度策略和优先级</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#释放CPU"><span class="nav-number">1.8.</span> <span class="nav-text">释放CPU</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SCHED-RR时间片"><span class="nav-number">1.9.</span> <span class="nav-text">SCHED_RR时间片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CPU亲和力"><span class="nav-number">1.10.</span> <span class="nav-text">CPU亲和力</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
