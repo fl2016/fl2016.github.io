@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="线程安全　　实现线程安全的多种方式：　　　　1.将函数和互斥量关联使用，在调用函数时将互斥量锁定，在函数返回时解锁，对互斥量只能串行访问，无法并发执行。　　　　2.将函数和互斥量关联起来，需确定函数的那些部分使用了共享变量的临界区，仅在执行临界区时去获取和释放互斥量。">
+<meta name="description" content="进程资源#include &amp;lt;sys/resource.h&amp;gt; int getrusage(int who,struct rusage *res_usage); 　　who参数指定了需查询使用信息的资源。其取值为以下几个值中的一个。　　RUSAGE_SELF 返回进程相关的信息　　RUSAGE_CHILDREN 返回调用进程的所有被终止和处于等待状态的子进程的相关消息　　RUSAGE_TH">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="线程安全">
-<meta property="og:url" content="https://www.yixuan.tech/2018/08/14/30/index.html">
+<meta property="og:title" content="进程资源">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/20/37/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="线程安全　　实现线程安全的多种方式：　　　　1.将函数和互斥量关联使用，在调用函数时将互斥量锁定，在函数返回时解锁，对互斥量只能串行访问，无法并发执行。　　　　2.将函数和互斥量关联起来，需确定函数的那些部分使用了共享变量的临界区，仅在执行临界区时去获取和释放互斥量。">
+<meta property="og:description" content="进程资源#include &amp;lt;sys/resource.h&amp;gt; int getrusage(int who,struct rusage *res_usage); 　　who参数指定了需查询使用信息的资源。其取值为以下几个值中的一个。　　RUSAGE_SELF 返回进程相关的信息　　RUSAGE_CHILDREN 返回调用进程的所有被终止和处于等待状态的子进程的相关消息　　RUSAGE_TH">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-13T18:22:59.442Z">
+<meta property="og:updated_time" content="2018-08-20T04:11:05.458Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="线程安全">
-<meta name="twitter:description" content="线程安全　　实现线程安全的多种方式：　　　　1.将函数和互斥量关联使用，在调用函数时将互斥量锁定，在函数返回时解锁，对互斥量只能串行访问，无法并发执行。　　　　2.将函数和互斥量关联起来，需确定函数的那些部分使用了共享变量的临界区，仅在执行临界区时去获取和释放互斥量。">
+<meta name="twitter:title" content="进程资源">
+<meta name="twitter:description" content="进程资源#include &amp;lt;sys/resource.h&amp;gt; int getrusage(int who,struct rusage *res_usage); 　　who参数指定了需查询使用信息的资源。其取值为以下几个值中的一个。　　RUSAGE_SELF 返回进程相关的信息　　RUSAGE_CHILDREN 返回调用进程的所有被终止和处于等待状态的子进程的相关消息　　RUSAGE_TH">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/08/14/30/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/20/37/"/>
 
 
 
 
 
-  <title>线程安全 | A new cpp learner</title>
+  <title>进程资源 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/14/30/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/20/37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">线程安全</h1>
+          <h1 class="post-title" itemprop="name headline">进程资源</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-14T02:21:40+08:00">
-                2018-08-14
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-20T12:10:18+08:00">
+                2018-08-20
               </time>
             
 
@@ -300,25 +300,27 @@
       
 
       
-        <h4 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h4><p>　　实现线程安全的多种方式：<br>　　　　1.将函数和互斥量关联使用，在调用函数时将互斥量锁定，在函数返回时解锁，对互斥量只能串行访问，无法并发执行。<br>　　　　2.将函数和互斥量关联起来，需确定函数的那些部分使用了共享变量的临界区，仅在执行临界区时去获取和释放互斥量。<br><a id="more"></a></p>
-<h5 id="可重入和不可重入函数"><a href="#可重入和不可重入函数" class="headerlink" title="可重入和不可重入函数"></a>可重入和不可重入函数</h5><p>　　可冲入函数则无需使用互斥量即可实现线程安全，其关键在于避免全局变量和静态变量的使用，需要返回给调用者的任何信息，亦或是需要在对函数历次调用间加以维护的信息，都存储在调用者分配的缓冲区内，并非所有函数均可重入。原因如下：<br>　　1.根据性质，有些函数必须访问全局结构，如malloc()函数库中的函数为堆中的空闲块维护一个全局链表，其线程安全通过互斥量实现。<br>　　2.一些函数本身的接口就定义为不可重入的。</p>
-<h5 id="一次性初始化"><a href="#一次性初始化" class="headerlink" title="一次性初始化"></a>一次性初始化</h5><p>　　不管创建了多少线程，有些初始化动作只发生一次，并且只能初始化一次，对于库函数，可以通过函数pthread_once()实现一次性初始化。</p>
-<pre><code>#include &lt;pthread.h&gt;
-int pthread_once(pthread_once_t *once control,void (*init)(void));
-</code></pre><p>　　利用参数once_control的状态，函数pthread_once()可以确保无论有多少线程对pthread_once()调用了多少次，只会执行一次由init指向的函数初始化。
+        <h4 id="进程资源"><a href="#进程资源" class="headerlink" title="进程资源"></a>进程资源</h4><pre><code>#include &lt;sys/resource.h&gt;
+int getrusage(int who,struct rusage *res_usage);
+</code></pre><p>　　who参数指定了需查询使用信息的资源。其取值为以下几个值中的一个。<br>　　RUSAGE_SELF 返回进程相关的信息<br>　　RUSAGE_CHILDREN 返回调用进程的所有被终止和处于等待状态的子进程的相关消息<br>　　RUSAGE_THREAD 返回线程相关的信息，这个是linux特有的。<br>　　res_usage参数是一个指向rusage结构的指针。</p>
+<h5 id="进程资源限制"><a href="#进程资源限制" class="headerlink" title="进程资源限制"></a>进程资源限制</h5><p>　　每个进程都有一组资源限值，使用shell的内置命令ulimit可以设置shell的资源限制，shell创建用来执行用户命令的进程会继承这些限制。</p>
+<pre><code>#include &lt;sys/resource.h&gt;
+int getrlimit(int resource,struct rlimit *rlim);
+int setrlimit(int resource,struct rlimit *rlim);
+</code></pre><p>　　resource参数标识出了需要读取或者修改的资源限制，rlim参数用来返回限制值，它是一个指向包含两个字段结构的指针。</p>
+<pre><code>struct rlimit{
+   rlim_t rlim_cur;//soft limit（actual process limit）
+   rlim_t rlim_max;//hard limit(ceiling for rlim_cur)
+   }
+</code></pre><p>　　特权进程(CAP_SYS_RESOURCE)能够增大或者缩小硬限制，非特权进程只能缩小硬限制。<br>　　通过fork()创建的子进程会继承父进程的限制，并且在exec()调用之间不得不保持。
 　　</p>
-<h5 id="线程特有数据-提供线程内存储"><a href="#线程特有数据-提供线程内存储" class="headerlink" title="线程特有数据(提供线程内存储)"></a>线程特有数据(提供线程内存储)</h5><p>　　实现线程安全最有效的方式就是使其可重入，应以这种方式来实现所有的函数库，对于不可重入的函数库，可能需要修改函数接口，这样做比较麻烦，使用线程特有数据技术，可以无需修改函数接口而实现已有函数的线程安全，较之于可重入函数，其函数效率可能较低一些。<br>　　线程特有数据时函数得以为每个线程分别维护一个变量的副本，线程特有数据是长期存在的，在同一个线程对相同函数的历次调用期间，每个线程的变量会持续存在，函数可以向每个调用线程返回各自的结果缓冲区。</p>
-<h6 id="从库函数视角下看线程特有数据"><a href="#从库函数视角下看线程特有数据" class="headerlink" title="从库函数视角下看线程特有数据"></a>从库函数视角下看线程特有数据</h6><ul>
-<li>该函数必须为每个调用者线程分配单独的存储，且只需在线程初次调用该函数时分配一次即可。</li>
-<li>在同一线程对此函数的后续调用中，该函数都需要获取初次调用线程分配的存储块地址，由于函数调用结束时会释放自动变量，故函数不应再自动变量中存储存储快地址，也不应该在静态变量中存储，因为静态变量在进程中只有一个实例。</li>
-<li>不同的线程(无相互依赖关系)各自可能需要使用线程特有数据，每个函数都需要方法来标识其自身的特有线程特有数据，以便与其他函数所使用的线程特有数据相区分。</li>
-<li>当线程退出时，函数无法控制将要发生的情况，可能需要执行函数之外的代码，一定会存在一些机制在线程退出前，释放线程所分配的存储，否则会发生内存泄漏。</li>
+<h5 id="daemon"><a href="#daemon" class="headerlink" title="daemon"></a>daemon</h5><p>　　daemon是一种具备以下特征的进程：</p>
+<ul>
+<li>生命周期很长，通常是系统启动时被创建直到系统被关闭。</li>
+<li>他在后台运行且不拥有控制终端。</li>
 </ul>
-<h5 id="线程特有数据API"><a href="#线程特有数据API" class="headerlink" title="线程特有数据API"></a>线程特有数据API</h5><p>　　1.函数创建一个键，可以将不同函数的线程特有数据项区分开来，pthread_key_create()用于创建键，且只需在首个调用该函数的线程中创建一次，键在创建时并未分配任何线程特有数据块。<br>　　2.pthread_key_create()允许调用这自定义解构函数，用于释放该键所分配的各个存储块，当使用线程特有数据的线程终止时，PthreadAPI自动调用该解构函数。<br>　　3.函数为每个调用者线程创建线程特有数据块，通过调用malloc()完成，每个线程分配一次，且只会在线程初次调用函数时分配。<br>　　4.保存分配存储块的地址和记录地址指针与特定函数键以及特定线程的关联性，用两个Pthread()函数：pthread_setspecific()和pthread_getspecific()。<br>　　<br>　　调用pthread_key_create()函数为线程特有数据创建一个键，并通过key所指向的缓冲区返回给调用者。<br>　　因为进程中的所有线程都可以使用返回的键，所以参数key应指向一个全局变量。</p>
-<pre><code>#include &lt;pthread.h&gt;
-int pthread_key_create(pthread_key_t *key,void(*destructor)(void *));
-</code></pre><p>　　参数destructor指向一个自定义函数，只要线程终止时与Key关联值不为NULL，Pthread API会自动执行解构函数，并将key的关联值作为参数传入解构函数，传入的值通常是与该键关联，且指向线程特有数据块的指针，如果无需结构，将destructor = NULL。<br>　　<br>　　线程特有数据的典型实现：<br>　　　　1.一个全局(进程范围)数据，存放线程特有数据。<br>　　　　2.每个线程包含一个数据，存有为每个线程分配的线程特有数据块指针(通过调用pthread_setspecific()来存储指针)。</p>
-<h5 id="使用线程特有数据API"><a href="#使用线程特有数据API" class="headerlink" title="使用线程特有数据API"></a>使用线程特有数据API</h5><p>　　</p>
+<p>　　daemon是用来执行特殊任务的：<br>　　1.cron 一个在规定时间内执行命令的daemon.<br>　　2.sshd 安全shell daemon,允许远程主机使用一个安全的通信协议登录系统。<br>　　3.httpd:HTTP服务器daemon。<br>　　4.inetd:Internet超级服务器daemon，它监听从指定的TCP/IP口进入的网络连接并启动相应的服务器程序来处理这些连接。
+　　</p>
 
       
     </div>
@@ -343,8 +345,8 @@ int pthread_key_create(pthread_key_t *key,void(*destructor)(void *));
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/13/29/" rel="next" title="线程同步">
-                <i class="fa fa-chevron-left"></i> 线程同步
+              <a href="/2018/08/19/36/" rel="next" title="进程组 会话和作业控制">
+                <i class="fa fa-chevron-left"></i> 进程组 会话和作业控制
               </a>
             
           </div>
@@ -352,10 +354,6 @@ int pthread_key_create(pthread_key_t *key,void(*destructor)(void *));
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/15/31/" rel="prev" title="线程取消">
-                线程取消 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -473,7 +471,7 @@ int pthread_key_create(pthread_key_t *key,void(*destructor)(void *));
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程安全"><span class="nav-number">1.</span> <span class="nav-text">线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#可重入和不可重入函数"><span class="nav-number">1.1.</span> <span class="nav-text">可重入和不可重入函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#一次性初始化"><span class="nav-number">1.2.</span> <span class="nav-text">一次性初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程特有数据-提供线程内存储"><span class="nav-number">1.3.</span> <span class="nav-text">线程特有数据(提供线程内存储)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#从库函数视角下看线程特有数据"><span class="nav-number">1.3.1.</span> <span class="nav-text">从库函数视角下看线程特有数据</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程特有数据API"><span class="nav-number">1.4.</span> <span class="nav-text">线程特有数据API</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用线程特有数据API"><span class="nav-number">1.5.</span> <span class="nav-text">使用线程特有数据API</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程资源"><span class="nav-number">1.</span> <span class="nav-text">进程资源</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程资源限制"><span class="nav-number">1.1.</span> <span class="nav-text">进程资源限制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#daemon"><span class="nav-number">1.2.</span> <span class="nav-text">daemon</span></a></li></ol></li></ol></div>
             
 
           </div>
