@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="内存映射　　mmap()系统调用是在调用进程的虚拟地址空间中创建一个新内存映射，映射分为两种：  文件映射：将文件的一部分直接映射到调用进程的虚拟内存中，一旦一个文件被映射之后就可以通过在相应内存区域中操作字节来访问文件内容了。映射的分页会在需要的时候从文件中自动加载。这样映射也被称为给予文件的映射或者内存映射文件。 匿名映射：一个匿名映射没有相应的文件。相反，这个映射的分页会被初始化为0。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存映射">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/25/40/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="内存映射　　mmap()系统调用是在调用进程的虚拟地址空间中创建一个新内存映射，映射分为两种：  文件映射：将文件的一部分直接映射到调用进程的虚拟内存中，一旦一个文件被映射之后就可以通过在相应内存区域中操作字节来访问文件内容了。映射的分页会在需要的时候从文件中自动加载。这样映射也被称为给予文件的映射或者内存映射文件。 匿名映射：一个匿名映射没有相应的文件。相反，这个映射的分页会被初始化为0。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-25T06:16:09.646Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内存映射">
+<meta name="twitter:description" content="内存映射　　mmap()系统调用是在调用进程的虚拟地址空间中创建一个新内存映射，映射分为两种：  文件映射：将文件的一部分直接映射到调用进程的虚拟内存中，一旦一个文件被映射之后就可以通过在相应内存区域中操作字节来访问文件内容了。映射的分页会在需要的时候从文件中自动加载。这样映射也被称为给予文件的映射或者内存映射文件。 匿名映射：一个匿名映射没有相应的文件。相反，这个映射的分页会被初始化为0。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/25/40/"/>
+
+
+
+
+
+  <title>内存映射 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/25/40/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">内存映射</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-25T14:14:55+08:00">
+                2018-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h4><p>　　mmap()系统调用是在调用进程的虚拟地址空间中创建一个新内存映射，映射分为两种：</p>
+<ul>
+<li>文件映射：将文件的一部分直接映射到调用进程的虚拟内存中，一旦一个文件被映射之后就可以通过在相应内存区域中操作字节来访问文件内容了。映射的分页会在需要的时候从文件中自动加载。这样映射也被称为给予文件的映射或者内存映射文件。</li>
+<li>匿名映射：一个匿名映射没有相应的文件。相反，这个映射的分页会被初始化为0。</li>
+</ul>
+<p>　　一个进程的映射中的内存可以与其他进程中的映射共享(即各个进程的页表条目指向RAM中的相同分页)，一般会在两种情况下发生：<br>　　　　1.当两个进程映射了一个文件的同一个区域时他们会共享物理内存的相同分页。<br>　　　　2.通过fork()创建的子进程会继承父进程的映射的副本，并且这些映射所引用的物理内存分页与父进程中的相应映射所引用的分页相同。<br>　　当两个或更多进程共享相同分页时，每个进程都有可能看到其他进程对分页内容做出的变更，取决于映射是私有的还是共享的。</p>
+<ul>
+<li>私有映射(MAP_PRIVATE)：在映射内容上发生的变更对其他进程不可见，变更不会在底层文件上进行。即初始文件是共享的，变更是私有的，内核采用了写时复制技术。</li>
+<li>共享映射(MAP_SHARED):在映射内容上发生的变更对所有共享同一个映射的其他进程都可见，对于文件映射来讲，变更发生在底层的文件上。</li>
+</ul>
+<h5 id="创建一个映射"><a href="#创建一个映射" class="headerlink" title="创建一个映射"></a>创建一个映射</h5><p>　　mmap()系统调用在调用进程的虚拟地址空间中创建一个新映射。</p>
+<pre><code>#include&lt;sys/mman.h&gt;
+void *mmap(void *addr,size_t length,int prot,int flags,int fd,off_t offset);
+</code></pre><p>　　addr参数指定了映射被放置的虚拟地址。如果将addr指定为NULL，那么内核会为映射选择一个合适的地址。<br>　　length参数指定了映射的字节数，length无需是一个系统分页的大小(sysconf(_SC_PAGESIZE)的返回值)的倍数，但是内核会以分页大小为单位来创建映射，实际上length会被向上提升为分页大小的下一个倍数。<br>　　prot参数是一个位掩码，它指定了施加于映射之上的保护信息，取值要么是PROT_NONE(区域无法访问),或者是以下三个标记的OR组合。(PROT_READ,PROT_WRITE,PROT_EXEC)。<br>　　flag参数是一个控制映射操作各个方面的选项的位掩码。可以是MAP_PRIVATE(创建一个私有映射)或者MAP_SHARED(创建一个共享映射)。</p>
+<h5 id="解除映射区域：munmap"><a href="#解除映射区域：munmap" class="headerlink" title="解除映射区域：munmap()"></a>解除映射区域：munmap()</h5><p>　　munmap()执行与mmap()相反的操作，即从调用进程的虚拟地址空间中删除一个映射。</p>
+<pre><code>#include &lt;sys/mman.h&gt;
+int munmap(void *addr,size_t length);
+</code></pre><p>　　addr是待解除映射的地址范围的起始地址，它必须与一个分页边界对齐。<br>　　length参数是一个非负整数，它指定了待解除映射区域的大小。范围为系统分页大小的下一个倍数的地址空间将会被解除映射。<br>　　可以解除整个映射或者解除mmap()创建的部分映射，在解除映射期间，内存会删除进程持有的指定地址范围的所有内存锁.(内存锁是通过mlock()或者mlockall()来建立的)。<br>　　当一个进程终止或者执行了exec()之后进程中所有的映射会自动解除。<br>　　为确保一个共享文件映射的内容会被写入底层文件中，在使用munmap()解除一个映射之后需要调用msync()。</p>
+<h5 id="文件映射"><a href="#文件映射" class="headerlink" title="文件映射"></a>文件映射</h5><p>　　创建一个文件映射的步骤：<br>　　　　1.通过调用open()获取一个文件的描述符。<br>　　　　2.将文件描述符作为fd参数传入mmap()调用。<br>　　执行完上述步骤后，mmmap()会将打开的文件内容映射到调用进程的地址空间中，一旦mmap()被调用之后就能够关闭文件描述符了，而不会对映射产生任何影响。<br>　　在打开描述符fd引用的文件时必须要具备与prot和flags参数值匹配的权限。文件必须总是被打开以允许读取，并且如果在flags中指定了PROT_WRITE和MAP_SHARED，那么文件总是被打开以允许读取和写入。
+　　</p>
+<h5 id="私有文件映射"><a href="#私有文件映射" class="headerlink" title="私有文件映射"></a>私有文件映射</h5><p>　　私有文件映射最常见的两个用途：<br>　　　　1.允许多个执行同一个程序或者使用同一个共享库的进程共享同样的(只读的)文本段，他是从底层可执行文件或者库文件的相应部分映射而来的。<br>　　　　2.映射一个可执行文件或共享库的初始化数据段，这种映射会被处理成私有映射对映射数据段的变更不会发生在底层文件上。</p>
+<h5 id="共享文件映射"><a href="#共享文件映射" class="headerlink" title="共享文件映射"></a>共享文件映射</h5><p>　　当多个进程创建同一个文件区域的共享映射时，他们会共享同样的内存物理分页，此外，对映射内容的变更会反应到文件上。<br>　　共享文件存在两个用途：内存映射I/O和IPC。</p>
+<h6 id="内存映射I-O"><a href="#内存映射I-O" class="headerlink" title="内存映射I/O"></a>内存映射I/O</h6><p>　　内存映射简化了read()和write()系统调用需要高速缓冲区和用户空间缓冲区之间的二次缓冲，使用mmap()时用户空间和内核空间共享同一个缓冲区。</p>
+<h5 id="同步映射区域：msync"><a href="#同步映射区域：msync" class="headerlink" title="同步映射区域：msync()"></a>同步映射区域：msync()</h5><p>　　内核会自动的将发生在MAP_SHARED映射内容上的变更写入底层文件中，但是默认情况下，内核不会保证这种同步操作何时发生。<br>　　msync()系统调用让应用程序能够显式的控制何时完成共享映射和映射文件之间的同步，同时保证一个应用程序在可写入映射行的更新对其他在该文件上执行read()的程序是可见的。</p>
+<pre><code>#include &lt;sys/mman.h&gt;
+int msync(void *addr,size_t length,int flags);
+</code></pre><p>　　addr和length参数指定了需要同步的内存区域的起始地址和大小。<br>　　flags参数可以是MS_SYNC(执行一个同步的文件写入，这个调用一直阻塞到内存区域中所有被修改过的分页被写入底盘为止)，也可以是MS_ASYNC(执行一个文件的异步写入，内存区域中被修改过的分页会在后面某个时刻被写入磁盘并立即对相应文件区域中执行read()的其他进程可见)。<br>　　MS_SYNC内存区域与磁盘同步，MS_ASYNC操作，内存区域仅仅是与内核告诉缓冲区同步。</p>
+<h5 id="匿名映射"><a href="#匿名映射" class="headerlink" title="匿名映射"></a>匿名映射</h5><p>　　匿名映射是没有对应文件的一种映射。<br>　　在linux上，使用mmap()创建匿名映射有两种不同但是等价的方法。</p>
+<ul>
+<li>在flags中指定MAP_ANONYMOUS并将fd = -1。</li>
+<li>打开/dev/zero设备文件并将得到的文件描述符传递给mmap()。<br>　　不管是使用MAP_ANONYMOUS还是使用/dev/zero技术，得到的映射中的字节会被初始化为0。<h5 id="重新映射一个映射区域：mremap"><a href="#重新映射一个映射区域：mremap" class="headerlink" title="重新映射一个映射区域：mremap()"></a>重新映射一个映射区域：mremap()</h5></li>
+</ul>
+<h5 id="非线性映射：remap-file-pages"><a href="#非线性映射：remap-file-pages" class="headerlink" title="非线性映射：remap_file_pages()"></a>非线性映射：remap_file_pages()</h5><p>　　使用mmap()创建的映射是连续的:即映射文件的分页和内存区域的分页存在一个顺序的，一一对应的关系。<br>　　有时候需要非线性的映射。linux提供了remap_file_pages()系统调用来在无需创建多个VMA的情况下创建非线性映射。<br>　　　　1.使用mmap()创建一个映射。<br>　　　　2.使用一个或者多个remap_file_pages()调用来调整内存分页和文件分页之间的对应关系。<br>　　remap_file_pages()系统调用是linux特有的，在当今的实现上，remap_file_pages()仅仅适用于(MAP_SHARED)映射。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/25/39/" rel="next" title="管道和FIFO">
+                <i class="fa fa-chevron-left"></i> 管道和FIFO
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#内存映射"><span class="nav-number">1.</span> <span class="nav-text">内存映射</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建一个映射"><span class="nav-number">1.1.</span> <span class="nav-text">创建一个映射</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解除映射区域：munmap"><span class="nav-number">1.2.</span> <span class="nav-text">解除映射区域：munmap()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#文件映射"><span class="nav-number">1.3.</span> <span class="nav-text">文件映射</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#私有文件映射"><span class="nav-number">1.4.</span> <span class="nav-text">私有文件映射</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#共享文件映射"><span class="nav-number">1.5.</span> <span class="nav-text">共享文件映射</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#内存映射I-O"><span class="nav-number">1.5.1.</span> <span class="nav-text">内存映射I/O</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#同步映射区域：msync"><span class="nav-number">1.6.</span> <span class="nav-text">同步映射区域：msync()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#匿名映射"><span class="nav-number">1.7.</span> <span class="nav-text">匿名映射</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#重新映射一个映射区域：mremap"><span class="nav-number">1.8.</span> <span class="nav-text">重新映射一个映射区域：mremap()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#非线性映射：remap-file-pages"><span class="nav-number">1.9.</span> <span class="nav-text">非线性映射：remap_file_pages()</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
