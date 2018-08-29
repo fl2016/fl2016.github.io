@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="POSIX 消息队列打开，关闭和断开链接消息队列打开一个消息队列#include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;mqueue.h&amp;gt; mqd_t mq_open(const char*name,int oflag,...); 　　name参数标识出了消息队列，oflag参数是一个位掩码。 fork(),exec">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="POSIX 消息队列">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/29/42/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="POSIX 消息队列打开，关闭和断开链接消息队列打开一个消息队列#include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;mqueue.h&amp;gt; mqd_t mq_open(const char*name,int oflag,...); 　　name参数标识出了消息队列，oflag参数是一个位掩码。 fork(),exec">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-29T05:22:54.507Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="POSIX 消息队列">
+<meta name="twitter:description" content="POSIX 消息队列打开，关闭和断开链接消息队列打开一个消息队列#include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;mqueue.h&amp;gt; mqd_t mq_open(const char*name,int oflag,...); 　　name参数标识出了消息队列，oflag参数是一个位掩码。 fork(),exec">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/29/42/"/>
+
+
+
+
+
+  <title>POSIX 消息队列 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/29/42/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">POSIX 消息队列</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-29T13:21:00+08:00">
+                2018-08-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="POSIX-消息队列"><a href="#POSIX-消息队列" class="headerlink" title="POSIX 消息队列"></a>POSIX 消息队列</h4><h5 id="打开，关闭和断开链接消息队列"><a href="#打开，关闭和断开链接消息队列" class="headerlink" title="打开，关闭和断开链接消息队列"></a>打开，关闭和断开链接消息队列</h5><h6 id="打开一个消息队列"><a href="#打开一个消息队列" class="headerlink" title="打开一个消息队列"></a>打开一个消息队列</h6><pre><code>#include &lt;fcntl.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;mqueue.h&gt;
+mqd_t mq_open(const char*name,int oflag,...);
+</code></pre><p>　　name参数标识出了消息队列，oflag参数是一个位掩码。</p>
+<h5 id="fork-exec-以及进程终止对消息队列描述符的影响"><a href="#fork-exec-以及进程终止对消息队列描述符的影响" class="headerlink" title="fork(),exec()以及进程终止对消息队列描述符的影响"></a>fork(),exec()以及进程终止对消息队列描述符的影响</h5><p>　　在fork()中子进程通常会接收其父进程的消息队列描述符的副本，并且这些描述符会引用同样的打开着的消息队列描述，子进程不会继承其父进程的任何消息通知注册。<br>　　当一个进程执行了一个exec()或者终止时，所有其打开的消息队列描述符会被关闭。关闭消息队列描述符的结果是进程在相应队列上的消息通知注册会被注销。</p>
+<h6 id="关闭一个消息队列"><a href="#关闭一个消息队列" class="headerlink" title="关闭一个消息队列"></a>关闭一个消息队列</h6><p>　　mq_close()函数关闭消息队列描述符mqdes。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+int mq_close(mqd_t mqdes);
+</code></pre><p>　　如果调用进程已经通过mqdes在消息队列上注册了消息通知，那么通知注册会自动被删除，并且另一个进程可以随后向该队列注册消息通知。</p>
+<h5 id="删除一个消息队列"><a href="#删除一个消息队列" class="headerlink" title="删除一个消息队列"></a>删除一个消息队列</h5><p>　　mq_unlink()函数删除了通过name标识的消息队列，并将队列标记为所有进程使用完该队列之后销毁该队列(这意味着会立即删除，前提是所有打开该队列的进程都已经关闭了该队列)。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+int mq\_unlink(const char *name);
+</code></pre><h5 id="描述符和消息队列之间的关系"><a href="#描述符和消息队列之间的关系" class="headerlink" title="描述符和消息队列之间的关系"></a>描述符和消息队列之间的关系</h5><p>　　消息队列描述符和打开的消息队列之间的关系与文件描述符和打开的文件描述符的关系类似，消息队列描述符是一个进程级别的句柄，它引用了系统层面的打开着的消息队列描述表中的一个条目，而该条目则引用了一个消息队列对象。</p>
+<h5 id="获取消息队列特性"><a href="#获取消息队列特性" class="headerlink" title="获取消息队列特性"></a>获取消息队列特性</h5><p>　　mq_getattr()函数返回一个与描述符相关的消息队列描述和消息队列的相关信息的mq_attr结构。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+int mq_getattr(mqd_t mqdes,struct mq_attr *attr);
+</code></pre><h5 id="修改消息队列特性"><a href="#修改消息队列特性" class="headerlink" title="修改消息队列特性"></a>修改消息队列特性</h5><p>　　mq_setattr()函数设置与消息队列描述符mqdes相关联的消息队列的特性，并可选的返回与消息队列相关的消息。</p>
+<pre><code>int mq_setattr(mqd_t mqdes,const struct mq_attr *newattr,struct mq_attr *oldattr);
+</code></pre><p>　　mq_setattr()函数执行以下任务。</p>
+<ul>
+<li>它使用newattr指向的mq_attr结构中的mq_flags字段来修改与描述符mqdes相关联的消息队列描述的标记。</li>
+<li>如果oldattr不为NULL，那么就返回一个之前的消息队列描述标记和消息队列特性的mq_attr结构。</li>
+</ul>
+<h5 id="交换信息"><a href="#交换信息" class="headerlink" title="交换信息"></a>交换信息</h5><h6 id="发送信息"><a href="#发送信息" class="headerlink" title="发送信息"></a>发送信息</h6><p>　　mq_send()函数将位于msg_ptr指向的缓冲区中的消息添加到队列中。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+int mq_send(mqd_t mqdes,const char *msg_ptr,size_t msg_len,unsigned int msg_prio);
+</code></pre><p>　　msg_len 参数制定了msg_ptr指向的消息的长度，其值必须小于或者等于队列的mq_msgsize特性，否则msg_send()就会返回EMSGSIZE错误，长度为0的消息是允许的。<br>　　每个消息都有一个非负整数表示的优先级，它通过msg_prio参数指定。消息在队列中是按照优先级倒序排列的，即0表示的优先级最低，当一个消息被添加到队列中，它会被放置在队列中具有相同优先级的所有消息之后。如果一个应用程序无需使用优先级，那么只需要将msg_prio指定为0。</p>
+<h5 id="接收消息"><a href="#接收消息" class="headerlink" title="接收消息"></a>接收消息</h5><p>　　mq_receive()函数从mqdes引用的消息队列中删除一条优先级最高，存在时间最长的消息并将删除的消息放置在msg_ptr指向的缓冲区。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+ssize_t mq_receive(mqd_t mqdes,char *msg_ptr,size_t msg_len,unsigned int *msg_prio);
+</code></pre><p>　　调用者使用msg_len参数来指定msg_ptr指向的缓冲区中的可用字节数。<br>　　不管消息的实际大小是什么，msg_len(即msg_ptr指向的缓冲区的大小)必须大于等于队列中的mq_msgsize特性，否则mq_receive()就会失败并返回EMSGSIZE错误。如果不清楚一个队列mq_msgsize特性的值，那么可以使用mq_getattr()来获取这个值。</p>
+<h5 id="在发送和接收消息时设置超时时间"><a href="#在发送和接收消息时设置超时时间" class="headerlink" title="在发送和接收消息时设置超时时间"></a>在发送和接收消息时设置超时时间</h5><p>　　mq_timedsend()和mq_timedreceive()函数与mq_send()和mq_receive()几乎是一样的。唯一的区别在于如果操作无法立即执行，并且该消息队列描述上O_NONBLOCK标记不起作用，那么abs_timeout参数就会为调用阻塞的时间指定一个上限。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+#include &lt;time.h&gt;
+int mq_timedsend(mqd_t mqdes,const char *msg_ptr,size_t msg_len,unsigned int msg_prio,const struct timespec *abs_timeout);
+ssize_t mq_timedreceive(mqd_t mqdes,char *msg_ptr,size_t msg_len,unsigned int *msg_prio,const struct timespec *abs_timeout);
+</code></pre><p>　　abs_timeout参数是一个timespec结构，它将超时事件设置为自新纪元到现在的一个绝对值，其单位为秒数和纳秒数。</p>
+<h5 id="消息通知"><a href="#消息通知" class="headerlink" title="消息通知"></a>消息通知</h5><p>　　该功能可无需执行一个阻塞的调用或者将消息队列描述符标记为非阻塞并在队列上定期执行 mq_receive()调用了，因为一个进程能够请求消息到达通知。</p>
+<pre><code>#include &lt;mqueue.h&gt;
+int mq_notify(mqd_t mqdes,const struct sigevent *notification);
+</code></pre><p>　　notification参数指定了进程接收通知的机制。</p>
+<ul>
+<li>在任何一个时刻都只有一个进程(“注册进程”)能够向一个特定的消息队列注册接收通知，如果一个消息队列上已经存在注册进程了，那么后续在该队列上的注册请求将失败。</li>
+<li>只有一个新消息进入之前为空的队列时注册进程才会收到通知。</li>
+<li>当注册进程发送一个通知后就会删除注册信息，之后任何进程就能够向队列注册接收通知了。</li>
+<li>注册进程只有当前不存在在其他在该队列上调用mq_receive()而发生阻塞的进程时才会收到通知，如果其他进程在mq_receive()调用中被阻塞了，那么该进程就会读取消息，注册进程会保持注册状态。</li>
+<li>一个进程通过mq_notify()时传入一个NULL的notification参数来撤销自己在消息通知上的注册消息。<br>　　linux实现上，消息队列描述符实际上就是一个文件描述符，在linux中,每个进程以及系统所能打开的文件描述符的限制实际上会用于文件描述符和消息队列描述符之和。
+　　</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/29/41/" rel="next" title="虚拟内存操作">
+                <i class="fa fa-chevron-left"></i> 虚拟内存操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/29/43-1/" rel="prev" title="POSIX 信号量">
+                POSIX 信号量 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#POSIX-消息队列"><span class="nav-number">1.</span> <span class="nav-text">POSIX 消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#打开，关闭和断开链接消息队列"><span class="nav-number">1.1.</span> <span class="nav-text">打开，关闭和断开链接消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开一个消息队列"><span class="nav-number">1.1.1.</span> <span class="nav-text">打开一个消息队列</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fork-exec-以及进程终止对消息队列描述符的影响"><span class="nav-number">1.2.</span> <span class="nav-text">fork(),exec()以及进程终止对消息队列描述符的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#关闭一个消息队列"><span class="nav-number">1.2.1.</span> <span class="nav-text">关闭一个消息队列</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除一个消息队列"><span class="nav-number">1.3.</span> <span class="nav-text">删除一个消息队列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#描述符和消息队列之间的关系"><span class="nav-number">1.4.</span> <span class="nav-text">描述符和消息队列之间的关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取消息队列特性"><span class="nav-number">1.5.</span> <span class="nav-text">获取消息队列特性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改消息队列特性"><span class="nav-number">1.6.</span> <span class="nav-text">修改消息队列特性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#交换信息"><span class="nav-number">1.7.</span> <span class="nav-text">交换信息</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#发送信息"><span class="nav-number">1.7.1.</span> <span class="nav-text">发送信息</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#接收消息"><span class="nav-number">1.8.</span> <span class="nav-text">接收消息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在发送和接收消息时设置超时时间"><span class="nav-number">1.9.</span> <span class="nav-text">在发送和接收消息时设置超时时间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#消息通知"><span class="nav-number">1.10.</span> <span class="nav-text">消息通知</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

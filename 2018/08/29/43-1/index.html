@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="进程创建和程序执行深入进程记账　　打开进程记账功能后，内核会在每个进程终止时将一条记账信息写入系统级的进程记账文件，这个账单包含进程的终止状态和进程消耗CPU时间。">
+<meta name="description" content="POSIX 信号量打开一个命名信号量　　sem_open()函数创建和打开一个新的命名信号量或打开一个既有信号量。 #include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;semaphone.h&amp;gt; set_t *sem_open(const char *name,int oflag,...); 　　name参数标识出">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程创建和程序执行深入">
-<meta property="og:url" content="https://www.yixuan.tech/2018/08/12/28/index.html">
+<meta property="og:title" content="POSIX 信号量">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/29/43-1/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="进程创建和程序执行深入进程记账　　打开进程记账功能后，内核会在每个进程终止时将一条记账信息写入系统级的进程记账文件，这个账单包含进程的终止状态和进程消耗CPU时间。">
+<meta property="og:description" content="POSIX 信号量打开一个命名信号量　　sem_open()函数创建和打开一个新的命名信号量或打开一个既有信号量。 #include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;semaphone.h&amp;gt; set_t *sem_open(const char *name,int oflag,...); 　　name参数标识出">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-12T13:12:45.895Z">
+<meta property="og:updated_time" content="2018-08-29T13:27:16.205Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="进程创建和程序执行深入">
-<meta name="twitter:description" content="进程创建和程序执行深入进程记账　　打开进程记账功能后，内核会在每个进程终止时将一条记账信息写入系统级的进程记账文件，这个账单包含进程的终止状态和进程消耗CPU时间。">
+<meta name="twitter:title" content="POSIX 信号量">
+<meta name="twitter:description" content="POSIX 信号量打开一个命名信号量　　sem_open()函数创建和打开一个新的命名信号量或打开一个既有信号量。 #include &amp;lt;fcntl.h&amp;gt; #include &amp;lt;sys/stat.h&amp;gt; #include &amp;lt;semaphone.h&amp;gt; set_t *sem_open(const char *name,int oflag,...); 　　name参数标识出">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/08/12/28/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/29/43-1/"/>
 
 
 
 
 
-  <title>进程创建和程序执行深入 | A new cpp learner</title>
+  <title>POSIX 信号量 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/12/28/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/29/43-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">进程创建和程序执行深入</h1>
+          <h1 class="post-title" itemprop="name headline">POSIX 信号量</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-12T21:10:42+08:00">
-                2018-08-12
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-29T21:26:45+08:00">
+                2018-08-29
               </time>
             
 
@@ -300,17 +300,42 @@
       
 
       
-        <h4 id="进程创建和程序执行深入"><a href="#进程创建和程序执行深入" class="headerlink" title="进程创建和程序执行深入"></a>进程创建和程序执行深入</h4><h5 id="进程记账"><a href="#进程记账" class="headerlink" title="进程记账"></a>进程记账</h5><p>　　打开进程记账功能后，内核会在每个进程终止时将一条记账信息写入系统级的进程记账文件，这个账单包含进程的终止状态和进程消耗CPU时间。<br><a id="more"></a></p>
-<h6 id="打开和关闭进程记账功能"><a href="#打开和关闭进程记账功能" class="headerlink" title="打开和关闭进程记账功能"></a>打开和关闭进程记账功能</h6><p>　　特权进程可以利用系统调用acct()来打开和关闭进程记账功能。</p>
-<pre><code>#define /_BSD/_SOURCE
-#include &lt;unistd.h&gt;
-int acct(const char *acctfile);
-</code></pre><p>　　acctfile中指定一个现有常规文件的路径名，记账文件通常的路径名为/var/log/pact或/usr/account/pacct.关闭记账功能只需将acctfile置位NULL</p>
-<h5 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h5><p>　　类似于fork()和vfork()，linux特有的系统调用也能创建一个新进程，，clone()主要用于线程库的实现。</p>
-<pre><code>#define _GNU_SOURCE
-#include &lt;sched.h&gt;
-int clone(int (*func)(void*),void *child_stack,int flags,void *func_arg,...);
-</code></pre><p>　　与fork()不同的是，克隆生成的子进程继续运行时不以调用处为起点，转而去调用func所指定的函数，func又称子函数，子函数对该参数的含义可以自由解读，可以作为整形值，或者视为指向结构的指针（因为克隆产生的子进程对调用进程的内存即可获取，也可共享）。<br>　　一个线程组内的每个线程都有唯一的线程标识符TID。<br>　　线程可以调用gettid（）获取自身的线程ID。<br>　　线程ID在整个系统中是唯一的，只有线程担当进程中线程组首线程时线程ID和进程ID相同。<br>　　线程组中的所有线程用于同一个父进程ID。<br>　　线程与进程不同，不能用wait()等待，必须调用pthread_join()来加入。</p>
+        <h4 id="POSIX-信号量"><a href="#POSIX-信号量" class="headerlink" title="POSIX 信号量"></a>POSIX 信号量</h4><h5 id="打开一个命名信号量"><a href="#打开一个命名信号量" class="headerlink" title="打开一个命名信号量"></a>打开一个命名信号量</h5><p>　　sem_open()函数创建和打开一个新的命名信号量或打开一个既有信号量。</p>
+<pre><code>#include &lt;fcntl.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;semaphone.h&gt;
+set_t *sem_open(const char *name,int oflag,...);
+</code></pre><p>　　name参数标识出了信号量，oflags参数是一个位掩码，它确定了是打开一个信号量还是创建一个新的信号量。<br>　　不管是创建一个新信号量还是打开一个既有信号量，sem_open()都会返回一个指向一个sem_t 的指针，而在后续调用中则可以通过这个指针操纵这个信号量。</p>
+<h5 id="关闭一个信号量"><a href="#关闭一个信号量" class="headerlink" title="关闭一个信号量"></a>关闭一个信号量</h5><p>　　当一个进程打开一个命名信号量时，系统会记录进程和信号量之间的关联关系，sem_close()函数会终止这种关联关系(即关闭信号量)，释放系统为该进程关联到该信号之上的所有资源，并递减引用该信号量的进程数。</p>
+<pre><code>#include &lt;semaphore.h&gt;
+int sem_close(sem_t *sem);
+</code></pre><p>　　打开的命名信号量子在进程终止或者进程执行了一个exec()时会自动被关闭。关闭一个信号量并不会删除这个信号量，删除信号量要用sem_unlink()。</p>
+<h5 id="删除一个命名信号量"><a href="#删除一个命名信号量" class="headerlink" title="删除一个命名信号量"></a>删除一个命名信号量</h5><p>　　sem_unlink()函数删除通过name标识的信号量并将信号量标记为一旦所有进程都使用完这个信号量时就销毁该信号量。</p>
+<pre><code>#include &lt;semaphore.h&gt;
+int sem_unlink(const char *name);
+</code></pre><h6 id="信号量操作"><a href="#信号量操作" class="headerlink" title="信号量操作"></a>信号量操作</h6><pre><code>#include &lt;semaphore.h&gt;
+int sem_wait(sem_t *sem);
+</code></pre><p>　　如果信号量的当前值大于0，那么sem_wait()会立即返回，如果信号量的当前值等于0，那么sem_wait()会阻塞直到信号量的值大于0为止，当信号量大于0时该信号量值就被递减并且sem_wait()就会立即返回。</p>
+<h6 id="信号量的发布"><a href="#信号量的发布" class="headerlink" title="信号量的发布"></a>信号量的发布</h6><pre><code>＃include &lt;semaphore.h&gt;
+int sem_post(sem_t *sem);
+</code></pre><p>　　如果在sem_post调用之前信号量的值为0，并且其他某个进程或线程正在因等待递减这个信号量而阻塞，那么该进程会被唤醒，它的sem_wait()调用会继续往前执行来递减这个信号量。</p>
+<h5 id="获取信号量的当前值"><a href="#获取信号量的当前值" class="headerlink" title="获取信号量的当前值"></a>获取信号量的当前值</h5><pre><code>#include &lt;semaphore.h&gt;
+int sem_getvalue(sem_t *sem,int sval);
+</code></pre><p>　　将sem引用的信号量的当前值通过sval指向的int变量返回。</p>
+<h5 id="未命名信号量"><a href="#未命名信号量" class="headerlink" title="未命名信号量"></a>未命名信号量</h5><p>　　未命名信号量(也称基于内存的信号量)是类型为set_t并存储在应用程序分配的内存中的信号量，通过将这个信号量放在几个进程或者线程共享的内存中就能够使得这个信号量对这些进程或者线程可用。<br>　　操作未命名信号量所使用的函数与操作命名信号量使用的函数是一样的，此外：<br>　　　　　１．sem_init()函数对一个信号量进行初始化并通知该信号量会在进程间共享还是会在单个进程中的线程间共享。<br>　　　　　２．sem_destory(sem)函数会销毁一个信号量。</p>
+<ul>
+<li>在线程间共享的信号量不需要名字，将一个未命名信号量作为一个共享变量(全局或堆上)自动会使之对所有线程可访问。</li>
+<li>在相关进程间共享的信号量不需要名字。</li>
+<li>如果正在构建的是一个动态数据结构(如二叉树),并且其中每一项都需要一个关联的信号量，简单实现可以是分配一个未命名信号量。</li>
+</ul>
+<h5 id="初始化一个未命名信号量"><a href="#初始化一个未命名信号量" class="headerlink" title="初始化一个未命名信号量"></a>初始化一个未命名信号量</h5><p>　　sem_init()函数使用value中指定的值来对sem指向的未命名信号量进行初始化。</p>
+<pre><code>#include &lt;semaphore.h&gt;
+int sem_init(sem_t *sem,int pshared,unsigned int value);
+</code></pre><p>　　1，如果pshared等于0，那么信号量将会在调用进程中的线程间共享，sem通常会被指定为一个全局变量的地址或者分配在一个堆上的变量的地址，线程共享的信号量具备进程持久性，他在进程终止时会被销毁。<br>　　2.如果pshared不等于0，那么信号量将在进程间共享，在这种情况下，sem必须是共享内存区域(一个POSIX共享内存对象，一个使用mmap()创建的共享映射或者一个system V内存段)中某个位置的地址。信号量的持久性和它所处共享内存的持久性是一样的。</p>
+<h5 id="销毁一个未命名信号量"><a href="#销毁一个未命名信号量" class="headerlink" title="销毁一个未命名信号量"></a>销毁一个未命名信号量</h5><p>　　sem_destory()函数将销毁信号量sem，其中sem必须是一个之前使用sem_init()进行初始化的未命名信号量，只有在不存在进程或线程在等待一个信号量时才能安全销毁这个信号量。</p>
+<pre><code>#include &lt;semaphore.h&gt;
+int sem_destory(sem_t *sem);
+</code></pre><p>　　当使用sem_destory()销毁了一个未命名信号量之后就能够使用sem_init()来重新初始化这个信号量了。<br>　　一个未命名的信号量应该在底层的内存被释放之前被销毁。</p>
 
       
     </div>
@@ -335,8 +360,8 @@ int clone(int (*func)(void*),void *child_stack,int flags,void *func_arg,...);
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/12/27/" rel="next" title="线程">
-                <i class="fa fa-chevron-left"></i> 线程
+              <a href="/2018/08/29/42/" rel="next" title="POSIX 消息队列">
+                <i class="fa fa-chevron-left"></i> POSIX 消息队列
               </a>
             
           </div>
@@ -344,10 +369,6 @@ int clone(int (*func)(void*),void *child_stack,int flags,void *func_arg,...);
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/13/29/" rel="prev" title="线程同步">
-                线程同步 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -465,7 +486,7 @@ int clone(int (*func)(void*),void *child_stack,int flags,void *func_arg,...);
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程创建和程序执行深入"><span class="nav-number">1.</span> <span class="nav-text">进程创建和程序执行深入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程记账"><span class="nav-number">1.1.</span> <span class="nav-text">进程记账</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开和关闭进程记账功能"><span class="nav-number">1.1.1.</span> <span class="nav-text">打开和关闭进程记账功能</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#系统调用"><span class="nav-number">1.2.</span> <span class="nav-text">系统调用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#POSIX-信号量"><span class="nav-number">1.</span> <span class="nav-text">POSIX 信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#打开一个命名信号量"><span class="nav-number">1.1.</span> <span class="nav-text">打开一个命名信号量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关闭一个信号量"><span class="nav-number">1.2.</span> <span class="nav-text">关闭一个信号量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除一个命名信号量"><span class="nav-number">1.3.</span> <span class="nav-text">删除一个命名信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#信号量操作"><span class="nav-number">1.3.1.</span> <span class="nav-text">信号量操作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#信号量的发布"><span class="nav-number">1.3.2.</span> <span class="nav-text">信号量的发布</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取信号量的当前值"><span class="nav-number">1.4.</span> <span class="nav-text">获取信号量的当前值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#未命名信号量"><span class="nav-number">1.5.</span> <span class="nav-text">未命名信号量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#初始化一个未命名信号量"><span class="nav-number">1.6.</span> <span class="nav-text">初始化一个未命名信号量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#销毁一个未命名信号量"><span class="nav-number">1.7.</span> <span class="nav-text">销毁一个未命名信号量</span></a></li></ol></li></ol></div>
             
 
           </div>

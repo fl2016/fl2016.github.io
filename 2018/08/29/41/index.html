@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="虚拟内存操作改变内存保护：mprotect()#include &amp;lt;sys/mman.h&amp;gt; int mprotect(void *addr,size_t length,int prot); 　　mprotect()系统调用起始位置为addr长度为length字节的虚拟内存区域中分页的保护。　　addr的取值必须是系统分页大小(sysconf(_SC_PAGESIZE)的返回值)的整数倍。">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟内存操作">
+<meta property="og:url" content="https://www.yixuan.tech/2018/08/29/41/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="虚拟内存操作改变内存保护：mprotect()#include &amp;lt;sys/mman.h&amp;gt; int mprotect(void *addr,size_t length,int prot); 　　mprotect()系统调用起始位置为addr长度为length字节的虚拟内存区域中分页的保护。　　addr的取值必须是系统分页大小(sysconf(_SC_PAGESIZE)的返回值)的整数倍。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-29T05:22:22.833Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="虚拟内存操作">
+<meta name="twitter:description" content="虚拟内存操作改变内存保护：mprotect()#include &amp;lt;sys/mman.h&amp;gt; int mprotect(void *addr,size_t length,int prot); 　　mprotect()系统调用起始位置为addr长度为length字节的虚拟内存区域中分页的保护。　　addr的取值必须是系统分页大小(sysconf(_SC_PAGESIZE)的返回值)的整数倍。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/08/29/41/"/>
+
+
+
+
+
+  <title>虚拟内存操作 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/08/29/41/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">虚拟内存操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-29T13:20:56+08:00">
+                2018-08-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="虚拟内存操作"><a href="#虚拟内存操作" class="headerlink" title="虚拟内存操作"></a>虚拟内存操作</h4><h5 id="改变内存保护：mprotect"><a href="#改变内存保护：mprotect" class="headerlink" title="改变内存保护：mprotect()"></a>改变内存保护：mprotect()</h5><pre><code>#include &lt;sys/mman.h&gt;
+int mprotect(void *addr,size_t length,int prot);
+</code></pre><p>　　mprotect()系统调用起始位置为addr长度为length字节的虚拟内存区域中分页的保护。<br>　　addr的取值必须是系统分页大小(sysconf(_SC_PAGESIZE)的返回值)的整数倍。<br>　　prot参数是一个位掩码,它制定了这块内存区域上的新保护，取值是PROT_NONE或PROT_READ,PROT_WRITE以及PROT_EXEC这三个值中的一个或者多个取OR。<br>　　如果一个进程在访问一块内存区域时违背了内存保护，那么内核就会向该进程发送一个SIGSEGV信号。</p>
+<h5 id="内存锁-mlock-和mlockatt"><a href="#内存锁-mlock-和mlockatt" class="headerlink" title="内存锁:mlock()和mlockatt()"></a>内存锁:mlock()和mlockatt()</h5><h5 id="RLIMIT-MEMLOCK-资源限制"><a href="#RLIMIT-MEMLOCK-资源限制" class="headerlink" title="RLIMIT_MEMLOCK 资源限制"></a>RLIMIT_MEMLOCK 资源限制</h5><p>　　RLIMIT_MEMLOCK限制它为了一个进程能够锁进内存的字节数设定了一个上限。<br>　　在linux内核中，只有特权进程(CAP_IPC_LOCK)才能给内存加锁，RLIMIT_MEMLOCK软资源限制为一个特权进程能够锁住的字节数设定一个上限。<br>　　从linux开始，内核加锁模型发生了变化，即允许非特权进程给一小段内存进行加锁，这对于需要将一部分敏感信息锁进内存以确保这些信息永远不会被写入磁盘上的交换空间的程序是十分有用的。</p>
+<ul>
+<li>特权进程能够锁住的内存数量是没有限制的。(RLIMIT_MEMLOCK会被忽略)</li>
+<li><p>非特权进程能够锁住的内存数量上限由软控制RLIMIT_MEMLOCK控制。<br>　　RLIMIT_MEMLOCK限制影响：</p>
+</li>
+<li><p>mlock()和mlockall()</p>
+</li>
+<li>mmap() MAP_LOCKED标记，该标记用来在映射被创建时将内存映射锁进内存。</li>
+<li>shmctl() SHM_LOCK操作，该操作用来为System V共享内存段加锁。<br>　　软和硬RLIMIT_MEMLOCK限制的默认值都是8个分页。</li>
+</ul>
+<h5 id="给内存区域加锁和解锁"><a href="#给内存区域加锁和解锁" class="headerlink" title="给内存区域加锁和解锁"></a>给内存区域加锁和解锁</h5><p>　　一个进程可以使用mlock()和munlock()来给一个内存区域加锁和解锁。</p>
+<pre><code>#include &lt;sys/mman.h&gt;
+int mlock(void *addr,size_t length);
+int munlock(void *addr,size_t length
+</code></pre><p>　　mlock()系统调用会锁住调用进程的虚拟地址空间中的起始地址为addr长度为length字节的区域中的所有分页。与传入其他一些与内存相关的系统调用中的相应参数相比，addr是无需分页对齐的：内核会从addr下面的下一个分页边界开始锁住分页。<br>　　由于加锁的单位是分页，所以被锁住的区域的结束位置为大于length+addr的下一个分页边界。<br>　　在mlock()调用成功之后就能确保指定区域中的分页会被锁住并驻留在物理内存中，当没有足够的物理内存来锁住所有所请求的分页或请求违背RLIMIT_MEMELOCK软资源的限制时，mlock()系统调用会失败。<br>　　除了显式的使用unlock()之外，内存锁在下列情况下会自动解除。</p>
+<ul>
+<li>在进程终止时</li>
+<li>当被锁住的分页通过munmap()被解除映射时。</li>
+<li>当被锁住的分页被使用mmap() MAP_FIXED标记的映射覆盖时。</li>
+</ul>
+<p>　　内存锁不会被通过fork()创建的子进程继承，也不会在exec()执行期间保留。<br>　　当多个进程共享一组分页(MAP_SHARED映射)，只要还存在一个进程持有这些分页上的内存锁，那么这些分页就会保持被锁内内存的状态。<br>　　如果使用mmap()将同一组分页(即同样文件)映射到单个进程中的几个不同的位置，然后分别给所有这些映射加锁，那么这些分页将会保持被锁进RAM的状态直到所有的映射都被解锁为止。<br>　　内存锁加锁的单位为分页以及无法叠加的事实意味着独立的将mlock()和munlock()调用应用与同一个虚拟分页的不同数据结构在逻辑上是不正确的。若果在同一个虚拟内存分页中存在两个数据结构，指针p1和p2分别指向了这两个数据结构。</p>
+<pre><code>mlock(*p1,len1);
+mlock(*p2,len2);
+munlock(*p1,len1);
+</code></pre><p>　　上述所有的调用都会成功，但最后整个分页都会被解锁，即p2指向的数据结构将不会被锁紧内存。</p>
+<p>　　注意shmctl()SHM_LOCK操作的语义与mlock()和mlockall()的语义是不同的。<br>　　具体如下：<br>　　　　1.在SHM_LOCK操作之后，分页只有因后续引用而发生故障时才会被锁进内存，与之相反的是，mlock()和mlockall()调用在返回之前会将所有分页锁紧内存。<br>　　　　2.SHM_LOCK操作会设置共享内存段这一属性，而不是进程的属性，这意味着分页一旦因故障锁紧了内存，那么即使所有进程都与这个共享段分离了，分页还是会继续保持驻留在内存中的状态，与之相反的是，使用mlock()或者mlockall()只有在还存在进程持有该区域的锁时才会保持被锁进内存的状态。与之相反的是，使用mlock()或者mlockall()锁紧内存区域只有在还存在进程持有该区域的锁时才会保持被锁紧内存的状态。</p>
+<h5 id="给一个进程占据的所有内存加锁和解锁"><a href="#给一个进程占据的所有内存加锁和解锁" class="headerlink" title="给一个进程占据的所有内存加锁和解锁"></a>给一个进程占据的所有内存加锁和解锁</h5><pre><code>#include &lt;sys/mman.h&gt;
+int mlockall(int flags);
+int munlockall(void);
+</code></pre><p>　　mlockall()系统调用根据flags位掩码的取值将一个进程的虚拟地址空间中当前所有映射的分页或者将来所有映射的分页或者两者缩进内存，其中flags参数中的取值为以下这些常量的一个或者多个OR。<br>　　MCL_CURRENT 将调用进程的虚拟地址空间中当前所有映射的分页锁紧内存，包括当前为程序文本段，数据段，内存映射以及栈分配的所有分页，当指定了MCL_CURRENT标记的调用成功之后就能够确保调用进程的所有分页都驻留在这些内存之中。这个标记不会对后续在进程的虚拟地址空间上分配的分页产生影响，<br>　　MCL_FUTURE<br>将后续映射进调用进程的虚拟地址空间的所有分页缩进内存。</p>
+<h5 id="确定内存驻留性：mincore"><a href="#确定内存驻留性：mincore" class="headerlink" title="确定内存驻留性：mincore()"></a>确定内存驻留性：mincore()</h5><p>　　mincore()系统调用是内存加锁系统调用的补充，它报告了一个虚拟地址范围中哪些分页可以驻留在RAM中，因此访问这些分页时也不会导致分页故障。</p>
+<pre><code>#include &lt;sys/mman.h&gt;
+int mincore(void *addr,size_t length,unsigned char *vec);
+</code></pre><p>　　mincore()系统调用返回其实地址为addr,长度为length字节的虚拟地址范围中分页的内存驻留信息，addr中的地址必须是分页对齐的，并且由于返回的信息是关于整个分页的。</p>
+<h5 id="建议后续的内存使用模式：madvise"><a href="#建议后续的内存使用模式：madvise" class="headerlink" title="建议后续的内存使用模式：madvise()"></a>建议后续的内存使用模式：madvise()</h5><p>　　madvise()系统调用通过通知内核调用进程对起始地址为addr长度为length字节范围之内的分页的可能的使用情况来提升应用程序的性能，内核可能会使用这种信息来提升在分页之下的文件映射上执行I/O的效率。</p>
+<pre><code>#include &lt;sys/mman.h&gt;
+int madvise( void *addr,size_t length,int advice);
+</code></pre><p>　　addr中的值必须是分页对齐的.<br>　　advice可以是：<br>　　　　1.MADV_NORMAL 这是默认行为，分页是以簇的形式传输的，这个值会导致一些预先读和事后读。<br>　　　　2.MADV_RANDOM 这个区域中的分页会被随机访问，预先读没有太多好处。<br>　　　　3.MADV_SEQUENTIAL 顺序访问，且该范围中的分页只会被访问一次。<br>　　　　4.MADV_WILLNEED 预先读取这个区域中的分页以备不时之需。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/25/40/" rel="next" title="内存映射">
+                <i class="fa fa-chevron-left"></i> 内存映射
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/29/42/" rel="prev" title="POSIX 消息队列">
+                POSIX 消息队列 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟内存操作"><span class="nav-number">1.</span> <span class="nav-text">虚拟内存操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#改变内存保护：mprotect"><span class="nav-number">1.1.</span> <span class="nav-text">改变内存保护：mprotect()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存锁-mlock-和mlockatt"><span class="nav-number">1.2.</span> <span class="nav-text">内存锁:mlock()和mlockatt()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RLIMIT-MEMLOCK-资源限制"><span class="nav-number">1.3.</span> <span class="nav-text">RLIMIT_MEMLOCK 资源限制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#给内存区域加锁和解锁"><span class="nav-number">1.4.</span> <span class="nav-text">给内存区域加锁和解锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#给一个进程占据的所有内存加锁和解锁"><span class="nav-number">1.5.</span> <span class="nav-text">给一个进程占据的所有内存加锁和解锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#确定内存驻留性：mincore"><span class="nav-number">1.6.</span> <span class="nav-text">确定内存驻留性：mincore()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#建议后续的内存使用模式：madvise"><span class="nav-number">1.7.</span> <span class="nav-text">建议后续的内存使用模式：madvise()</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
