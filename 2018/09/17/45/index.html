@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SOCKET:介绍　　socket是一种IPC方法，其通信方式如下：　　　　1.各个应用程序创建了一个socket，socket是一个允许应用程序通信的设备，两个应用程序都需要用到它。　　　　2.服务器将自己的socket绑定到一个众所周知的地址上能够是使的客户端定位到它的位置。 fd = socket(domain,type,protocol); 通信domain　　socket存在于一个dom">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOCKET介绍">
+<meta property="og:url" content="https://www.yixuan.tech/2018/09/17/45/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="SOCKET:介绍　　socket是一种IPC方法，其通信方式如下：　　　　1.各个应用程序创建了一个socket，socket是一个允许应用程序通信的设备，两个应用程序都需要用到它。　　　　2.服务器将自己的socket绑定到一个众所周知的地址上能够是使的客户端定位到它的位置。 fd = socket(domain,type,protocol); 通信domain　　socket存在于一个dom">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-17T02:59:52.225Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SOCKET介绍">
+<meta name="twitter:description" content="SOCKET:介绍　　socket是一种IPC方法，其通信方式如下：　　　　1.各个应用程序创建了一个socket，socket是一个允许应用程序通信的设备，两个应用程序都需要用到它。　　　　2.服务器将自己的socket绑定到一个众所周知的地址上能够是使的客户端定位到它的位置。 fd = socket(domain,type,protocol); 通信domain　　socket存在于一个dom">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/09/17/45/"/>
+
+
+
+
+
+  <title>SOCKET介绍 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/09/17/45/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SOCKET介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T10:59:26+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="SOCKET-介绍"><a href="#SOCKET-介绍" class="headerlink" title="SOCKET:介绍"></a>SOCKET:介绍</h4><p>　　socket是一种IPC方法，其通信方式如下：<br>　　　　1.各个应用程序创建了一个socket，socket是一个允许应用程序通信的设备，两个应用程序都需要用到它。<br>　　　　2.服务器将自己的socket绑定到一个众所周知的地址上能够是使的客户端定位到它的位置。</p>
+<pre><code>fd = socket(domain,type,protocol);
+</code></pre><h5 id="通信domain"><a href="#通信domain" class="headerlink" title="通信domain"></a>通信domain</h5><p>　　socket存在于一个domain中，它确定：</p>
+<ul>
+<li>识别出了一个socket方法。</li>
+<li>通信范围</li>
+</ul>
+<p>　　三种domain,UNIX，IPv4,IPv6。</p>
+<h5 id="socket类型"><a href="#socket类型" class="headerlink" title="socket类型"></a>socket类型</h5><p>　　每种socket实现都至少提供两种socket:流和数据报，流是面向连接的，可靠传送，没有消息边界，数据报是非面向连接的，由消息边界。<br>　　流socket（SOCK_STREAM)提供了一个可靠的双向的字节流通道。<br>　　流socket的正常工作需要一对相互连接的socket，因此流socket通常是称为面向连接的，一个流socket只能与一个对等socket进行连接。<br>　　数据报socekt在使用时无需与另一个socket连接。<br>　　在internet domain中，数据报socket使用了数据报协议，流socket通常使用了TCP协议。</p>
+<h6 id="socket-系统调用"><a href="#socket-系统调用" class="headerlink" title="socket 系统调用"></a>socket 系统调用</h6><ul>
+<li>socket系统调用创建一个新socket。</li>
+<li>bind系统调用将一个socket绑定到一个地址上，通常服务器将socket绑定到一个众所周知的地址绑定上以使得客户端能够定位到该socet。</li>
+<li>listen()系统调用允许一个流socket接受来自其他socket的接入连接。</li>
+<li>accept()系统调用允许在一个监听流socket上接受一个来自对等应用程序的连接。</li>
+<li>connect()系统调用建立与另一个socket之间的连接。</li>
+<li>socket I/O可以使用传统的read()和write()，或者使用socket特有的系统调用(如send()，sendto()，recv()，recvfrom())来完成，默认情况下，这些系统调用在I/O操作无法完成时会被阻塞，通过使用fcntl()F_SETFL操作来启用O_NONBLOCK打开文件状态标记可以执行非阻塞I/O。</li>
+</ul>
+<h5 id="创建一个socket"><a href="#创建一个socket" class="headerlink" title="创建一个socket"></a>创建一个socket</h5><pre><code>#include &lt;sys/socket.h&gt;
+int socket(int domain,int type,int protocol);
+</code></pre><p>　　domain参数制定了socket通信的domain，type参数指定了socket类型，type可以是SOCK_STREAM或者SOCK_DGRAM。<br>　　protocol参数在本书描述的socket类型中总是会被指定为0.</p>
+<h5 id="将socket绑定到地址"><a href="#将socket绑定到地址" class="headerlink" title="将socket绑定到地址"></a>将socket绑定到地址</h5><p>　　bind()系统调用将一个socket绑定到一个地址上。</p>
+<pre><code>#incldue &lt;sys/socket.h&gt;
+int bind(int sockfd,const struct sockaddr *addr,socklen_t addlen);
+</code></pre><p>　　sockfd参数是一个sock()调用中获得文件描述符，addr参数是一个指针，指向了一个指定该socket绑定到的地址的结构，传入的这个参数的结构的类型取决于socket domain,addrlen指定了地址结构的大小。</p>
+<h5 id="通用的socket地址结构：struct-sockaddr"><a href="#通用的socket地址结构：struct-sockaddr" class="headerlink" title="通用的socket地址结构：struct sockaddr"></a>通用的socket地址结构：struct sockaddr</h5><p>　　UNIX domain socket 使用路径名，Internet domain socket中使用IP地址和端口号。</p>
+<pre><code>struct sockaddr{
+    sa_family_t sa_family;
+    char sa_data[14];
+    };
+</code></pre><p>　　这个结构是所有domain特定的地址结构的模板，其中每个地址结构均与sockaddr结构中sa_family字段的family字段打头。</p>
+<h5 id="流socket"><a href="#流socket" class="headerlink" title="流socket"></a>流socket</h5><p>　　主动socket和被动socket：<br>　　　　1.默认情况下，使用socket创建的socket是主动的，一个主动的socket可以在connect系统调用中来创建贵到被动socket连接，这种行为称为执行一个主动的打开。<br>　　　　2.一个被动socket（也称为监听socket）是一个通过listen()以被标记成允许接入连接的socket。<br>　　　　大多数情况下，服务器执行被动式打开，客户端执行主动式打开。</p>
+<h5 id="监听接入连接：listen"><a href="#监听接入连接：listen" class="headerlink" title="监听接入连接：listen()"></a>监听接入连接：listen()</h5><p>　　listen()系统调用将文件描述符sockfd引用的流标记为被动，这个socket后面会被从来接受来自其他主动socket的连接。</p>
+<pre><code>#include &lt;sys/socket.h&gt;
+int listen(int sockfd,int backlog);
+</code></pre><p>　　无法在一个已连接的socket（即已成功执行connect的socket或由accept()调用返回的socket）上执行listen。<br>　　内核必须记录所有未决的连接请求的相关信息，这样后续accept()就能够处理这些请求了，backlg参数允许限制这种未决的连接的数量。</p>
+<h5 id="接受连接-accept"><a href="#接受连接-accept" class="headerlink" title="接受连接:accept()"></a>接受连接:accept()</h5><p>　　accept()系统调用在文件描述符sockfd引用的监听流上接受一个接入连接，如果调用accept()不存在未决的连接，那么调用会阻塞到有连接请求到达为止。</p>
+<pre><code>#include &lt;sys/socket.h&gt;
+int accept(int sockfd,struct sockaddr *addr,socket_t *addrlen);
+</code></pre><p>　　理解accept()的关键点是它会创建一个新socket，并且正是这个新socket会与执行connect()的对等socket进行连接。<br>　　剩余参数返回对端的socket的地址，addr参数指向了一个用来返回socket地址的结构，这个参数的类型取决于socket domain.<br>　　addrlen参数是一个值结果参数，它指向了一个整数，在调用之前将这个整数初始化为指向addr的缓冲区的空间的大小。这样内核就知道有多少空间可以返回socket地址了。accept()返回之后，这个整数就可以设置成复制进缓冲区的数据的字节数。</p>
+<h5 id="连接到对等socket-connect"><a href="#连接到对等socket-connect" class="headerlink" title="连接到对等socket:connect()"></a>连接到对等socket:connect()</h5>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/17/44/" rel="next" title="POSIX共享内存">
+                <i class="fa fa-chevron-left"></i> POSIX共享内存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/17/46/" rel="prev" title="SOCKET DOMAIN">
+                SOCKET DOMAIN <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SOCKET-介绍"><span class="nav-number">1.</span> <span class="nav-text">SOCKET:介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#通信domain"><span class="nav-number">1.1.</span> <span class="nav-text">通信domain</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#socket类型"><span class="nav-number">1.2.</span> <span class="nav-text">socket类型</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#socket-系统调用"><span class="nav-number">1.2.1.</span> <span class="nav-text">socket 系统调用</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建一个socket"><span class="nav-number">1.3.</span> <span class="nav-text">创建一个socket</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#将socket绑定到地址"><span class="nav-number">1.4.</span> <span class="nav-text">将socket绑定到地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通用的socket地址结构：struct-sockaddr"><span class="nav-number">1.5.</span> <span class="nav-text">通用的socket地址结构：struct sockaddr</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#流socket"><span class="nav-number">1.6.</span> <span class="nav-text">流socket</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#监听接入连接：listen"><span class="nav-number">1.7.</span> <span class="nav-text">监听接入连接：listen()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#接受连接-accept"><span class="nav-number">1.8.</span> <span class="nav-text">接受连接:accept()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#连接到对等socket-connect"><span class="nav-number">1.9.</span> <span class="nav-text">连接到对等socket:connect()</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

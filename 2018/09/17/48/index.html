@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SOCKET服务器设计迭代和并发型服务器　　使用socket(套接字)的网络服务器端程序，有两种常见的设计方式：　　　　1.迭代型： 服务器每次只处理一个客户端，只有当完全处理完一个客户端的请求后才去处理下一个客户端。　　　　2.并发型：这种类型的服务器可以同时处理多个客户端的请求。 迭代型echo服务器并发型TCP echo服务器　　echo支持UDP和TCP，echo服务工作在端口7上，TCP">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOCKET 服务器设计">
+<meta property="og:url" content="https://www.yixuan.tech/2018/09/17/48/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="SOCKET服务器设计迭代和并发型服务器　　使用socket(套接字)的网络服务器端程序，有两种常见的设计方式：　　　　1.迭代型： 服务器每次只处理一个客户端，只有当完全处理完一个客户端的请求后才去处理下一个客户端。　　　　2.并发型：这种类型的服务器可以同时处理多个客户端的请求。 迭代型echo服务器并发型TCP echo服务器　　echo支持UDP和TCP，echo服务工作在端口7上，TCP">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-17T03:02:32.387Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SOCKET 服务器设计">
+<meta name="twitter:description" content="SOCKET服务器设计迭代和并发型服务器　　使用socket(套接字)的网络服务器端程序，有两种常见的设计方式：　　　　1.迭代型： 服务器每次只处理一个客户端，只有当完全处理完一个客户端的请求后才去处理下一个客户端。　　　　2.并发型：这种类型的服务器可以同时处理多个客户端的请求。 迭代型echo服务器并发型TCP echo服务器　　echo支持UDP和TCP，echo服务工作在端口7上，TCP">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/09/17/48/"/>
+
+
+
+
+
+  <title>SOCKET 服务器设计 | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/09/17/48/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SOCKET 服务器设计</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T11:01:56+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="SOCKET服务器设计"><a href="#SOCKET服务器设计" class="headerlink" title="SOCKET服务器设计"></a>SOCKET服务器设计</h4><h5 id="迭代和并发型服务器"><a href="#迭代和并发型服务器" class="headerlink" title="迭代和并发型服务器"></a>迭代和并发型服务器</h5><p>　　使用socket(套接字)的网络服务器端程序，有两种常见的设计方式：<br>　　　　1.迭代型： 服务器每次只处理一个客户端，只有当完全处理完一个客户端的请求后才去处理下一个客户端。<br>　　　　2.并发型：这种类型的服务器可以同时处理多个客户端的请求。</p>
+<h5 id="迭代型echo服务器"><a href="#迭代型echo服务器" class="headerlink" title="迭代型echo服务器"></a>迭代型echo服务器</h5><h5 id="并发型TCP-echo服务器"><a href="#并发型TCP-echo服务器" class="headerlink" title="并发型TCP echo服务器"></a>并发型TCP echo服务器</h5><p>　　echo支持UDP和TCP，echo服务工作在端口7上，TCPecho服务器接受一条连接然后不断循环，读取所有已传输的数据并在同一个套接字上将他们发送回客户端。服务器不断地读取数据直到检测到文件结尾为止，此服务器就关闭它的套接字(如果客户端仍从套接字中读取数据的话，就可以看到文件结尾了)。<br>　　由于客户端可能会无限量的数据发送给服务器(因而服务这样的客户端可能需要无限的时间)，因此这种情况下适合将服务器设计成并发型，这样多个客户端能够同时得到服务。</p>
+<h5 id="inetd-Internet超级服务器-守护进程"><a href="#inetd-Internet超级服务器-守护进程" class="headerlink" title="inetd(Internet超级服务器)守护进程"></a>inetd(Internet超级服务器)守护进程</h5><p>　　服务项目可以在/etc/services中看到，一个系统中有大量的服务器进程，大多数只是等待着偶尔发送过来的连接请求或者数据报，除此之外什么也不错，所有这些服务器进程会占用内核进程表中的槽位，而且也会占用一些内存和交换空间。<br>　　守护进程inetd用来消除大量非常用服务器的需要，inetd可提供两个主要的好处。</p>
+<ul>
+<li>与其为每个服务单独运行一个守护进程，现在只用一个进程-inetd守护进程就可以监视一组指定的套接字端口，并且按照需要启动其他服务，因此可以降低系统上运行的进程的数量。</li>
+<li>inetd简化了启动其他服务的编程工作，因为由inetd执行的一些步骤通常在所有的网络服务启动时都会用到。<br>　　由于inetd监管着一些服务，有时候按照需要启动一些服务，因此inetd有时候被称为Internet超级服务器。<h5 id="inetd守护进程所做的操作"><a href="#inetd守护进程所做的操作" class="headerlink" title="inetd守护进程所做的操作"></a>inetd守护进程所做的操作</h5>　　inetd守护进程通常在系统启动时进行，在成为守护进程后，inetd的执行如下：<br>　　　1.对于在配置文件/etc/inetd.conf中指定的每项服务，inetd都会创建一个恰当类型的套接字，即流式套接字或者数据报套接字，然后绑定到指定端口上，每个TCP套接字都会通过listen()调用允许客户端发来连接。<br>　　　2.通过select()调用，inetd对前一步创建的所有套接字进行监视，看是否有数据报或者请求连接发送过来。<br>　　　3.select()调用进入阻塞态，直到一个UDP套接字上由数据报可读或者TCP套接字上收到了连接请求，在TCP连接中，inetd在进入下一个步骤之前会先为连接执行accept()调用。<br>　　　4.要启动这个套接字上的服务，inetd调用fork()创建一个新的进程，然后通过exec()启动服务器程序，在执行exec()前，子进程执行如下的步骤。<br>　　　　a.除了用于UDP的数据报和接受TCP连接的文件描述符之外，将其他所有从父进程继承而来的文件描述符都关闭。<br>　　　　b.在文件描述符0,1,2上复制套接字文件描述符，并关闭套接字文件描述符本身，完成这一步之后，启动的服务器进程标准的文件描述符同套接字通信了 。<br>　　　5.如果TCP套接字上接受了一个连接，inetd就关闭这个套接字。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/17/47/" rel="next" title="SOCKET Internet domain">
+                <i class="fa fa-chevron-left"></i> SOCKET Internet domain
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/17/49/" rel="prev" title="SOCKET高级主题">
+                SOCKET高级主题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SOCKET服务器设计"><span class="nav-number">1.</span> <span class="nav-text">SOCKET服务器设计</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#迭代和并发型服务器"><span class="nav-number">1.1.</span> <span class="nav-text">迭代和并发型服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#迭代型echo服务器"><span class="nav-number">1.2.</span> <span class="nav-text">迭代型echo服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#并发型TCP-echo服务器"><span class="nav-number">1.3.</span> <span class="nav-text">并发型TCP echo服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#inetd-Internet超级服务器-守护进程"><span class="nav-number">1.4.</span> <span class="nav-text">inetd(Internet超级服务器)守护进程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#inetd守护进程所做的操作"><span class="nav-number">1.5.</span> <span class="nav-text">inetd守护进程所做的操作</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

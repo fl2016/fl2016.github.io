@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SOCKET:Internet Domain　　UNIX domain数据报是可靠地，但UDP socket 数据报则是不可靠。在一个UNXI domain数据报socket上发送数据会在接收socket的数据队列为满时候阻塞，不同的是，使用UDP时如果进入的数据报会使接受者的队列溢出，那么数据报就会静默的丢弃。 网络字节序　　标准网路字节序是大端的，即先存储最高有效位。 　　 域名系统　　在DN">
+<meta name="keywords" content="The directiion,the efficiency,the persistence!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOCKET Internet domain">
+<meta property="og:url" content="https://www.yixuan.tech/2018/09/17/47/index.html">
+<meta property="og:site_name" content="A new cpp learner">
+<meta property="og:description" content="SOCKET:Internet Domain　　UNIX domain数据报是可靠地，但UDP socket 数据报则是不可靠。在一个UNXI domain数据报socket上发送数据会在接收socket的数据队列为满时候阻塞，不同的是，使用UDP时如果进入的数据报会使接受者的队列溢出，那么数据报就会静默的丢弃。 网络字节序　　标准网路字节序是大端的，即先存储最高有效位。 　　 域名系统　　在DN">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-17T03:01:42.926Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SOCKET Internet domain">
+<meta name="twitter:description" content="SOCKET:Internet Domain　　UNIX domain数据报是可靠地，但UDP socket 数据报则是不可靠。在一个UNXI domain数据报socket上发送数据会在接收socket的数据队列为满时候阻塞，不同的是，使用UDP时如果进入的数据报会使接受者的队列溢出，那么数据报就会静默的丢弃。 网络字节序　　标准网路字节序是大端的，即先存储最高有效位。 　　 域名系统　　在DN">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.yixuan.tech/2018/09/17/47/"/>
+
+
+
+
+
+  <title>SOCKET Internet domain | A new cpp learner</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A new cpp learner</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn by thinking and learn by persistence!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/09/17/47/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yixuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myheader.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A new cpp learner">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SOCKET Internet domain</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-17T11:00:56+08:00">
+                2018-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="SOCKET-Internet-Domain"><a href="#SOCKET-Internet-Domain" class="headerlink" title="SOCKET:Internet Domain"></a>SOCKET:Internet Domain</h4><p>　　UNIX domain数据报是可靠地，但UDP socket 数据报则是不可靠。在一个UNXI domain数据报socket上发送数据会在接收socket的数据队列为满时候阻塞，不同的是，使用UDP时如果进入的数据报会使接受者的队列溢出，那么数据报就会静默的丢弃。</p>
+<h5 id="网络字节序"><a href="#网络字节序" class="headerlink" title="网络字节序"></a>网络字节序</h5><p>　　标准网路字节序是大端的，即先存储最高有效位。
+　　</p>
+<h5 id="域名系统"><a href="#域名系统" class="headerlink" title="域名系统"></a>域名系统</h5><p>　　在DNS以前，主机名和IP之间映射关系是一个手工维护的/etc/hosts文件定义的。</p>
+<h5 id="ect-services-文件"><a href="#ect-services-文件" class="headerlink" title="/ect/services 文件"></a>/ect/services 文件</h5><p>　　众所周知的端口号是由IANA集中注册的，其中每个端口号都对应于一个服务名，getaddrinfo()和getnameinfo()函数会使用这个文件中的信息进行服务号和端口号之间的转换。</p>
+<h5 id="getaddrinfo-函数"><a href="#getaddrinfo-函数" class="headerlink" title="getaddrinfo()函数"></a>getaddrinfo()函数</h5><p>　　给定一个主机名和服务器名，getaddrinfo()函数会返回一个socket地址结构列表。每个结构都包含一个地址和端口号。</p>
+<pre><code>#include&lt;sys/socket.h&gt;
+#incldue &lt;netdb.h&gt;
+itn getaddrinfo(const char*host,const char*service,const struct addrinfo *hints,struct addrinfo **result);
+</code></pre><p>　　成功是返回0，错误返回非0.<br>　　host参数包含一个主机名或者一个ipv4或者ipv6地址字符串，service包含一个服务名或者一个十进制端口号，hints参数指向一个addrinfo结构，该结构规定了选择通过result返回的socket地址结构的标准。<br>　　getaddrinfo()会动态的分配一个addrinfo结构的链表并将result指向这个链表的表头，每个addrinfo结构包含了一个host和service对应的socket地址结构的指针。
+　　</p>
+<h5 id="UNIX与internet-domain-socket比较"><a href="#UNIX与internet-domain-socket比较" class="headerlink" title="UNIX与internet domain socket比较"></a>UNIX与internet domain socket比较</h5><p>　　当在网路上通信时必须使用internet domian socket，当在同一个系统上是两者都可以使用，但是一般选择使用UNIX socket，原因如下：<br>　　　　1.在一个实现上，UNIX domian比较快。<br>　　　　2.可以使用目录权限来控制对UNIX domain socket的访问。<br>　　　　3.使用UNIX domain socket可以传递打开的文件描述符和发送者的验证信息。
+　　　　</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/17/46/" rel="next" title="SOCKET DOMAIN">
+                <i class="fa fa-chevron-left"></i> SOCKET DOMAIN
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/17/48/" rel="prev" title="SOCKET 服务器设计">
+                SOCKET 服务器设计 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/myheader.png"
+                alt="yixuan" />
+            
+              <p class="site-author-name" itemprop="name">yixuan</p>
+              <p class="site-description motion-element" itemprop="description">勇者自由</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SOCKET-Internet-Domain"><span class="nav-number">1.</span> <span class="nav-text">SOCKET:Internet Domain</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#网络字节序"><span class="nav-number">1.1.</span> <span class="nav-text">网络字节序</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#域名系统"><span class="nav-number">1.2.</span> <span class="nav-text">域名系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ect-services-文件"><span class="nav-number">1.3.</span> <span class="nav-text">/ect/services 文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getaddrinfo-函数"><span class="nav-number">1.4.</span> <span class="nav-text">getaddrinfo()函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UNIX与internet-domain-socket比较"><span class="nav-number">1.5.</span> <span class="nav-text">UNIX与internet domain socket比较</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yixuan</span>
+
+  
+</div>
+
+
+
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+<div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
