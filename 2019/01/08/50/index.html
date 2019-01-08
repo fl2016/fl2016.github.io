@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="C++泛型思想　　泛型编程（Generic Programming）是一种语言机制，通过它可以实现一个标准的容器库。像类一样，泛型也是一种抽象数据类型，但是泛型不属于面向对象，它是面向对象的补充和发展。在面向对象编程中，当算法与数据类型有关时，面向对象在对算法的抽象描述方面存在一些缺陷。　　在C++中分为类泛型和函数泛型">
+<meta name="description" content="备选I/O模型　　大多数I/O模型都是单个进程每次只在一个文件描述符上进行I/O操作，每次I/O系统调用都会阻塞直到完成数据传输，如从一个管道中读取数据时，如果管道中恰好没有数据，那么通常read()会阻塞，如果管道中没有足够的空间写入数据时，write()也会阻塞。   　　磁盘的缓冲区是个特例，磁盘采用缓冲区cache来加速磁盘的I/O请求，因此一旦请求的数据传输到内核缓冲区cache,对磁盘">
 <meta name="keywords" content="The directiion,the efficiency,the persistence!">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++泛型思想">
-<meta property="og:url" content="https://www.yixuan.tech/2018/05/31/1/index.html">
+<meta property="og:title" content="备选的I&#x2F;O模型">
+<meta property="og:url" content="https://www.yixuan.tech/2019/01/08/50/index.html">
 <meta property="og:site_name" content="A new cpp learner">
-<meta property="og:description" content="C++泛型思想　　泛型编程（Generic Programming）是一种语言机制，通过它可以实现一个标准的容器库。像类一样，泛型也是一种抽象数据类型，但是泛型不属于面向对象，它是面向对象的补充和发展。在面向对象编程中，当算法与数据类型有关时，面向对象在对算法的抽象描述方面存在一些缺陷。　　在C++中分为类泛型和函数泛型">
+<meta property="og:description" content="备选I/O模型　　大多数I/O模型都是单个进程每次只在一个文件描述符上进行I/O操作，每次I/O系统调用都会阻塞直到完成数据传输，如从一个管道中读取数据时，如果管道中恰好没有数据，那么通常read()会阻塞，如果管道中没有足够的空间写入数据时，write()也会阻塞。   　　磁盘的缓冲区是个特例，磁盘采用缓冲区cache来加速磁盘的I/O请求，因此一旦请求的数据传输到内核缓冲区cache,对磁盘">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-12T10:50:11.000Z">
+<meta property="og:updated_time" content="2019-01-08T00:51:20.104Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++泛型思想">
-<meta name="twitter:description" content="C++泛型思想　　泛型编程（Generic Programming）是一种语言机制，通过它可以实现一个标准的容器库。像类一样，泛型也是一种抽象数据类型，但是泛型不属于面向对象，它是面向对象的补充和发展。在面向对象编程中，当算法与数据类型有关时，面向对象在对算法的抽象描述方面存在一些缺陷。　　在C++中分为类泛型和函数泛型">
+<meta name="twitter:title" content="备选的I&#x2F;O模型">
+<meta name="twitter:description" content="备选I/O模型　　大多数I/O模型都是单个进程每次只在一个文件描述符上进行I/O操作，每次I/O系统调用都会阻塞直到完成数据传输，如从一个管道中读取数据时，如果管道中恰好没有数据，那么通常read()会阻塞，如果管道中没有足够的空间写入数据时，write()也会阻塞。   　　磁盘的缓冲区是个特例，磁盘采用缓冲区cache来加速磁盘的I/O请求，因此一旦请求的数据传输到内核缓冲区cache,对磁盘">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.yixuan.tech/2018/05/31/1/"/>
+  <link rel="canonical" href="https://www.yixuan.tech/2019/01/08/50/"/>
 
 
 
 
 
-  <title>C++泛型思想 | A new cpp learner</title>
+  <title>备选的I/O模型 | A new cpp learner</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2018/05/31/1/">
+    <link itemprop="mainEntityOfPage" href="https://www.yixuan.tech/2019/01/08/50/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yixuan">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">C++泛型思想</h1>
+          <h1 class="post-title" itemprop="name headline">备选的I/O模型</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-31T18:23:00+08:00">
-                2018-05-31
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-08T08:33:07+08:00">
+                2019-01-08
               </time>
             
 
@@ -300,37 +300,9 @@
       
 
       
-        <h1 id="C-泛型思想"><a href="#C-泛型思想" class="headerlink" title="C++泛型思想"></a>C++泛型思想</h1><p>　　泛型编程（Generic Programming）是一种语言机制，通过它可以实现一个标准的容器库。像类一样，泛型也是一种抽象数据类型，但是泛型不属于面向对象，它是面向对象的补充和发展。<br>在面向对象编程中，当算法与数据类型有关时，面向对象在对算法的抽象描述方面存在一些缺陷。<br>　　在C++中分为类泛型和函数泛型<br><a id="more"></a><br><strong>函数模板泛型</strong><br>　　定义一个函数模板，就是一个独立类型的函数。如下：</p>
-<pre><code>template &lt; typename T &gt;
-int compare( T &amp;a, T &amp;b ){
-    if( a == b ){
-      return 0;
-    }
-    return a&gt;b?1:-1;
-}
-</code></pre><p>　　模板的定义以关键字template开始，后面接模板参数( template parameter list )，模板形参表是用尖括号括起来的一个或多个模板形参( template parameter )，形参之间用逗号分割。<br>编译器把实例化compare的两个不同版本，编译器用Int代替T 创建第一个，用string替换T创建第二个。<br><strong>函数模板性质</strong>  </p>
-<p>  1.函数模板并不是真正的函数，它只是C++编译生成具体函数的一个模子。<br>  2.函数模板本身并不生成函数，实际生成的函数是替换函数模板的那个函数，比如上例中的add(sum1,sum2)<br>   这种替换是编译期就绑定的。<br>  3.函数模板不是只编译一份满足多重需要，而是为每一种替换它的函数编译一份。<br>  4.函数模板不允许自动类型转换。<br>  5.函数模板不可以设置默认模板实参。比如template <typename t="0">不可以。<br>   　<br><strong>类模板泛型</strong><br>　　我们定义类模版的时候同函数模板一样。<br>　　例如我们定义一个Point类，可能是2d（x和y）的，可能是3d（x，y和z）的，所以需要类模版。第一种是定义3d的Point：  </typename></p>
-<pre><code>template &lt; class type &gt;
-class Point3d
-{
-  public:
-  Point3d( type x = 0.0, type y = 0.0, type z = 0.0)
-  : _x(x), _y(y), _z(z) {}
-
-  type x(){
-    return _x;
-}
-
-void x( type xval ){
-    _x = xval;
-}
-
-  private:
-  type _x;
-  type _y;
-  type _z;
-};
-</code></pre><p><strong>类模板性质</strong><br>　　1.  类模板不是真正的类，它只是C++编译器生成具体类的一个模子。<br>　　2.  类模板可以设置默认模板实参。</p>
+        <h4 id="备选I-O模型"><a href="#备选I-O模型" class="headerlink" title="备选I/O模型"></a>备选I/O模型</h4><p>　　大多数I/O模型都是单个进程每次只在一个文件描述符上进行I/O操作，每次I/O系统调用都会阻塞直到完成数据传输，如从一个管道中读取数据时，如果管道中恰好没有数据，那么通常read()会阻塞，如果管道中没有足够的空间写入数据时，write()也会阻塞。  </p>
+<p>　　磁盘的缓冲区是个特例，磁盘采用缓冲区cache来加速磁盘的I/O请求，因此一旦请求的数据传输到内核缓冲区cache,对磁盘的write（）请求将立即返回，而不是等数据写入磁盘后才返回（除非在打开文件时指定了O/_SYNC标志）。与之相对应的是，read()调用将数据从内核缓冲区cache移动到用户的缓冲区中，如果请求的数据不在内核缓冲区，那么内核会让进程休眠，同时对磁盘执行读操作。    
+　　　</p>
 
       
     </div>
@@ -355,15 +327,15 @@ void x( type xval ){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/09/17/49/" rel="next" title="SOCKET高级主题">
+                <i class="fa fa-chevron-left"></i> SOCKET高级主题
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/01/2/" rel="prev" title="进程初步">
-                进程初步 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -481,7 +453,7 @@ void x( type xval ){
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-泛型思想"><span class="nav-number">1.</span> <span class="nav-text">C++泛型思想</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#备选I-O模型"><span class="nav-number">1.</span> <span class="nav-text">备选I/O模型</span></a></li></ol></div>
             
 
           </div>
